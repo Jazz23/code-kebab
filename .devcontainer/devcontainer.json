@@ -1,0 +1,34 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/debian
+{
+	"name": "code-kebab",
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+	"mounts": [
+		"source=claude,target=/home/vscode/.claude,type=volume",
+		"source=zsh-history,target=/commandhistory,type=volume",
+		"source=azure-cli,target=/home/vscode/.azure,type=volume"
+	],
+	"features": {
+		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
+		"ghcr.io/devcontainers/features/common-utils:2": {
+			"configureZshAsDefaultShell": true
+		},
+		"ghcr.io/stu-bell/devcontainer-features/claude-code:0": {},
+		"ghcr.io/devcontainers/features/azure-cli:1": {},
+		"ghcr.io/devcontainers-extra/features/bun:1": {}
+	},
+	"containerEnv": {
+		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+	},
+	"onCreateCommand": {
+		"zshell-history": "sudo chown -R $(whoami) /commandhistory && touch /commandhistory/.zsh_history && echo 'export HISTFILE=/commandhistory/.zsh_history' >> ~/.zshrc",
+		"env": "sudo chown $(whoami):$(whoami) .env",
+		"azure-cli": "sudo chown -R $(whoami) /home/vscode/.azure"
+	},
+	"initializeCommand": "touch .env",
+	"runArgs": [
+		"--env-file", ".env"
+	],
+	"postCreateCommand": ".devcontainer/get-secrets.sh"
+}
