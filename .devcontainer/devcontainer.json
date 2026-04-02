@@ -3,7 +3,7 @@
 {
 	"name": "code-kebab",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+	"image": "ghcr.io/jazz23/code-kebab:latest",
 	"mounts": [
 		"source=claude,target=/home/vscode/.claude,type=volume",
 		"source=zsh-history,target=/commandhistory,type=volume",
@@ -23,6 +23,7 @@
 	},
 	"onCreateCommand": {
 		"zshell-history": "sudo chown -R $(whoami) /commandhistory && touch /commandhistory/.zsh_history && echo 'export HISTFILE=/commandhistory/.zsh_history' >> ~/.zshrc",
+		"zsh-aliases": ".devcontainer/aliases.sh",
 		"env": "sudo chown $(whoami):$(whoami) .env",
 		"azure-cli": "sudo chown -R $(whoami) /home/vscode/.azure"
 	},
