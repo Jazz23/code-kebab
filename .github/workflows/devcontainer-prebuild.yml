@@ -4,7 +4,9 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "fix/prebuild"
+      - "main"
+    paths:
+      - ".github/.devcontainer/**"
 jobs:
   build-and-push:
     permissions: write-all
