@@ -19,5 +19,8 @@
 	"runArgs": [
 		"--env-file", ".env"
 	],
-	"postCreateCommand": ".devcontainer/get-secrets.sh"
+	"postCreateCommand": {
+		"get-secrets": ".devcontainer/get-secrets.sh",
+		"bun-install": "bun install"
+	}
 }
