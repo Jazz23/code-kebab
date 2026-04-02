@@ -1,6 +1,6 @@
 #!/bin/sh
 VAULT_NAME="CodeKebab"
-ENV_FILE=".env"
+ENV_FILE="/workspaces/code-kebab/.env"
 
 if ! az account show > /dev/null 2>&1; then
   echo "Not logged in to Azure CLI, skipping secret fetch."

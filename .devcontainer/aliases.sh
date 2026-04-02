@@ -2,7 +2,7 @@
 
 # Modifiable list of aliases — add, remove, or change entries here
 alias_list=(
-    'alias bruh="echo hi"'
+    'alias secrets="/workspaces/code-kebab/.devcontainer/get-secrets.sh"'
 )
 
 ZSHRC="$HOME/.zshrc"
