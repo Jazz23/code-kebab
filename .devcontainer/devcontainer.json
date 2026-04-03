@@ -22,5 +22,6 @@
 	"postCreateCommand": {
 		"get-secrets": ".devcontainer/get-secrets.sh",
 		"bun-install": "bun install"
-	}
+	},
+	"forwardPorts": [5050]
 }
