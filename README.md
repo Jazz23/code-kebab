@@ -20,6 +20,41 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Postgres
+
+This repo includes a `compose.yml` for PostgreSQL 18.
+
+Start it with:
+
+```bash
+docker compose up -d
+```
+
+Default connection settings:
+
+```text
+host=localhost
+port=5432
+database=ckebab
+user=kebab
+password=7b992bb4c32ef2bf8ec30818f7e75e02c34756120cc38011
+```
+
+App connection string:
+
+```text
+DATABASE_URL=postgresql://kebab:7b992bb4c32ef2bf8ec30818f7e75e02c34756120cc38011@localhost:5432/ckebab
+```
+
+pgAdmin runs at `http://localhost:5050` by default with:
+
+```text
+email=admin@local.com
+password=admin
+```
+
+The host ports are configurable with `POSTGRES_PORT` and `PGADMIN_PORT`.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:

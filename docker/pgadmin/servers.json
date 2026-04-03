@@ -1,0 +1,13 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "code-kebab-postgres",
+      "Group": "Servers",
+      "Host": "postgres",
+      "Port": 5432,
+      "MaintenanceDB": "ckebab",
+      "Username": "kebab",
+      "SSLMode": "prefer"
+    }
+  }
+}
