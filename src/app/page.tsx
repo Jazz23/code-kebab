@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const allProjects = await getProjects();
   const featured = allProjects.slice(0, 3);

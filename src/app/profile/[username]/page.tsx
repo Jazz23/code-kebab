@@ -3,6 +3,8 @@ import Link from "next/link";
 import { getUserByUsername, getUserProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {

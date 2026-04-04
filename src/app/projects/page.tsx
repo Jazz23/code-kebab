@@ -5,6 +5,8 @@ export const metadata = {
   title: "Projects - code-kebab",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function ProjectsPage() {
   const projects = await getProjects();
 
