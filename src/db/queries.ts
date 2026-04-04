@@ -103,6 +103,7 @@ export async function getUserProjects(username: string) {
       githubUrl: projects.githubUrl,
       timelineDate: projects.timelineDate,
       ownerName: users.name,
+      ownerId: projects.ownerId,
       memberCount:
         sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
     })

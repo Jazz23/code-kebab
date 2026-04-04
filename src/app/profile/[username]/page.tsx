@@ -114,7 +114,11 @@ export default async function ProfilePage({
           {userProjects.length > 0 ? (
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {userProjects.map((project) => (
-                <ProjectCard key={project.slug} project={project} />
+                <ProjectCard
+                  key={project.slug}
+                  project={project}
+                  editHref={isOwnProfile && project.ownerId === user.id ? `/projects/${project.slug}/edit` : undefined}
+                />
               ))}
             </div>
           ) : (

@@ -13,7 +13,13 @@ type ProjectCardData = {
   memberCount: number;
 };
 
-export function ProjectCard({ project }: { project: ProjectCardData }) {
+export function ProjectCard({
+  project,
+  editHref,
+}: {
+  project: ProjectCardData;
+  editHref?: string;
+}) {
   const roleCount = project.openRoles.length || project.openSlots;
   const roleLabel =
     project.openSlots && !project.openRoles.length
@@ -28,19 +34,31 @@ export function ProjectCard({ project }: { project: ProjectCardData }) {
     : null;
 
   return (
-    <Link
-      href={`/projects/${project.slug}`}
-      className="group flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700"
-    >
-      <div className="flex items-start justify-between gap-2">
+    <div className="group relative flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700">
+      {/* Stretched link covering the whole card */}
+      <Link href={`/projects/${project.slug}`} className="absolute inset-0 rounded-xl">
+        <span className="sr-only">{project.title}</span>
+      </Link>
+
+      <div className="relative z-10 flex items-start justify-between gap-2">
         <h3 className="text-lg font-semibold text-zinc-900 group-hover:text-zinc-700 dark:text-zinc-50 dark:group-hover:text-zinc-200">
           {project.title}
         </h3>
-        {(roleCount ?? 0) > 0 && (
-          <span className="shrink-0 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
-            {roleLabel}
-          </span>
-        )}
+        <div className="flex shrink-0 items-center gap-2">
+          {editHref && (
+            <Link
+              href={editHref}
+              className="rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-50"
+            >
+              Edit
+            </Link>
+          )}
+          {(roleCount ?? 0) > 0 && (
+            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+              {roleLabel}
+            </span>
+          )}
+        </div>
       </div>
 
       <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -78,6 +96,6 @@ export function ProjectCard({ project }: { project: ProjectCardData }) {
           </>
         )}
       </div>
-    </Link>
+    </div>
   );
 }
