@@ -1,0 +1,13 @@
+.git
+.github
+.next
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+bun-debug.log*
+.env
+.env.*
+compose.yml
+README.md
+tsconfig.tsbuildinfo

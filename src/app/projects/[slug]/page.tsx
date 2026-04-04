@@ -4,6 +4,8 @@ import { getProjectBySlug } from "@/db/queries";
 import { Avatar } from "@/components/avatar";
 import { JoinRequestButton } from "@/components/join-request-button";
 
+export const dynamic = "force-dynamic";
+
 export async function generateMetadata({
   params,
 }: {
