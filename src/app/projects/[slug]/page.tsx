@@ -1,12 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { projects, getProject } from "@/lib/mock-data";
+import { getProjectBySlug } from "@/db/queries";
 import { Avatar } from "@/components/avatar";
 import { JoinRequestButton } from "@/components/join-request-button";
-
-export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }));
-}
 
 export async function generateMetadata({
   params,
@@ -14,7 +10,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) return { title: "Not Found" };
   return { title: `${project.title} - code-kebab` };
 }
@@ -25,7 +21,7 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const project = await getProjectBySlug(slug);
   if (!project) notFound();
 
   return (
@@ -61,28 +57,36 @@ export default async function ProjectPage({
               Team
             </h2>
             <div className="mt-4 flex flex-col gap-3">
-              {project.members.map((member) => (
-                <div key={member.username} className="flex items-center gap-3">
-                  <Avatar
-                    initials={member.avatar}
-                    username={member.username}
-                    size="sm"
-                  />
-                  <div>
-                    <Link
-                      href={`/profile/${member.username}`}
-                      className="text-sm font-medium text-zinc-900 hover:underline dark:text-zinc-50"
-                    >
-                      {member.name}
-                    </Link>
-                    {member.username === project.owner.username && (
-                      <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
-                        Owner
-                      </span>
-                    )}
+              {project.members.map((member) => {
+                const initials = (member.name ?? "?")
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()
+                  .slice(0, 2);
+                return (
+                  <div key={member.id} className="flex items-center gap-3">
+                    <Avatar
+                      initials={initials}
+                      username={member.username ?? member.id}
+                      size="sm"
+                    />
+                    <div>
+                      <Link
+                        href={`/profile/${member.username ?? member.id}`}
+                        className="text-sm font-medium text-zinc-900 hover:underline dark:text-zinc-50"
+                      >
+                        {member.name}
+                      </Link>
+                      {member.id === project.ownerId && (
+                        <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                          Owner
+                        </span>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
@@ -114,7 +118,7 @@ export default async function ProjectPage({
                 <div className="flex justify-between">
                   <dt className="text-zinc-500">Created</dt>
                   <dd className="text-zinc-900 dark:text-zinc-50">
-                    {project.createdAt}
+                    {project.createdAt.toLocaleDateString()}
                   </dd>
                 </div>
                 <div className="flex justify-between">
@@ -127,10 +131,10 @@ export default async function ProjectPage({
                   <dt className="text-zinc-500">Owner</dt>
                   <dd>
                     <Link
-                      href={`/profile/${project.owner.username}`}
+                      href={`/profile/${project.ownerUsername ?? project.ownerId}`}
                       className="text-zinc-900 hover:underline dark:text-zinc-50"
                     >
-                      {project.owner.name}
+                      {project.ownerName}
                     </Link>
                   </dd>
                 </div>

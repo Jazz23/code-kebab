@@ -1,7 +1,16 @@
 import Link from "next/link";
-import type { Project } from "@/lib/mock-data";
 
-export function ProjectCard({ project }: { project: Project }) {
+type ProjectCardData = {
+  slug: string;
+  title: string;
+  description: string;
+  tags: string[];
+  openRoles: string[];
+  ownerName: string | null;
+  memberCount: number;
+};
+
+export function ProjectCard({ project }: { project: ProjectCardData }) {
   return (
     <Link
       href={`/projects/${project.slug}`}
@@ -30,11 +39,11 @@ export function ProjectCard({ project }: { project: Project }) {
         ))}
       </div>
       <div className="mt-auto flex items-center gap-2 pt-2 text-xs text-zinc-500 dark:text-zinc-500">
-        <span>by {project.owner.name}</span>
+        <span>by {project.ownerName}</span>
         <span>&middot;</span>
         <span>
-          {project.members.length}{" "}
-          {project.members.length === 1 ? "member" : "members"}
+          {project.memberCount}{" "}
+          {project.memberCount === 1 ? "member" : "members"}
         </span>
       </div>
     </Link>

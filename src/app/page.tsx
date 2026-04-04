@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { projects } from "@/lib/mock-data";
+import { getProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
 
-export default function Home() {
-  const featured = projects.slice(0, 3);
+export default async function Home() {
+  const allProjects = await getProjects();
+  const featured = allProjects.slice(0, 3);
 
   return (
     <main className="flex-1">

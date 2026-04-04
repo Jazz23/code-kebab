@@ -16,6 +16,10 @@ export const users = pgTable("user", {
   emailVerified: timestamp("emailVerified", { mode: "date" }),
   image: text("image"),
   password: text("password"),
+  username: text("username").unique(),
+  bio: text("bio"),
+  skills: text("skills").array(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 
 export const accounts = pgTable(
@@ -62,4 +66,33 @@ export const verificationTokens = pgTable(
       columns: [verificationToken.identifier, verificationToken.token],
     }),
   ],
+);
+
+export const projects = pgTable("project", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  longDescription: text("longDescription").notNull(),
+  tags: text("tags").array().notNull(),
+  openRoles: text("openRoles").array().notNull(),
+  ownerId: text("ownerId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const projectMembers = pgTable(
+  "projectMember",
+  {
+    projectId: text("projectId")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+  },
+  (t) => [primaryKey({ columns: [t.projectId, t.userId] })],
 );

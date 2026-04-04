@@ -8,6 +8,13 @@
       "when": 1775253760280,
       "tag": "0000_dazzling_shooting_star",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775318443410,
+      "tag": "0001_smiling_calypso",
+      "breakpoints": true
     }
   ]
 }

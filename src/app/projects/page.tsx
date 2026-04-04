@@ -1,11 +1,13 @@
-import { projects } from "@/lib/mock-data";
+import { getProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
 
 export const metadata = {
   title: "Projects - code-kebab",
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage() {
+  const projects = await getProjects();
+
   return (
     <main className="flex-1">
       <div className="mx-auto max-w-6xl px-6 py-12">
