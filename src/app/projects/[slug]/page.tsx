@@ -117,7 +117,7 @@ export default async function ProjectPage({
                       >
                         {member.name}
                       </Link>
-                      {member.id === project.ownerId && (
+                      {member.userId === project.ownerId && (
                         <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
                           Owner
                         </span>

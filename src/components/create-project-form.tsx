@@ -17,7 +17,6 @@ type MemberEntry = {
   id: string;
   name: string;
   username: string;
-  role: string;
   checkState: "idle" | "checking" | "found" | "not-found";
   resolvedUserId?: string;
   resolvedName?: string;
@@ -179,27 +178,29 @@ function MemberRow({
 
   return (
     <div className="flex flex-col gap-2 rounded-lg border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-800/50">
-      <div className="flex gap-2">
-        <div className="flex-1">
-          <input
-            type="text"
-            value={member.name}
-            onChange={(e) =>
-              onChange({ ...member, name: e.target.value, checkState: "idle" })
-            }
-            placeholder="Display name"
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400"
-          />
+      {member.checkState !== "found" && (
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <input
+              type="text"
+              value={member.name}
+              onChange={(e) =>
+                onChange({ ...member, name: e.target.value, checkState: "idle" })
+              }
+              placeholder="Name"
+              className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400"
+            />
+          </div>
+          <button
+            type="button"
+            onClick={onRemove}
+            className="shrink-0 rounded-lg p-2 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+            aria-label="Remove member"
+          >
+            ✕
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={onRemove}
-          className="shrink-0 rounded-lg p-2 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
-          aria-label="Remove member"
-        >
-          ✕
-        </button>
-      </div>
+      )}
 
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -215,7 +216,7 @@ function MemberRow({
               })
             }
             onBlur={checkUsername}
-            placeholder="@username (optional — links account)"
+            placeholder="Code Kebab username (optional)"
             className="w-full rounded-lg border border-zinc-300 bg-white py-2 pl-3 pr-8 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400"
           />
           {member.checkState === "checking" && (
@@ -245,6 +246,16 @@ function MemberRow({
         >
           Check
         </button>
+        {member.checkState === "found" && (
+          <button
+            type="button"
+            onClick={onRemove}
+            className="shrink-0 rounded-lg p-2 text-zinc-400 hover:bg-zinc-200 hover:text-zinc-600 dark:hover:bg-zinc-700 dark:hover:text-zinc-300"
+            aria-label="Remove member"
+          >
+            ✕
+          </button>
+        )}
       </div>
 
       {member.checkState === "found" && member.resolvedName && (
@@ -258,14 +269,6 @@ function MemberRow({
           guest.
         </p>
       )}
-
-      <input
-        type="text"
-        value={member.role}
-        onChange={(e) => onChange({ ...member, role: e.target.value })}
-        placeholder="Role / title (optional)"
-        className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400"
-      />
     </div>
   );
 }
@@ -347,7 +350,6 @@ function newMember(): MemberEntry {
     id: crypto.randomUUID(),
     name: "",
     username: "",
-    role: "",
     checkState: "idle",
   };
 }
@@ -412,10 +414,18 @@ export function CreateProjectForm() {
               name: m.name,
               username: m.username,
               resolvedUserId: m.resolvedUserId,
-              role: m.role || undefined,
             })),
         });
       } catch (err) {
+        // Next.js redirect() throws a NEXT_REDIRECT error — rethrow it so the navigation works
+        if (
+          err instanceof Error &&
+          "digest" in err &&
+          typeof (err as { digest?: string }).digest === "string" &&
+          (err as { digest: string }).digest.startsWith("NEXT_REDIRECT")
+        ) {
+          throw err;
+        }
         setError(err instanceof Error ? err.message : "Something went wrong.");
       }
     });

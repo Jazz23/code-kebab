@@ -51,12 +51,13 @@ export async function getProjectBySlug(slug: string) {
 
   const members = await db
     .select({
-      id: users.id,
-      name: users.name,
+      id: projectMembers.id,
+      userId: projectMembers.userId,
+      name: sql<string | null>`coalesce(${users.name}, ${projectMembers.name})`,
       username: users.username,
     })
-    .from(users)
-    .innerJoin(projectMembers, eq(projectMembers.userId, users.id))
+    .from(projectMembers)
+    .leftJoin(users, eq(projectMembers.userId, users.id))
     .where(eq(projectMembers.projectId, project.id));
 
   const roles = await db
