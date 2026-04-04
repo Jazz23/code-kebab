@@ -3,7 +3,7 @@
 {
 	"name": "code-kebab",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "ghcr.io/jazz23/code-kebab:latest",
+	"image": "ghcr.io/jazz23/code-kebab-devcontainer:latest",
 	"mounts": [
 		"source=claude,target=/home/vscode/.claude,type=volume",
 		"source=zsh-history,target=/commandhistory,type=volume",
