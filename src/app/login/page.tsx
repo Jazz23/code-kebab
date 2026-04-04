@@ -59,6 +59,7 @@ export default function LoginPage() {
               type="email"
               required
               autoComplete="email"
+              defaultValue={process.env.NODE_ENV === "development" ? "alex@example.com" : undefined}
               className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder-zinc-500 dark:focus:border-zinc-100"
               placeholder="alex@example.com"
             />
@@ -77,6 +78,7 @@ export default function LoginPage() {
               type="password"
               required
               autoComplete="current-password"
+              defaultValue={process.env.NODE_ENV === "development" ? "password" : undefined}
               className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder-zinc-500 dark:focus:border-zinc-100"
               placeholder="••••••••"
             />
@@ -95,18 +97,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <div className="mt-8 rounded-lg border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-900/50">
-          <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
-            Seeded dev accounts — all use password:{" "}
-            <code className="font-mono">password</code>
-          </p>
-          <ul className="mt-2 space-y-1 font-mono text-xs text-zinc-600 dark:text-zinc-400">
-            <li>alex@example.com</li>
-            <li>samira@example.com</li>
-            <li>jordan@example.com</li>
-            <li>maria@example.com</li>
-          </ul>
-        </div>
       </div>
     </main>
   );
