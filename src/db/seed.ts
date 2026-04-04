@@ -3,7 +3,7 @@ import { hash } from "@node-rs/argon2";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { sql } from "drizzle-orm";
-import { projectMembers, projects, users } from "./schema";
+import { projectMembers, projectRoles, projects, users } from "./schema";
 
 const client = postgres(process.env.DATABASE_URL!);
 const db = drizzle(client);
@@ -79,6 +79,10 @@ async function main() {
       openRoles: ["Backend Engineer", "DevOps"],
       ownerId: "seed-user-alexchen",
       createdAt: new Date("2026-01-20"),
+      githubUrl: "https://github.com/example/devboard",
+      timelineOpenEnded: true,
+      timelineDate: null,
+      openSlots: null,
     },
     {
       id: "seed-project-lingua",
@@ -92,6 +96,10 @@ async function main() {
       openRoles: ["Mobile Developer", "Content Designer", "API Engineer"],
       ownerId: "seed-user-jpark",
       createdAt: new Date("2026-02-05"),
+      githubUrl: null,
+      timelineOpenEnded: false,
+      timelineDate: new Date("2026-12-01"),
+      openSlots: null,
     },
     {
       id: "seed-project-greenlens",
@@ -105,6 +113,10 @@ async function main() {
       openRoles: ["Frontend Engineer", "Data Analyst", "Designer"],
       ownerId: "seed-user-samira",
       createdAt: new Date("2026-03-01"),
+      githubUrl: null,
+      timelineOpenEnded: false,
+      timelineDate: null,
+      openSlots: 3,
     },
     {
       id: "seed-project-patchwork",
@@ -118,18 +130,124 @@ async function main() {
       openRoles: ["Rust Developer", "Technical Writer"],
       ownerId: "seed-user-alexchen",
       createdAt: new Date("2026-03-10"),
+      githubUrl: "https://github.com/example/patchwork",
+      timelineOpenEnded: false,
+      timelineDate: new Date("2026-09-01"),
+      openSlots: null,
+    },
+  ];
+
+  // --- Project roles ---
+  const seedRoles = [
+    {
+      id: "seed-role-devboard-1",
+      projectId: "seed-project-devboard",
+      name: "Backend Engineer",
+      hourlyRate: "75",
+      salary: null,
+    },
+    {
+      id: "seed-role-devboard-2",
+      projectId: "seed-project-devboard",
+      name: "DevOps",
+      hourlyRate: null,
+      salary: "90000",
+    },
+    {
+      id: "seed-role-lingua-1",
+      projectId: "seed-project-lingua",
+      name: "Mobile Developer",
+      hourlyRate: "65",
+      salary: null,
+    },
+    {
+      id: "seed-role-lingua-2",
+      projectId: "seed-project-lingua",
+      name: "Content Designer",
+      hourlyRate: null,
+      salary: null,
+    },
+    {
+      id: "seed-role-lingua-3",
+      projectId: "seed-project-lingua",
+      name: "API Engineer",
+      hourlyRate: "70",
+      salary: null,
+    },
+    {
+      id: "seed-role-greenlens-1",
+      projectId: "seed-project-greenlens",
+      name: "Frontend Engineer",
+      hourlyRate: "60",
+      salary: null,
+    },
+    {
+      id: "seed-role-patchwork-1",
+      projectId: "seed-project-patchwork",
+      name: "Rust Developer",
+      hourlyRate: "80",
+      salary: null,
+    },
+    {
+      id: "seed-role-patchwork-2",
+      projectId: "seed-project-patchwork",
+      name: "Technical Writer",
+      hourlyRate: "45",
+      salary: null,
     },
   ];
 
   // --- Project members ---
   const seedMembers = [
-    { projectId: "seed-project-devboard", userId: "seed-user-alexchen" },
-    { projectId: "seed-project-devboard", userId: "seed-user-samira" },
-    { projectId: "seed-project-lingua", userId: "seed-user-jpark" },
-    { projectId: "seed-project-lingua", userId: "seed-user-mrivera" },
-    { projectId: "seed-project-greenlens", userId: "seed-user-samira" },
-    { projectId: "seed-project-patchwork", userId: "seed-user-alexchen" },
-    { projectId: "seed-project-patchwork", userId: "seed-user-jpark" },
+    {
+      id: "seed-member-devboard-alex",
+      projectId: "seed-project-devboard",
+      userId: "seed-user-alexchen",
+      name: null,
+      role: "Owner",
+    },
+    {
+      id: "seed-member-devboard-samira",
+      projectId: "seed-project-devboard",
+      userId: "seed-user-samira",
+      name: null,
+      role: "Frontend Engineer",
+    },
+    {
+      id: "seed-member-lingua-jpark",
+      projectId: "seed-project-lingua",
+      userId: "seed-user-jpark",
+      name: null,
+      role: "Owner",
+    },
+    {
+      id: "seed-member-lingua-mrivera",
+      projectId: "seed-project-lingua",
+      userId: "seed-user-mrivera",
+      name: null,
+      role: "Mobile Developer",
+    },
+    {
+      id: "seed-member-greenlens-samira",
+      projectId: "seed-project-greenlens",
+      userId: "seed-user-samira",
+      name: null,
+      role: "Owner",
+    },
+    {
+      id: "seed-member-patchwork-alex",
+      projectId: "seed-project-patchwork",
+      userId: "seed-user-alexchen",
+      name: null,
+      role: "Owner",
+    },
+    {
+      id: "seed-member-patchwork-jpark",
+      projectId: "seed-project-patchwork",
+      userId: "seed-user-jpark",
+      name: null,
+      role: "Rust Developer",
+    },
   ];
 
   console.log("Seeding users...");
@@ -153,11 +271,29 @@ async function main() {
       longDescription: sql`excluded."longDescription"`,
       tags: sql`excluded.tags`,
       openRoles: sql`excluded."openRoles"`,
+      githubUrl: sql`excluded."githubUrl"`,
+      timelineOpenEnded: sql`excluded."timelineOpenEnded"`,
+      timelineDate: sql`excluded."timelineDate"`,
+      openSlots: sql`excluded."openSlots"`,
     },
   });
 
+  // Delete and re-insert roles and members for seed projects to avoid stale rows
+  // (e.g. from leftover data after a schema migration)
+  const seedProjectIds = seedProjects.map((p) => p.id);
+  console.log("Clearing seed project roles and members...");
+  await db.delete(projectRoles).where(
+    sql`${projectRoles.projectId} = ANY(ARRAY[${sql.join(seedProjectIds.map((id) => sql`${id}`), sql`, `)}])`,
+  );
+  await db.delete(projectMembers).where(
+    sql`${projectMembers.projectId} = ANY(ARRAY[${sql.join(seedProjectIds.map((id) => sql`${id}`), sql`, `)}])`,
+  );
+
+  console.log("Seeding project roles...");
+  await db.insert(projectRoles).values(seedRoles);
+
   console.log("Seeding project members...");
-  await db.insert(projectMembers).values(seedMembers).onConflictDoNothing();
+  await db.insert(projectMembers).values(seedMembers);
 
   console.log(`Done. (password for all users: "${SEED_PASSWORD}")`);
   process.exit(0);

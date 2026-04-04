@@ -28,6 +28,12 @@ export default async function Home() {
             >
               Browse Projects
             </Link>
+            <Link
+              href="/projects/new"
+              className="rounded-lg border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-100 dark:hover:text-zinc-50"
+            >
+              Start a project
+            </Link>
           </div>
         </div>
       </section>

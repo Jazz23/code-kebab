@@ -1,6 +1,6 @@
 import { eq, sql } from "drizzle-orm";
 import { db } from ".";
-import { projectMembers, projects, users } from "./schema";
+import { projectMembers, projectRoles, projects, users } from "./schema";
 
 export async function getProjects() {
   return db
@@ -10,6 +10,10 @@ export async function getProjects() {
       description: projects.description,
       tags: projects.tags,
       openRoles: projects.openRoles,
+      openSlots: projects.openSlots,
+      githubUrl: projects.githubUrl,
+      timelineDate: projects.timelineDate,
+      timelineOpenEnded: projects.timelineOpenEnded,
       ownerName: users.name,
       memberCount:
         sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
@@ -33,6 +37,10 @@ export async function getProjectBySlug(slug: string) {
       ownerId: projects.ownerId,
       ownerName: users.name,
       ownerUsername: users.username,
+      githubUrl: projects.githubUrl,
+      timelineDate: projects.timelineDate,
+      timelineOpenEnded: projects.timelineOpenEnded,
+      openSlots: projects.openSlots,
     })
     .from(projects)
     .innerJoin(users, eq(projects.ownerId, users.id))
@@ -51,7 +59,17 @@ export async function getProjectBySlug(slug: string) {
     .innerJoin(projectMembers, eq(projectMembers.userId, users.id))
     .where(eq(projectMembers.projectId, project.id));
 
-  return { ...project, members };
+  const roles = await db
+    .select({
+      id: projectRoles.id,
+      name: projectRoles.name,
+      hourlyRate: projectRoles.hourlyRate,
+      salary: projectRoles.salary,
+    })
+    .from(projectRoles)
+    .where(eq(projectRoles.projectId, project.id));
+
+  return { ...project, members, roles };
 }
 
 export async function getUserByUsername(username: string) {
@@ -82,6 +100,10 @@ export async function getUserProjects(username: string) {
       description: projects.description,
       tags: projects.tags,
       openRoles: projects.openRoles,
+      openSlots: projects.openSlots,
+      githubUrl: projects.githubUrl,
+      timelineDate: projects.timelineDate,
+      timelineOpenEnded: projects.timelineOpenEnded,
       ownerName: users.name,
       memberCount:
         sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,

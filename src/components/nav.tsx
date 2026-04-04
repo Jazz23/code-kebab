@@ -42,7 +42,15 @@ export async function Nav() {
             Projects
           </Link>
           {username && initials ? (
-            <NavUser initials={initials} userId={username} />
+            <>
+              <Link
+                href="/projects/new"
+                className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+              >
+                + New project
+              </Link>
+              <NavUser initials={initials} userId={username} />
+            </>
           ) : (
             <Link
               href="/login"

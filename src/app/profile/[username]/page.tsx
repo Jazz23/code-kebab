@@ -1,5 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { auth } from "@/auth";
+import { eq } from "drizzle-orm";
+import { db } from "@/db";
+import { users } from "@/db/schema";
 import { getUserByUsername, getUserProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
 
@@ -22,12 +26,24 @@ export default async function ProfilePage({
   params: Promise<{ username: string }>;
 }) {
   const { username } = await params;
-  const [user, userProjects] = await Promise.all([
+  const [user, userProjects, session] = await Promise.all([
     getUserByUsername(username),
     getUserProjects(username),
+    auth(),
   ]);
 
   if (!user) notFound();
+
+  // Check if the logged-in user is viewing their own profile
+  let isOwnProfile = false;
+  if (session?.user?.id) {
+    const [row] = await db
+      .select({ username: users.username })
+      .from(users)
+      .where(eq(users.id, session.user.id))
+      .limit(1);
+    isOwnProfile = row?.username === username;
+  }
 
   const initials = (user.name ?? "?")
     .split(" ")
@@ -43,11 +59,23 @@ export default async function ProfilePage({
           <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-2xl font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
             {initials}
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-              {user.name}
-            </h1>
-            <p className="mt-1 text-sm text-zinc-500">@{user.username}</p>
+          <div className="flex-1">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                  {user.name}
+                </h1>
+                <p className="mt-1 text-sm text-zinc-500">@{user.username}</p>
+              </div>
+              {isOwnProfile && (
+                <Link
+                  href="/projects/new"
+                  className="shrink-0 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                >
+                  + Create project
+                </Link>
+              )}
+            </div>
             <p className="mt-3 max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
               {user.bio}
             </p>
@@ -70,9 +98,19 @@ export default async function ProfilePage({
         </div>
 
         <section className="mt-12">
-          <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-            Projects
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+              Projects
+            </h2>
+            {isOwnProfile && (
+              <Link
+                href="/projects/new"
+                className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+              >
+                + New project
+              </Link>
+            )}
+          </div>
           {userProjects.length > 0 ? (
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {userProjects.map((project) => (
@@ -82,12 +120,21 @@ export default async function ProfilePage({
           ) : (
             <p className="mt-4 text-sm text-zinc-500">
               No projects yet.{" "}
-              <Link
-                href="/projects"
-                className="text-zinc-900 hover:underline dark:text-zinc-50"
-              >
-                Browse projects
-              </Link>{" "}
+              {isOwnProfile ? (
+                <Link
+                  href="/projects/new"
+                  className="text-zinc-900 hover:underline dark:text-zinc-50"
+                >
+                  Create your first project
+                </Link>
+              ) : (
+                <Link
+                  href="/projects"
+                  className="text-zinc-900 hover:underline dark:text-zinc-50"
+                >
+                  Browse projects
+                </Link>
+              )}{" "}
               to get started.
             </p>
           )}

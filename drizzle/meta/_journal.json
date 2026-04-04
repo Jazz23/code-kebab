@@ -15,6 +15,13 @@
       "when": 1775318443410,
       "tag": "0001_smiling_calypso",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1775329463063,
+      "tag": "0002_redundant_sentinels",
+      "breakpoints": true
     }
   ]
 }

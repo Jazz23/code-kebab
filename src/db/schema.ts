@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgTable,
   primaryKey,
@@ -75,24 +76,39 @@ export const projects = pgTable("project", {
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
   description: text("description").notNull(),
-  longDescription: text("longDescription").notNull(),
+  longDescription: text("longDescription"),
   tags: text("tags").array().notNull(),
   openRoles: text("openRoles").array().notNull(),
   ownerId: text("ownerId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  githubUrl: text("githubUrl"),
+  timelineDate: timestamp("timelineDate", { mode: "date" }),
+  timelineOpenEnded: boolean("timelineOpenEnded").default(false),
+  openSlots: integer("openSlots"),
 });
 
-export const projectMembers = pgTable(
-  "projectMember",
-  {
-    projectId: text("projectId")
-      .notNull()
-      .references(() => projects.id, { onDelete: "cascade" }),
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-  },
-  (t) => [primaryKey({ columns: [t.projectId, t.userId] })],
-);
+export const projectRoles = pgTable("projectRole", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  projectId: text("projectId")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  name: text("name").notNull(),
+  hourlyRate: text("hourlyRate"),
+  salary: text("salary"),
+});
+
+export const projectMembers = pgTable("projectMember", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  projectId: text("projectId")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
+  name: text("name"),
+  role: text("role"),
+});
