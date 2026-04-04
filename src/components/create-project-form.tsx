@@ -22,7 +22,7 @@ type MemberEntry = {
   resolvedName?: string;
 };
 
-type TimelineMode = "none" | "open-ended" | "date";
+type TimelineMode = "none" | "date";
 type RolesMode = "none" | "slots" | "named";
 
 // ─── Tag input ────────────────────────────────────────────────────────────────
@@ -494,7 +494,6 @@ export function CreateProjectForm() {
             {(
               [
                 ["none", "No timeline"],
-                ["open-ended", "Open ended"],
                 ["date", "End date"],
               ] as const
             ).map(([value, label]) => (

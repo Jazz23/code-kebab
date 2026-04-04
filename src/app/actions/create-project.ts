@@ -27,7 +27,7 @@ type CreateProjectInput = {
   rolesMode: "none" | "slots" | "named";
   openSlots?: number;
   roles: RoleInput[];
-  timelineMode: "none" | "open-ended" | "date";
+  timelineMode: "none" | "date";
   timelineDate?: string;
   members: MemberInput[];
 };
@@ -82,7 +82,6 @@ export async function createProject(input: CreateProjectInput) {
       openRoles: openRolesNames,
       ownerId,
       githubUrl: input.githubUrl || null,
-      timelineOpenEnded: input.timelineMode === "open-ended",
       timelineDate:
         input.timelineMode === "date" && input.timelineDate
           ? new Date(input.timelineDate)

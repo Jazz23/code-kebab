@@ -9,7 +9,6 @@ type ProjectCardData = {
   openSlots: number | null;
   githubUrl: string | null;
   timelineDate: Date | null;
-  timelineOpenEnded: boolean | null;
   ownerName: string | null;
   memberCount: number;
 };
@@ -21,15 +20,12 @@ export function ProjectCard({ project }: { project: ProjectCardData }) {
       ? `${project.openSlots} open ${project.openSlots === 1 ? "slot" : "slots"}`
       : `${project.openRoles.length} open ${project.openRoles.length === 1 ? "role" : "roles"}`;
 
-  let timelineLabel: string | null = null;
-  if (project.timelineOpenEnded) {
-    timelineLabel = "Open ended";
-  } else if (project.timelineDate) {
-    timelineLabel = project.timelineDate.toLocaleDateString(undefined, {
-      month: "short",
-      year: "numeric",
-    });
-  }
+  const timelineLabel = project.timelineDate
+    ? project.timelineDate.toLocaleDateString(undefined, {
+        month: "short",
+        year: "numeric",
+      })
+    : null;
 
   return (
     <Link

@@ -62,8 +62,7 @@ export default async function ProjectPage({
                   href={project.githubUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-400 dark:hover:text-zinc-50"
+className="flex items-center gap-1.5 rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-400 dark:hover:text-zinc-50"
                 >
                   <svg
                     viewBox="0 0 24 24"
@@ -113,7 +112,7 @@ export default async function ProjectPage({
                     <div>
                       <Link
                         href={`/profile/${member.username ?? member.id}`}
-                        className="text-sm font-medium text-zinc-900 hover:underline dark:text-zinc-50"
+                        className="text-sm font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
                       >
                         {member.name}
                       </Link>
@@ -200,7 +199,7 @@ export default async function ProjectPage({
                   <dd>
                     <Link
                       href={`/profile/${project.ownerUsername ?? project.ownerId}`}
-                      className="text-zinc-900 hover:underline dark:text-zinc-50"
+                      className="text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
                     >
                       {project.ownerName}
                     </Link>
@@ -222,7 +221,7 @@ export default async function ProjectPage({
                         href={project.githubUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="max-w-40 truncate text-zinc-900 hover:underline dark:text-zinc-50"
+                        className="max-w-40 truncate text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
                       >
                         {project.githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "")}
                       </a>

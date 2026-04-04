@@ -13,7 +13,6 @@ export async function getProjects() {
       openSlots: projects.openSlots,
       githubUrl: projects.githubUrl,
       timelineDate: projects.timelineDate,
-      timelineOpenEnded: projects.timelineOpenEnded,
       ownerName: users.name,
       memberCount:
         sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
@@ -39,7 +38,6 @@ export async function getProjectBySlug(slug: string) {
       ownerUsername: users.username,
       githubUrl: projects.githubUrl,
       timelineDate: projects.timelineDate,
-      timelineOpenEnded: projects.timelineOpenEnded,
       openSlots: projects.openSlots,
     })
     .from(projects)
@@ -104,7 +102,6 @@ export async function getUserProjects(username: string) {
       openSlots: projects.openSlots,
       githubUrl: projects.githubUrl,
       timelineDate: projects.timelineDate,
-      timelineOpenEnded: projects.timelineOpenEnded,
       ownerName: users.name,
       memberCount:
         sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,

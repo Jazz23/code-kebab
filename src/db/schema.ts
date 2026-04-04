@@ -1,5 +1,4 @@
 import {
-  boolean,
   integer,
   pgTable,
   primaryKey,
@@ -85,7 +84,6 @@ export const projects = pgTable("project", {
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
   githubUrl: text("githubUrl"),
   timelineDate: timestamp("timelineDate", { mode: "date" }),
-  timelineOpenEnded: boolean("timelineOpenEnded").default(false),
   openSlots: integer("openSlots"),
 });
 
