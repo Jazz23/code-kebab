@@ -71,6 +71,13 @@
       "when": 1775404617141,
       "tag": "0009_cheerful_ultron",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1775423677541,
+      "tag": "0010_sleepy_masque",
+      "breakpoints": true
     }
   ]
 }

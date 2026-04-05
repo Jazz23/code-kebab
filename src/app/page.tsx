@@ -29,12 +29,18 @@ export default async function Home() {
               straight in.
             </p>
           </div>
-          <div className="mt-6 flex gap-4">
+          <div className="mt-6 flex flex-wrap gap-4">
             <Link
               href="/projects"
               className="rounded-lg bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               Browse Projects
+            </Link>
+            <Link
+              href="/posts"
+              className="rounded-lg bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+            >
+              Browse Posts
             </Link>
             <Link
               href="/projects/new"

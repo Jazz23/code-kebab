@@ -145,6 +145,19 @@ export const notifications = pgTable("notification", {
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
 
+export const posts = pgTable("post", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  tags: text("tags").array().notNull().default([]),
+  authorId: text("authorId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+});
+
 export const directMessages = pgTable("directMessage", {
   id: text("id")
     .primaryKey()

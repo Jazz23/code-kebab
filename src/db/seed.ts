@@ -3,7 +3,7 @@ import { hash } from "@node-rs/argon2";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { sql } from "drizzle-orm";
-import { projectMembers, projectRoles, projects, users } from "./schema";
+import { posts, projectMembers, projectRoles, projects, users } from "./schema";
 
 const client = postgres(process.env.DATABASE_URL!);
 const db = drizzle(client);
@@ -737,6 +737,126 @@ async function main() {
 
   console.log("Seeding project members...");
   await db.insert(projectMembers).values(seedMembers);
+
+  // --- Posts ---
+  const seedPosts = [
+    {
+      id: "seed-post-1",
+      title: "Looking for a co-founder / coding partner for a SaaS side project",
+      description: `Hey everyone! I've been heads-down on a dev tools SaaS idea for the past month and I'm at the point where I really need someone to build with. Flying solo is getting lonely and I keep context-switching between frontend and backend when I should be going deep on one.
+
+I'm building a lightweight code review tool for small teams who find GitHub's PR review UX too heavy. Think focused inline comments, async approval flows, and a clean diff view — without the GitHub overhead. Early prototype is working, a few friends are already using it.
+
+I'm looking for a frontend-focused developer who's comfortable with React and has an eye for UX. The backend is mostly done (Next.js API routes + PostgreSQL). What's missing is polish: a great diff viewer component, keyboard shortcuts, a responsive layout that doesn't feel like an afterthought.
+
+You'd be a good fit if you've shipped at least one side project of your own, care about interaction design (not just making things work), are comfortable working async (I'm UTC+1, open to anyone), and want real equity, not just a "contributor" credit.
+
+I bring the initial codebase (TypeScript throughout, well-structured), a small group of beta users already giving feedback, and product and backend coverage so you can focus on UI.
+
+If this sounds interesting, send me a message with something you've built — doesn't have to be polished, just something real.`,
+      tags: ["TypeScript", "React", "Next.js", "SaaS", "Developer Tools"],
+      authorId: "seed-user-alexchen",
+      createdAt: new Date("2026-02-14"),
+    },
+    {
+      id: "seed-post-2",
+      title: "Wanting to find a backend dev to pair with on weekends — accessibility tooling project",
+      description: `I'm a frontend/design-leaning developer and I've been prototyping an automated accessibility auditing tool that goes beyond what axe and Lighthouse currently offer. I have the UI and the browser extension shell built, but I'm stuck on the backend — and honestly, I don't enjoy backend work enough to do it well.
+
+The tool crawls a site, runs a suite of WCAG checks, stores historical results, and surfaces regressions in a dashboard. The crawler and audit runner need to be robust, scalable, and fast. That's the part I need help with.
+
+I'm looking for a backend developer who knows Node.js or Go, has dealt with job queues, workers, or crawling before, is available on weekend mornings (I'm based in London, flexible on time zones), and wants a genuine co-build, not just task-swapping.
+
+I'm not looking for someone to just write code I spec out. I want a real collaborator who'll push back on my ideas and bring their own. If you think the crawler should be written differently than I've planned, I want to hear it.
+
+Time commitment is probably 4–6 hours a week to start. No crunch, no deadlines. We go at a pace that keeps it fun.
+
+Drop me a message if you're interested. Would love to jump on a quick call first to see if we click.`,
+      tags: ["Node.js", "Accessibility", "TypeScript", "Developer Tools", "Open Source"],
+      authorId: "seed-user-samira",
+      createdAt: new Date("2026-02-22"),
+    },
+    {
+      id: "seed-post-3",
+      title: "Anyone want to build a distributed tracing side project together? (Go / Rust)",
+      description: `I work on data infrastructure professionally and I want to scratch an itch that my day job doesn't let me: building a lightweight, self-hosted distributed tracing system — basically a stripped-down Jaeger/Tempo that's easy to run on a single VPS without Kubernetes.
+
+Most observability tooling assumes you have a big infrastructure budget or are comfortable with heavy operational overhead. I want something you can "docker compose up" and forget.
+
+I have a proof-of-concept trace collector written in Go that receives OTLP spans and stores them in SQLite. Query performance is already surprisingly good for small-to-medium trace volumes. The hard parts remaining are a decent query language and filter UI, trace visualization (the waterfall view), sampling strategies, and optional multi-node support.
+
+I want to work with another systems-minded developer who finds this genuinely interesting. Go or Rust background preferred — I don't want to introduce a language nobody knows for a side project.
+
+You don't need to know observability deeply. I can onboard you on the domain. What matters more is that you care about correctness, enjoy reading RFCs, and won't go quiet for three weeks without warning.
+
+Async-first. Weekly sync call optional. I use a shared Linear board to track work. If this sounds like your kind of project, send me a message.`,
+      tags: ["Go", "Rust", "PostgreSQL", "Developer Tools", "Open Source"],
+      authorId: "seed-user-jpark",
+      createdAt: new Date("2026-03-03"),
+    },
+    {
+      id: "seed-post-4",
+      title: "CS student looking for a more experienced dev to build something real with",
+      description: `I'm a second-year CS student and I've hit the ceiling of what I can learn from tutorials and toy projects. I want to build something real with someone who's been in the industry — not a mentor relationship exactly, more of a genuine collaboration where I'm a useful contributor, not just a passenger.
+
+What I can bring: mobile development (I'm most comfortable with React Native and have shipped two small apps to the App Store), Firebase and Supabase backend integration, time (I'm a student, I can put in real hours), and fresh eyes on product decisions.
+
+I'm hoping to find someone with a project idea or early-stage side project that could use a mobile frontend. I'm not looking for a job or an internship — just someone to build alongside and learn from in the process. I'm not precious about the idea. If you have something you've been wanting to build but don't want to do the mobile side, let's talk.
+
+What I'm not looking for: vague "let's build an app" conversations that go nowhere. I want someone who has a concrete idea they're actually excited about, and who's willing to commit to showing up consistently.
+
+My timezone is EST. Message me and let's find something worth building.`,
+      tags: ["React Native", "Firebase", "Mobile", "iOS", "Android"],
+      authorId: "seed-user-mrivera",
+      createdAt: new Date("2026-03-12"),
+    },
+    {
+      id: "seed-post-5",
+      title: "Looking for a developer to co-build an open source design system",
+      description: `I've been maintaining a small component library for my own projects for about two years. It's grown to around 40 components, has a coherent design language, and I've been told multiple times I should open source it properly. I want to do that — but doing it right means more than just pushing to GitHub.
+
+Doing it right means a proper documentation site (I'm thinking Astro or Docusaurus), Storybook integration, an accessibility audit and fixes across all components, a11y and interaction tests, and a semantic versioning and changelog process. That's a lot for one person alongside a full-time job, so I'm looking for someone to split this work with — ideally someone who's been through the process of open-sourcing a project before.
+
+The stack is React and TypeScript with Tailwind CSS for styling. Nothing exotic.
+
+A great fit would be someone with experience maintaining or contributing to an open source UI library, comfortable with Storybook and writing good component docs, and interested in design systems as a craft, not just "make it look nice."
+
+This isn't a startup. There's no monetization plan. It's about building something useful for the community and doing it properly.
+
+If you want to see the current state of the library before deciding, just ask and I'll share the private repo link.`,
+      tags: ["React", "TypeScript", "Tailwind CSS", "Open Source", "Accessibility"],
+      authorId: "seed-user-samira",
+      createdAt: new Date("2026-03-19"),
+    },
+    {
+      id: "seed-post-6",
+      title: "Pair programming partner wanted — I'll help with your project if you help with mine",
+      description: `Simple proposition: I'm looking for a developer to do regular pair programming sessions with. I'll help with your project, you help with mine. Structured knowledge exchange, not mentorship, not freelancing — just two people building together.
+
+I'm a full-stack developer, strongest in TypeScript and the React/Next.js ecosystem. I've been writing code professionally for four years. Currently working on a local-first notes app that syncs across devices. The hard part is the sync engine — I'm implementing a simple event log approach and would love a second brain on it.
+
+From the sessions I want roughly 2 hours per week, alternating whose project we work on. I find I write better code when someone's watching, ask better questions when I have to explain my thinking out loud, and catch more bugs in someone else's code than in my own.
+
+What you should bring: a real project you're actively working on (not "I have an idea"), willingness to share your screen and think out loud, any stack (I can be useful across languages even if I don't know yours deeply), and some overlap in availability (I'm UTC, flexible within reason).
+
+Not a job. Not equity. Not a commitment to ship anything. Just two developers making each other sharper.
+
+If you're interested, message me with a one-liner about what you're building. We'll take it from there.`,
+      tags: ["TypeScript", "React", "Next.js", "Offline-first", "Open Source"],
+      authorId: "seed-user-alexchen",
+      createdAt: new Date("2026-03-28"),
+    },
+  ];
+
+  console.log("Seeding posts...");
+  await db.insert(posts).values(seedPosts).onConflictDoUpdate({
+    target: posts.id,
+    set: {
+      title: sql`excluded.title`,
+      description: sql`excluded.description`,
+      tags: sql`excluded.tags`,
+    },
+  });
 
   console.log(`Done. (password for all users: "${SEED_PASSWORD}")`);
   process.exit(0);

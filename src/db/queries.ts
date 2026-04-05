@@ -1,6 +1,6 @@
-import { eq, sql } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from ".";
-import { projectMembers, projectRoles, projects, users } from "./schema";
+import { posts, projectMembers, projectRoles, projects, users } from "./schema";
 
 export async function getProjects() {
   return db
@@ -85,6 +85,42 @@ export async function getProjectBySlug(slug: string) {
     .where(eq(projectRoles.projectId, project.id));
 
   return { ...project, members, roles };
+}
+
+export async function getPosts() {
+  return db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      description: posts.description,
+      tags: posts.tags,
+      createdAt: posts.createdAt,
+      authorName: users.name,
+      authorUsername: users.username,
+    })
+    .from(posts)
+    .innerJoin(users, eq(posts.authorId, users.id))
+    .orderBy(desc(posts.createdAt));
+}
+
+export async function getPostById(id: string) {
+  const [post] = await db
+    .select({
+      id: posts.id,
+      title: posts.title,
+      description: posts.description,
+      tags: posts.tags,
+      createdAt: posts.createdAt,
+      authorId: posts.authorId,
+      authorName: users.name,
+      authorUsername: users.username,
+    })
+    .from(posts)
+    .innerJoin(users, eq(posts.authorId, users.id))
+    .where(eq(posts.id, id))
+    .limit(1);
+
+  return post ?? null;
 }
 
 export async function getUserByUsername(username: string) {
