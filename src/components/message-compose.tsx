@@ -43,10 +43,9 @@ export function MessageCompose({
         <input
           type="text"
           value={to}
-          onChange={(e) => setTo(e.target.value)}
-          placeholder="username"
+          readOnly
           required
-          className="flex-1 bg-transparent text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none dark:text-zinc-50 dark:placeholder:text-zinc-600"
+          className="flex-1 bg-transparent text-sm text-zinc-900 focus:outline-none dark:text-zinc-50"
         />
       </div>
 
