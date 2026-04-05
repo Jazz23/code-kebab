@@ -64,13 +64,19 @@ export default async function ProfilePage({
               {initials}
             </div>
             <div className="flex-1">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-                    {user.name}
-                  </h1>
-                  <p className="mt-1 text-sm text-zinc-500">@{user.username}</p>
-                </div>
+              <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                {user.name}
+              </h1>
+              <div className="mt-1 flex items-center gap-3">
+                <p className="text-sm text-zinc-500">@{user.username}</p>
+                {session?.user?.id && user.username && (
+                  <Link
+                    href={`/messages/compose?to=${user.username}`}
+                    className="rounded-lg border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-100 dark:hover:text-zinc-50"
+                  >
+                    Message
+                  </Link>
+                )}
               </div>
               <p className="mt-3 max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
                 {user.bio}
@@ -85,6 +91,21 @@ export default async function ProfilePage({
                   </span>
                 ))}
               </div>
+              {(user.socialLinks ?? []).filter((l) => l.trim()).length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {(user.socialLinks ?? []).filter((l) => l.trim()).map((link) => (
+                    <a
+                      key={link}
+                      href={link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50"
+                    >
+                      {new URL(link).hostname.replace(/^www\./, "")}
+                    </a>
+                  ))}
+                </div>
+              )}
               {user.timezone && (
                 <p className="mt-2 text-xs text-zinc-400">
                   Timezone: {user.timezone}

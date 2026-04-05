@@ -10,6 +10,7 @@ type UpdateProfileInput = {
   bio?: string;
   skills?: string[];
   timezone?: string;
+  socialLinks?: string[];
 };
 
 export async function updateProfile(input: UpdateProfileInput) {
@@ -32,6 +33,10 @@ export async function updateProfile(input: UpdateProfileInput) {
 
   if (input.timezone !== undefined) {
     updateData.timezone = input.timezone.trim() || null;
+  }
+
+  if (input.socialLinks !== undefined) {
+    updateData.socialLinks = input.socialLinks;
   }
 
   if (Object.keys(updateData).length === 0) return;

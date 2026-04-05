@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "socialLinks" text[] DEFAULT '{}' NOT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE "directMessage" ADD COLUMN "subject" text DEFAULT '(no subject)' NOT NULL;

@@ -89,5 +89,5 @@ export async function denyJoinRequest(joinRequestId: string): Promise<void> {
     referenceId: joinRequestId,
   });
 
-  revalidatePath(`/notifications`);
+  revalidatePath("/messages");
 }

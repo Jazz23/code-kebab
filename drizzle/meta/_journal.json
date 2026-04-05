@@ -43,6 +43,27 @@
       "when": 1775353325773,
       "tag": "0005_true_wild_pack",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1775401778123,
+      "tag": "0006_ordinary_wilson_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1775402879267,
+      "tag": "0007_even_unicorn",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1775403478632,
+      "tag": "0008_brainy_vulture",
+      "breakpoints": true
     }
   ]
 }

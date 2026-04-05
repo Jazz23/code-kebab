@@ -21,6 +21,7 @@ export const users = pgTable("user", {
   bio: text("bio"),
   skills: text("skills").array(),
   timezone: text("timezone"),
+  socialLinks: text("socialLinks").array().notNull().default([]),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 
@@ -140,6 +141,22 @@ export const notifications = pgTable("notification", {
     .references(() => users.id, { onDelete: "cascade" }),
   type: text("type").notNull(),
   referenceId: text("referenceId").notNull(),
+  read: boolean("read").notNull().default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const directMessages = pgTable("directMessage", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  senderId: text("senderId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  recipientId: text("recipientId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  subject: text("subject").notNull().default("(no subject)"),
+  content: text("content").notNull(),
   read: boolean("read").notNull().default(false),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });

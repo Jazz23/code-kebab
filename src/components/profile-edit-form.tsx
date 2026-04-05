@@ -15,6 +15,7 @@ type UserData = {
   bio: string | null;
   skills: string[] | null;
   timezone: string | null;
+  socialLinks: string[] | null;
   createdAt: Date | null;
 };
 
@@ -27,11 +28,14 @@ export function ProfileEditForm({ user }: { user: UserData }) {
   const [bio, setBio] = useState(user.bio ?? "");
   const [skills, setSkills] = useState<string[]>(user.skills ?? []);
   const [timezone, setTimezone] = useState(user.timezone ?? "");
+  const [socialLinks, setSocialLinks] = useState<string[]>(
+    user.socialLinks?.length ? user.socialLinks : [""],
+  );
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
-  const stateRef = useRef({ name, bio, skills, timezone });
+  const stateRef = useRef({ name, bio, skills, timezone, socialLinks });
 
   const initials = (name || "?")
     .split(" ")
@@ -53,6 +57,7 @@ export function ProfileEditForm({ user }: { user: UserData }) {
           bio: latest.bio,
           skills: latest.skills,
           timezone: latest.timezone,
+          socialLinks: latest.socialLinks.filter((l) => l.trim()),
         });
         setSaveStatus("saved");
         setTimeout(() => setSaveStatus("idle"), 2000);
@@ -82,6 +87,25 @@ export function ProfileEditForm({ user }: { user: UserData }) {
     setTimezone(v);
     stateRef.current.timezone = v;
     scheduleSave({ timezone: v });
+  }
+
+  function addSocialLink() {
+    const next = [...socialLinks, ""];
+    setSocialLinks(next);
+    stateRef.current.socialLinks = next;
+    scheduleSave({ socialLinks: next });
+  }
+  function updateSocialLink(index: number, value: string) {
+    const next = socialLinks.map((l, i) => (i === index ? value : l));
+    setSocialLinks(next);
+    stateRef.current.socialLinks = next;
+    scheduleSave({ socialLinks: next });
+  }
+  function removeSocialLink(index: number) {
+    const next = socialLinks.filter((_, i) => i !== index);
+    setSocialLinks(next);
+    stateRef.current.socialLinks = next;
+    scheduleSave({ socialLinks: next });
   }
 
   const inputClass =
@@ -124,6 +148,21 @@ export function ProfileEditForm({ user }: { user: UserData }) {
               </span>
             ))}
           </div>
+          {socialLinks.filter((l) => l.trim()).length > 0 && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {socialLinks.filter((l) => l.trim()).map((link) => (
+                <a
+                  key={link}
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50"
+                >
+                  {new URL(link).hostname.replace(/^www\./, "")}
+                </a>
+              ))}
+            </div>
+          )}
           {timezone && (
             <p className="mt-2 text-xs text-zinc-400">
               Timezone: {timezone}
@@ -235,6 +274,48 @@ export function ProfileEditForm({ user }: { user: UserData }) {
                 <option key={tz} value={tz}>{tz}</option>
               ))}
             </select>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Social links{" "}
+              <span className="font-normal text-zinc-400">(GitHub, LinkedIn, portfolio…)</span>
+            </label>
+            <div className="flex flex-col gap-2">
+              {socialLinks.map((link, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <input
+                    type="url"
+                    value={link}
+                    onChange={(e) => updateSocialLink(i, e.target.value)}
+                    placeholder="https://..."
+                    className={inputClass}
+                  />
+                  {socialLinks.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeSocialLink(i)}
+                      className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
+                      aria-label="Remove link"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                        <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22z" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addSocialLink}
+                className="mt-1 flex h-8 w-8 items-center justify-center rounded-lg border border-dashed border-zinc-300 text-zinc-400 transition-colors hover:border-zinc-500 hover:text-zinc-600 dark:border-zinc-700 dark:hover:border-zinc-500 dark:hover:text-zinc-300"
+                aria-label="Add link"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                  <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 

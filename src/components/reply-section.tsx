@@ -1,15 +1,34 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { sendDirectMessage } from "@/app/actions/messages";
 
-export function ReplySection({ applicantName }: { applicantName: string }) {
+export function ReplySection({
+  applicantName,
+  applicantUsername,
+}: {
+  applicantName: string;
+  applicantUsername: string | null;
+}) {
   const [message, setMessage] = useState("");
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSend(e: React.FormEvent) {
+  async function handleSend(e: React.FormEvent) {
     e.preventDefault();
-    if (!message.trim()) return;
-    setSent(true);
+    if (!message.trim() || sending || !applicantUsername) return;
+    setSending(true);
+    setError(null);
+    try {
+      await sendDirectMessage(applicantUsername, `Re: Join request from ${applicantName}`, message.trim());
+      setSent(true);
+    } catch {
+      setError("Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
+    }
   }
 
   if (sent) {
@@ -28,22 +47,28 @@ export function ReplySection({ applicantName }: { applicantName: string }) {
               clipRule="evenodd"
             />
           </svg>
-          <p className="font-medium text-emerald-800 dark:text-emerald-300">
-            Message sent!
-          </p>
+          <p className="font-medium text-emerald-800 dark:text-emerald-300">Message sent!</p>
         </div>
         <p className="mt-1 text-sm text-emerald-700 dark:text-emerald-400">
           Your reply to {applicantName} has been sent.
         </p>
-        <button
-          onClick={() => {
-            setSent(false);
-            setMessage("");
-          }}
-          className="mt-3 text-xs text-emerald-600 underline-offset-2 hover:underline dark:text-emerald-400"
-        >
-          Send another message
-        </button>
+        <div className="mt-3 flex items-center gap-4">
+          <button
+            onClick={() => {
+              setSent(false);
+              setMessage("");
+            }}
+            className="text-xs text-emerald-600 underline-offset-2 hover:underline dark:text-emerald-400"
+          >
+            Send another message
+          </button>
+          <Link
+            href="/messages?tab=sent"
+            className="text-xs text-emerald-600 underline-offset-2 hover:underline dark:text-emerald-400"
+          >
+            View sent messages →
+          </Link>
+        </div>
       </div>
     );
   }
@@ -56,21 +81,28 @@ export function ReplySection({ applicantName }: { applicantName: string }) {
       <p className="mt-1 text-sm text-zinc-500">
         Send a message to let them know your decision or ask for more information.
       </p>
+      {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+      {!applicantUsername && (
+        <p className="mt-2 text-xs text-zinc-400">
+          This user does not have a username set and cannot receive messages.
+        </p>
+      )}
       <form onSubmit={handleSend} className="mt-4 flex flex-col gap-3">
         <textarea
           rows={4}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          disabled={!applicantUsername}
           placeholder={`Hi ${applicantName}, thanks for your interest…`}
-          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
+          className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
         />
         <div>
           <button
             type="submit"
-            disabled={!message.trim()}
+            disabled={!message.trim() || sending || !applicantUsername}
             className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
           >
-            Send Reply
+            {sending ? "Sending…" : "Send Reply"}
           </button>
         </div>
       </form>

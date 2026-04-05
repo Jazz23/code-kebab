@@ -5,7 +5,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { NavUser } from "./nav-user";
 import { NotificationBell } from "./notification-bell";
-import { getUnreadCount } from "@/app/actions/notifications";
+import { getTotalUnreadCount } from "@/app/actions/messages";
 
 export async function Nav() {
   const session = await auth();
@@ -27,7 +27,7 @@ export async function Nav() {
       ? row.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
       : null;
 
-    unreadCount = await getUnreadCount();
+    unreadCount = await getTotalUnreadCount();
   }
 
   return (
