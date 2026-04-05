@@ -16,6 +16,12 @@ export async function getProjects() {
       ownerName: users.name,
       memberCount:
         sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
+      beginnerRoles:
+        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'beginner')::int`,
+      intermediateRoles:
+        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'intermediate')::int`,
+      advancedRoles:
+        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'advanced')::int`,
     })
     .from(projects)
     .innerJoin(users, eq(projects.ownerId, users.id))
@@ -64,6 +70,7 @@ export async function getProjectBySlug(slug: string) {
       name: projectRoles.name,
       hourlyRate: projectRoles.hourlyRate,
       salary: projectRoles.salary,
+      difficulty: projectRoles.difficulty,
     })
     .from(projectRoles)
     .where(eq(projectRoles.projectId, project.id));
@@ -106,6 +113,12 @@ export async function getUserProjects(username: string) {
       ownerId: projects.ownerId,
       memberCount:
         sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
+      beginnerRoles:
+        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'beginner')::int`,
+      intermediateRoles:
+        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'intermediate')::int`,
+      advancedRoles:
+        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'advanced')::int`,
     })
     .from(projects)
     .innerJoin(users, eq(projects.ownerId, users.id))

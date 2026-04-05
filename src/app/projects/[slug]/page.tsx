@@ -155,6 +155,17 @@ export default async function ProjectPage({
                         <div className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
                           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
                           <span className="font-medium">{role.name}</span>
+                          {role.difficulty && (
+                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                              role.difficulty === "beginner"
+                                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                                : role.difficulty === "intermediate"
+                                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
+                                  : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400"
+                            }`}>
+                              {role.difficulty}
+                            </span>
+                          )}
                         </div>
                         {(role.hourlyRate || role.salary) && (
                           <p className="pl-3.5 text-xs text-zinc-500 dark:text-zinc-400">

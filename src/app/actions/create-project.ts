@@ -17,6 +17,7 @@ type RoleInput = {
   name: string;
   hourlyRate?: string;
   salary?: string;
+  difficulty?: "beginner" | "intermediate" | "advanced";
 };
 
 type CreateProjectInput = {
@@ -102,6 +103,7 @@ export async function createProject(input: CreateProjectInput) {
           name: r.name,
           hourlyRate: r.hourlyRate || null,
           salary: r.salary || null,
+          difficulty: r.difficulty || null,
         })),
     );
   }

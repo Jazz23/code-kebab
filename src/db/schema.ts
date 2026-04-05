@@ -97,6 +97,7 @@ export const projectRoles = pgTable("projectRole", {
   name: text("name").notNull(),
   hourlyRate: text("hourlyRate"),
   salary: text("salary"),
+  difficulty: text("difficulty").$type<"beginner" | "intermediate" | "advanced">(),
 });
 
 export const projectMembers = pgTable("projectMember", {

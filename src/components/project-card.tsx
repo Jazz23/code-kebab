@@ -11,6 +11,9 @@ type ProjectCardData = {
   timelineDate: Date | null;
   ownerName: string | null;
   memberCount: number;
+  beginnerRoles?: number;
+  intermediateRoles?: number;
+  advancedRoles?: number;
 };
 
 export function ProjectCard({
@@ -20,6 +23,11 @@ export function ProjectCard({
   project: ProjectCardData;
   editHref?: string;
 }) {
+  const hasDifficultyData =
+    (project.beginnerRoles ?? 0) > 0 ||
+    (project.intermediateRoles ?? 0) > 0 ||
+    (project.advancedRoles ?? 0) > 0;
+
   const roleCount = project.openRoles.length || project.openSlots;
   const roleLabel =
     project.openSlots && !project.openRoles.length
@@ -53,11 +61,29 @@ export function ProjectCard({
               Edit
             </Link>
           )}
-          {(roleCount ?? 0) > 0 && (
+          {hasDifficultyData ? (
+            <div className="flex gap-1">
+              {(project.beginnerRoles ?? 0) > 0 && (
+                <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+                  {project.beginnerRoles} beginner
+                </span>
+              )}
+              {(project.intermediateRoles ?? 0) > 0 && (
+                <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+                  {project.intermediateRoles} intermediate
+                </span>
+              )}
+              {(project.advancedRoles ?? 0) > 0 && (
+                <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-400">
+                  {project.advancedRoles} advanced
+                </span>
+              )}
+            </div>
+          ) : (roleCount ?? 0) > 0 ? (
             <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
               {roleLabel}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
 

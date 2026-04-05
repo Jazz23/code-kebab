@@ -74,6 +74,7 @@ export default async function EditProjectPage({
     name: r.name,
     hourlyRate: r.hourlyRate ?? "",
     salary: r.salary ?? "",
+    difficulty: (r.difficulty ?? "") as "" | "beginner" | "intermediate" | "advanced",
   }));
 
   const initialData: ProjectFormInitialData = {
@@ -84,7 +85,7 @@ export default async function EditProjectPage({
     tags: project.tags,
     rolesMode,
     openSlots: project.openSlots?.toString() ?? "",
-    roles: roleEntries.length > 0 ? roleEntries : [{ id: crypto.randomUUID(), name: "", hourlyRate: "", salary: "" }],
+    roles: roleEntries.length > 0 ? roleEntries : [{ id: crypto.randomUUID(), name: "", hourlyRate: "", salary: "", difficulty: "" as const }],
     timelineMode,
     timelineDate,
     members: memberEntries,

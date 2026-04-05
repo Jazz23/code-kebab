@@ -9,6 +9,7 @@ type RoleInput = {
   name: string;
   hourlyRate?: string;
   salary?: string;
+  difficulty?: "beginner" | "intermediate" | "advanced";
 };
 
 type MemberInput = {
@@ -79,6 +80,7 @@ export async function updateProject(projectId: string, input: UpdateProjectInput
           name: r.name,
           hourlyRate: r.hourlyRate || null,
           salary: r.salary || null,
+          difficulty: r.difficulty || null,
         })),
       );
     }

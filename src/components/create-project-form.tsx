@@ -13,6 +13,7 @@ type RoleEntry = {
   name: string;
   hourlyRate: string;
   salary: string;
+  difficulty: "" | "beginner" | "intermediate" | "advanced";
 };
 
 type MemberEntry = {
@@ -352,6 +353,29 @@ function RoleRow({
           </div>
         </div>
       </div>
+      <div>
+        <label className="mb-1 block text-xs text-zinc-500">
+          Difficulty (optional)
+        </label>
+        <div className="flex gap-3">
+          {(["", "beginner", "intermediate", "advanced"] as const).map((level) => (
+            <label
+              key={level}
+              className="flex cursor-pointer items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400"
+            >
+              <input
+                type="radio"
+                name={`difficulty-${role.id}`}
+                value={level}
+                checked={role.difficulty === level}
+                onChange={() => onChange({ ...role, difficulty: level })}
+                className="accent-zinc-900 dark:accent-zinc-50"
+              />
+              {level === "" ? "None" : level.charAt(0).toUpperCase() + level.slice(1)}
+            </label>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -359,7 +383,7 @@ function RoleRow({
 // ─── Main form ────────────────────────────────────────────────────────────────
 
 function newRole(): RoleEntry {
-  return { id: crypto.randomUUID(), name: "", hourlyRate: "", salary: "" };
+  return { id: crypto.randomUUID(), name: "", hourlyRate: "", salary: "", difficulty: "" };
 }
 
 function newMember(): MemberEntry {
@@ -429,7 +453,7 @@ export function CreateProjectForm({
           tags: latest.tags,
           rolesMode: latest.rolesMode,
           openSlots: latest.rolesMode === "slots" ? Number(latest.openSlots) || undefined : undefined,
-          roles: latest.rolesMode === "named" ? latest.roles.filter((r) => r.name.trim()) : [],
+          roles: latest.rolesMode === "named" ? latest.roles.filter((r) => r.name.trim()).map((r) => ({ ...r, difficulty: r.difficulty || undefined })) : [],
           timelineMode: latest.timelineMode,
           timelineDate: latest.timelineMode === "date" ? latest.timelineDate : undefined,
           members: latest.members
@@ -531,7 +555,7 @@ export function CreateProjectForm({
           tags,
           rolesMode,
           openSlots: rolesMode === "slots" ? Number(openSlots) || undefined : undefined,
-          roles: rolesMode === "named" ? roles.filter((r) => r.name.trim()) : [],
+          roles: rolesMode === "named" ? roles.filter((r) => r.name.trim()).map((r) => ({ ...r, difficulty: r.difficulty || undefined })) : [],
           timelineMode,
           timelineDate: timelineMode === "date" ? timelineDate : undefined,
           members: members
