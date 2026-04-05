@@ -19,6 +19,7 @@ export const users = pgTable("user", {
   username: text("username").unique(),
   bio: text("bio"),
   skills: text("skills").array(),
+  timezone: text("timezone"),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 

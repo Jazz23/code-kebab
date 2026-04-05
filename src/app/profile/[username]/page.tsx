@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { getUserByUsername, getUserProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
+import { ProfileEditForm } from "@/components/profile-edit-form";
 
 export const dynamic = "force-dynamic";
 
@@ -55,61 +56,54 @@ export default async function ProfilePage({
   return (
     <main className="flex-1">
       <div className="mx-auto max-w-6xl px-6 py-12">
-        <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-2xl font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
-            {initials}
-          </div>
-          <div className="flex-1">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-                  {user.name}
-                </h1>
-                <p className="mt-1 text-sm text-zinc-500">@{user.username}</p>
+        {isOwnProfile ? (
+          <ProfileEditForm user={user} />
+        ) : (
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:gap-8">
+            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-2xl font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
+              {initials}
+            </div>
+            <div className="flex-1">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h1 className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
+                    {user.name}
+                  </h1>
+                  <p className="mt-1 text-sm text-zinc-500">@{user.username}</p>
+                </div>
               </div>
-              {isOwnProfile && (
-                <Link
-                  href="/projects/new"
-                  className="shrink-0 rounded-lg bg-zinc-900 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                >
-                  + Create project
-                </Link>
+              <p className="mt-3 max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
+                {user.bio}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-1.5">
+                {(user.skills ?? []).map((skill) => (
+                  <span
+                    key={skill}
+                    className="rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+              {user.timezone && (
+                <p className="mt-2 text-xs text-zinc-400">
+                  Timezone: {user.timezone}
+                </p>
+              )}
+              {user.createdAt && (
+                <p className="mt-1 text-xs text-zinc-400">
+                  Joined {user.createdAt.toLocaleDateString("en-US", { timeZone: "UTC" })}
+                </p>
               )}
             </div>
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-zinc-600 dark:text-zinc-400">
-              {user.bio}
-            </p>
-            <div className="mt-4 flex flex-wrap gap-1.5">
-              {(user.skills ?? []).map((skill) => (
-                <span
-                  key={skill}
-                  className="rounded-md bg-zinc-100 px-2.5 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-            {user.createdAt && (
-              <p className="mt-4 text-xs text-zinc-400">
-                Joined {user.createdAt.toLocaleDateString()}
-              </p>
-            )}
           </div>
-        </div>
+        )}
 
         <section className="mt-12">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
               Projects
             </h2>
-            {isOwnProfile && (
-              <Link
-                href="/projects/new"
-                className="text-sm font-medium text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
-              >
-                + New project
-              </Link>
-            )}
           </div>
           {userProjects.length > 0 ? (
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -124,21 +118,12 @@ export default async function ProfilePage({
           ) : (
             <p className="mt-4 text-sm text-zinc-500">
               No projects yet.{" "}
-              {isOwnProfile ? (
-                <Link
-                  href="/projects/new"
-                  className="text-zinc-900 hover:underline dark:text-zinc-50"
-                >
-                  Create your first project
-                </Link>
-              ) : (
-                <Link
-                  href="/projects"
-                  className="text-zinc-900 hover:underline dark:text-zinc-50"
-                >
-                  Browse projects
-                </Link>
-              )}{" "}
+              <Link
+                href="/projects"
+                className="text-zinc-900 hover:underline dark:text-zinc-50"
+              >
+                Browse projects
+              </Link>{" "}
               to get started.
             </p>
           )}

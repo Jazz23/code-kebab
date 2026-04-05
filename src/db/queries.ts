@@ -86,6 +86,7 @@ export async function getUserByUsername(username: string) {
       username: users.username,
       bio: users.bio,
       skills: users.skills,
+      timezone: users.timezone,
       createdAt: users.createdAt,
     })
     .from(users)

@@ -44,19 +44,21 @@ export function ProjectCard({
   return (
     <div className="group relative flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700">
       {/* Stretched link covering the whole card */}
-      <Link href={`/projects/${project.slug}`} className="absolute inset-0 rounded-xl">
+      <Link href={`/projects/${project.slug}`} className="absolute inset-0 z-10 rounded-xl">
         <span className="sr-only">{project.title}</span>
       </Link>
 
-      <div className="relative z-10 flex items-start justify-between gap-2">
+      <div className="relative z-20 flex items-start justify-between gap-2">
         <h3 className="text-lg font-semibold text-zinc-900 group-hover:text-zinc-700 dark:text-zinc-50 dark:group-hover:text-zinc-200">
-          {project.title}
+          <Link href={`/projects/${project.slug}`} className="hover:underline">
+            {project.title}
+          </Link>
         </h3>
         <div className="flex shrink-0 items-center gap-2">
           {editHref && (
             <Link
               href={editHref}
-              className="rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-50"
+              className="relative z-30 rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-50"
             >
               Edit
             </Link>
