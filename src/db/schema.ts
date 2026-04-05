@@ -1,4 +1,5 @@
 import {
+  boolean,
   integer,
   pgTable,
   primaryKey,
@@ -111,4 +112,34 @@ export const projectMembers = pgTable("projectMember", {
   userId: text("userId").references(() => users.id, { onDelete: "cascade" }),
   name: text("name"),
   role: text("role"),
+});
+
+export const joinRequests = pgTable("joinRequest", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  projectId: text("projectId")
+    .notNull()
+    .references(() => projects.id, { onDelete: "cascade" }),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  roleNames: text("roleNames").array().notNull().default([]),
+  description: text("description").notNull(),
+  socialLinks: text("socialLinks").array().notNull().default([]),
+  status: text("status").$type<"pending" | "accepted" | "rejected">().notNull().default("pending"),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+});
+
+export const notifications = pgTable("notification", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  type: text("type").notNull(),
+  referenceId: text("referenceId").notNull(),
+  read: boolean("read").notNull().default(false),
+  createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });

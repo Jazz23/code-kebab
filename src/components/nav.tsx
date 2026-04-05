@@ -4,6 +4,8 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { NavUser } from "./nav-user";
+import { NotificationBell } from "./notification-bell";
+import { getUnreadCount } from "@/app/actions/notifications";
 
 export async function Nav() {
   const session = await auth();
@@ -11,6 +13,7 @@ export async function Nav() {
 
   let username: string | null = null;
   let initials: string | null = null;
+  let unreadCount = 0;
 
   if (userId) {
     const [row] = await db
@@ -23,6 +26,8 @@ export async function Nav() {
     initials = row?.name
       ? row.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
       : null;
+
+    unreadCount = await getUnreadCount();
   }
 
   return (
@@ -49,6 +54,7 @@ export async function Nav() {
               >
                 + New project
               </Link>
+              <NotificationBell initialUnreadCount={unreadCount} />
               <NavUser initials={initials} userId={username} />
             </>
           ) : (

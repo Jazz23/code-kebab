@@ -140,7 +140,7 @@ export default async function ProjectPage({
           </div>
 
           <aside className="flex flex-col gap-6">
-            <JoinRequestButton projectTitle={project.title} />
+            {!isOwner && <JoinRequestButton projectSlug={slug} />}
 
             {/* Open Roles */}
             {(hasNamedRoles || hasOpenRoles || hasSlots) && (
