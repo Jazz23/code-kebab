@@ -26,8 +26,9 @@ export default async function EmailViewPage({ params }: { params: Promise<{ id: 
 
   const backHref = msg.isFromMe ? "/messages?tab=sent" : "/messages";
   const replySubject = msg.subject.startsWith("Re: ") ? msg.subject : `Re: ${msg.subject}`;
-  const replyHref = msg.senderUsername
-    ? `/messages/compose?to=${encodeURIComponent(msg.senderUsername)}&subject=${encodeURIComponent(replySubject)}`
+  const replyTo = msg.isFromMe ? msg.recipientUsername : msg.senderUsername;
+  const replyHref = replyTo
+    ? `/messages/compose?to=${encodeURIComponent(replyTo)}&subject=${encodeURIComponent(replySubject)}&parentMessageId=${encodeURIComponent(msg.id)}`
     : null;
 
   return (
@@ -40,77 +41,126 @@ export default async function EmailViewPage({ params }: { params: Promise<{ id: 
           &larr; {msg.isFromMe ? "Sent" : "Inbox"}
         </Link>
 
-        <div className="mt-6 overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-          {/* Email header */}
-          <div className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
-            <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">{msg.subject}</h1>
-
-            <div className="mt-4 flex flex-col gap-2">
-              <div className="flex items-baseline gap-2 text-sm">
-                <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                  From
-                </span>
-                <span className="text-zinc-700 dark:text-zinc-300">
-                  {msg.senderName}
-                  {msg.senderUsername && (
-                    <span className="ml-1.5 text-zinc-400">
-                      &lt;@{msg.senderUsername}&gt;
+        <div className="mt-6 space-y-2">
+          {/* Thread: ancestor messages stacked oldest-first */}
+          {msg.thread.map((ancestor, i) => (
+            <div
+              key={ancestor.id}
+              className="overflow-hidden rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900"
+            >
+              <div className="border-b border-zinc-100 px-6 py-4 dark:border-zinc-800">
+                <div className="flex flex-col gap-1.5">
+                  <div className="flex items-baseline gap-2 text-sm">
+                    <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                      From
                     </span>
-                  )}
-                </span>
-                {msg.senderUsername && !msg.isFromMe && (
-                  <Link
-                    href={`/profile/${msg.senderUsername}`}
-                    className="ml-auto shrink-0 text-xs text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
-                  >
-                    View profile →
-                  </Link>
-                )}
-              </div>
-
-              <div className="flex items-baseline gap-2 text-sm">
-                <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                  To
-                </span>
-                <span className="text-zinc-700 dark:text-zinc-300">
-                  {msg.recipientName}
-                  {msg.recipientUsername && (
-                    <span className="ml-1.5 text-zinc-400">
-                      &lt;@{msg.recipientUsername}&gt;
+                    <span className="text-zinc-600 dark:text-zinc-400">
+                      {ancestor.senderName}
+                      {ancestor.senderUsername && (
+                        <span className="ml-1.5 text-zinc-400">
+                          &lt;@{ancestor.senderUsername}&gt;
+                        </span>
+                      )}
                     </span>
-                  )}
-                </span>
+                  </div>
+                  <div className="flex items-baseline gap-2 text-sm">
+                    <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                      Date
+                    </span>
+                    <span className="text-zinc-400 dark:text-zinc-500">
+                      {new Date(ancestor.createdAt).toLocaleString(undefined, {
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  </div>
+                </div>
               </div>
-
-              <div className="flex items-baseline gap-2 text-sm">
-                <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
-                  Date
-                </span>
-                <span className="text-zinc-500">
-                  {new Date(msg.createdAt).toLocaleString(undefined, {
-                    weekday: "short",
-                    month: "short",
-                    day: "numeric",
-                    year: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                </span>
+              <div className="px-6 py-4">
+                <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">
+                  {ancestor.content}
+                </p>
               </div>
             </div>
-          </div>
+          ))}
 
-          {/* Email body */}
-          <div className="px-6 py-6">
-            <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-              {msg.content}
-            </p>
+          {/* Current message */}
+          <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+            {/* Email header */}
+            <div className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
+              <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">{msg.subject}</h1>
+
+              <div className="mt-4 flex flex-col gap-2">
+                <div className="flex items-baseline gap-2 text-sm">
+                  <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    From
+                  </span>
+                  <span className="text-zinc-700 dark:text-zinc-300">
+                    {msg.senderName}
+                    {msg.senderUsername && (
+                      <span className="ml-1.5 text-zinc-400">
+                        &lt;@{msg.senderUsername}&gt;
+                      </span>
+                    )}
+                  </span>
+                  {msg.senderUsername && !msg.isFromMe && (
+                    <Link
+                      href={`/profile/${msg.senderUsername}`}
+                      className="ml-auto shrink-0 text-xs text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
+                    >
+                      View profile →
+                    </Link>
+                  )}
+                </div>
+
+                <div className="flex items-baseline gap-2 text-sm">
+                  <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    To
+                  </span>
+                  <span className="text-zinc-700 dark:text-zinc-300">
+                    {msg.recipientName}
+                    {msg.recipientUsername && (
+                      <span className="ml-1.5 text-zinc-400">
+                        &lt;@{msg.recipientUsername}&gt;
+                      </span>
+                    )}
+                  </span>
+                </div>
+
+                <div className="flex items-baseline gap-2 text-sm">
+                  <span className="w-12 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
+                    Date
+                  </span>
+                  <span className="text-zinc-500">
+                    {new Date(msg.createdAt).toLocaleString(undefined, {
+                      weekday: "short",
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                      hour: "numeric",
+                      minute: "2-digit",
+                    })}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Email body */}
+            <div className="px-6 py-6">
+              <p className="whitespace-pre-wrap text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+                {msg.content}
+              </p>
+            </div>
           </div>
         </div>
 
         {/* Actions */}
         <div className="mt-4 flex gap-3">
-          {!msg.isFromMe && replyHref && (
+          {replyHref && (
             <Link
               href={replyHref}
               className="flex items-center gap-2 rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-100 dark:hover:text-zinc-50"

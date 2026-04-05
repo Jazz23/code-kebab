@@ -10,6 +10,7 @@ export async function sendDirectMessage(
   recipientUsername: string,
   subject: string,
   content: string,
+  parentMessageId?: string,
 ) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
@@ -28,6 +29,7 @@ export async function sendDirectMessage(
     recipientId: recipient.id,
     subject: subject.trim() || "(no subject)",
     content: content.trim(),
+    parentMessageId: parentMessageId ?? null,
   });
 
   revalidatePath("/messages");
@@ -103,34 +105,19 @@ export async function getSentMessages() {
   return enriched;
 }
 
-export async function getMessage(id: string) {
-  const session = await auth();
-  if (!session?.user?.id) return null;
-
-  const [msg] = await db
-    .select({
-      id: directMessages.id,
-      senderId: directMessages.senderId,
-      recipientId: directMessages.recipientId,
-      subject: directMessages.subject,
-      content: directMessages.content,
-      read: directMessages.read,
-      createdAt: directMessages.createdAt,
-    })
-    .from(directMessages)
-    .where(
-      and(
-        eq(directMessages.id, id),
-        or(
-          eq(directMessages.senderId, session.user.id),
-          eq(directMessages.recipientId, session.user.id),
-        ),
-      ),
-    )
-    .limit(1);
-
-  if (!msg) return null;
-
+async function enrichMessage(
+  msg: {
+    id: string;
+    senderId: string;
+    recipientId: string;
+    subject: string;
+    content: string;
+    read: boolean;
+    createdAt: Date;
+    parentMessageId: string | null;
+  },
+  currentUserId: string,
+) {
   const [[sender], [recipient]] = await Promise.all([
     db
       .select({ name: users.name, username: users.username })
@@ -143,14 +130,86 @@ export async function getMessage(id: string) {
       .where(eq(users.id, msg.recipientId))
       .limit(1),
   ]);
-
   return {
     ...msg,
     senderName: sender?.name ?? "Unknown",
     senderUsername: sender?.username ?? null,
     recipientName: recipient?.name ?? "Unknown",
     recipientUsername: recipient?.username ?? null,
-    isFromMe: msg.senderId === session.user.id,
+    isFromMe: msg.senderId === currentUserId,
+  };
+}
+
+export async function getMessage(id: string) {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  const [msg] = await db
+    .select({
+      id: directMessages.id,
+      senderId: directMessages.senderId,
+      recipientId: directMessages.recipientId,
+      subject: directMessages.subject,
+      content: directMessages.content,
+      read: directMessages.read,
+      createdAt: directMessages.createdAt,
+      parentMessageId: directMessages.parentMessageId,
+    })
+    .from(directMessages)
+    .where(
+      and(
+        eq(directMessages.id, id),
+        or(
+          eq(directMessages.senderId, userId),
+          eq(directMessages.recipientId, userId),
+        ),
+      ),
+    )
+    .limit(1);
+
+  if (!msg) return null;
+
+  // Walk up the ancestor chain to build thread history (oldest first)
+  const ancestors: typeof msg[] = [];
+  let currentParentId = msg.parentMessageId;
+  while (currentParentId) {
+    const [parent] = await db
+      .select({
+        id: directMessages.id,
+        senderId: directMessages.senderId,
+        recipientId: directMessages.recipientId,
+        subject: directMessages.subject,
+        content: directMessages.content,
+        read: directMessages.read,
+        createdAt: directMessages.createdAt,
+        parentMessageId: directMessages.parentMessageId,
+      })
+      .from(directMessages)
+      .where(
+        and(
+          eq(directMessages.id, currentParentId),
+          or(
+            eq(directMessages.senderId, userId),
+            eq(directMessages.recipientId, userId),
+          ),
+        ),
+      )
+      .limit(1);
+
+    if (!parent) break;
+    ancestors.unshift(parent);
+    currentParentId = parent.parentMessageId;
+  }
+
+  const [enriched, ...enrichedAncestors] = await Promise.all([
+    enrichMessage(msg, userId),
+    ...ancestors.map((a) => enrichMessage(a, userId)),
+  ]);
+
+  return {
+    ...enriched,
+    thread: enrichedAncestors,
   };
 }
 

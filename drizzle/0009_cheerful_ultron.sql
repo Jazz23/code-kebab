@@ -1,0 +1,1 @@
+ALTER TABLE "directMessage" ADD COLUMN "parentMessageId" text;

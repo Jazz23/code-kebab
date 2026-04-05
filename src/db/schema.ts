@@ -159,4 +159,5 @@ export const directMessages = pgTable("directMessage", {
   content: text("content").notNull(),
   read: boolean("read").notNull().default(false),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
+  parentMessageId: text("parentMessageId"),
 });

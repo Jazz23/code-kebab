@@ -7,9 +7,11 @@ import { sendDirectMessage } from "@/app/actions/messages";
 export function MessageCompose({
   initialTo = "",
   initialSubject = "",
+  parentMessageId,
 }: {
   initialTo?: string;
   initialSubject?: string;
+  parentMessageId?: string;
 }) {
   const [to, setTo] = useState(initialTo);
   const [subject, setSubject] = useState(initialSubject);
@@ -24,7 +26,7 @@ export function MessageCompose({
     setSending(true);
     setError(null);
     try {
-      await sendDirectMessage(to.trim(), subject.trim(), body.trim());
+      await sendDirectMessage(to.trim(), subject.trim(), body.trim(), parentMessageId);
       router.push("/messages?tab=sent");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to send. Please try again.");

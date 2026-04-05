@@ -12,12 +12,12 @@ export const metadata = {
 export default async function ComposePage({
   searchParams,
 }: {
-  searchParams: Promise<{ to?: string; subject?: string }>;
+  searchParams: Promise<{ to?: string; subject?: string; parentMessageId?: string }>;
 }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
 
-  const { to, subject } = await searchParams;
+  const { to, subject, parentMessageId } = await searchParams;
 
   return (
     <main className="flex-1">
@@ -34,7 +34,11 @@ export default async function ComposePage({
         </h1>
 
         <div className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-          <MessageCompose initialTo={to ?? ""} initialSubject={subject ?? ""} />
+          <MessageCompose
+            initialTo={to ?? ""}
+            initialSubject={subject ?? ""}
+            parentMessageId={parentMessageId}
+          />
         </div>
       </div>
     </main>
