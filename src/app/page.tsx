@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
+import { HeroSearch } from "@/components/project-search";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,14 @@ export default async function Home() {
             Browse open projects looking for collaborators, or start your own
             and find the right people to build with.
           </p>
-          <div className="mt-8 flex gap-4">
+          <div className="mt-8 max-w-lg">
+            <HeroSearch projects={allProjects} />
+            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
+              Press Enter to see all results, or click a project to jump
+              straight in.
+            </p>
+          </div>
+          <div className="mt-6 flex gap-4">
             <Link
               href="/projects"
               className="rounded-lg bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"

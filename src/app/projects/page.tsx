@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { getProjects } from "@/db/queries";
-import { ProjectCard } from "@/components/project-card";
+import { ProjectSearch } from "@/components/project-search";
 
 export const metadata = {
   title: "Projects - code-kebab",
@@ -9,8 +9,16 @@ export const metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function ProjectsPage() {
-  const [projects, session] = await Promise.all([getProjects(), auth()]);
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const [projects, session, params] = await Promise.all([
+    getProjects(),
+    auth(),
+    searchParams,
+  ]);
 
   return (
     <main className="flex-1">
@@ -33,10 +41,8 @@ export default async function ProjectsPage() {
             </Link>
           )}
         </div>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
+        <div className="mt-8">
+          <ProjectSearch projects={projects} initialQuery={params.q ?? ""} />
         </div>
       </div>
     </main>

@@ -14,6 +14,10 @@ type ProjectCardData = {
   beginnerRoles?: number;
   intermediateRoles?: number;
   advancedRoles?: number;
+  minHourlyRate?: number | null;
+  maxHourlyRate?: number | null;
+  minSalary?: number | null;
+  maxSalary?: number | null;
 };
 
 export function ProjectCard({
@@ -34,8 +38,16 @@ export function ProjectCard({
       ? `${project.openSlots} open ${project.openSlots === 1 ? "slot" : "slots"}`
       : `${project.openRoles.length} open ${project.openRoles.length === 1 ? "role" : "roles"}`;
 
+  const payLabel = (() => {
+    if (project.maxHourlyRate != null) return `$${project.maxHourlyRate}/hr`;
+    if (project.maxSalary != null) return `$${Math.round(project.maxSalary / 1000)}k/yr`;
+    if (project.minHourlyRate != null) return `$${project.minHourlyRate}+/hr`;
+    if (project.minSalary != null) return `$${Math.round(project.minSalary / 1000)}k+/yr`;
+    return null;
+  })();
+
   const timelineLabel = project.timelineDate
-    ? project.timelineDate.toLocaleDateString(undefined, {
+    ? project.timelineDate.toLocaleDateString("en-US", {
         month: "short",
         year: "numeric",
       })
@@ -54,40 +66,41 @@ export function ProjectCard({
             {project.title}
           </Link>
         </h3>
-        <div className="flex shrink-0 items-center gap-2">
-          {editHref && (
-            <Link
-              href={editHref}
-              className="relative z-30 rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-50"
-            >
-              Edit
-            </Link>
-          )}
-          {hasDifficultyData ? (
-            <div className="flex gap-1">
-              {(project.beginnerRoles ?? 0) > 0 && (
-                <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
-                  {project.beginnerRoles} beginner
-                </span>
-              )}
-              {(project.intermediateRoles ?? 0) > 0 && (
-                <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
-                  {project.intermediateRoles} intermediate
-                </span>
-              )}
-              {(project.advancedRoles ?? 0) > 0 && (
-                <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-400">
-                  {project.advancedRoles} advanced
-                </span>
-              )}
-            </div>
-          ) : (roleCount ?? 0) > 0 ? (
-            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
-              {roleLabel}
-            </span>
-          ) : null}
-        </div>
+        {editHref && (
+          <Link
+            href={editHref}
+            className="relative z-30 shrink-0 rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-50"
+          >
+            Edit
+          </Link>
+        )}
       </div>
+
+      {hasDifficultyData ? (
+        <div className="flex flex-wrap gap-1">
+          {(project.beginnerRoles ?? 0) > 0 && (
+            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+              {project.beginnerRoles} beginner
+            </span>
+          )}
+          {(project.intermediateRoles ?? 0) > 0 && (
+            <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+              {project.intermediateRoles} intermediate
+            </span>
+          )}
+          {(project.advancedRoles ?? 0) > 0 && (
+            <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-400">
+              {project.advancedRoles} advanced
+            </span>
+          )}
+        </div>
+      ) : (roleCount ?? 0) > 0 ? (
+        <div>
+          <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+            {roleLabel}
+          </span>
+        </div>
+      ) : null}
 
       <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
         {project.description}
@@ -121,6 +134,12 @@ export function ProjectCard({
           <>
             <span>&middot;</span>
             <span className="text-zinc-400 dark:text-zinc-600">GitHub</span>
+          </>
+        )}
+        {payLabel && (
+          <>
+            <span>&middot;</span>
+            <span className="font-medium text-emerald-600 dark:text-emerald-400">{payLabel}</span>
           </>
         )}
       </div>
