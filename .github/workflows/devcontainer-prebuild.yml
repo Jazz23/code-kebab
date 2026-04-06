@@ -7,30 +7,64 @@ on:
       - "master"
     paths:
       - ".github/.devcontainer/**"
+      - ".github/workflows/devcontainer-prebuild.yml"
+
+permissions:
+  contents: read
+  packages: write
+
 jobs:
-  build-and-push:
-    permissions: write-all
-    runs-on: ubuntu-latest
+  build:
+    strategy:
+      matrix:
+        # Use a matrix strategy to run two jobs, one for amd64 and one for arm64.
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    outputs:
+      docker-image-name: ${{ steps.get-docker-image-name.outputs.docker-image-name }}
+
     steps:
-    -
-      name: Checkout
-      id: checkout
-      uses: actions/checkout@v6
-    -
-        name: Set lowercase image name
-        run: echo "IMAGE_NAME=ghcr.io/$(echo '${{ github.repository }}-devcontainer' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-    -
-        name: Login to GitHub Container Registry
+      # Downcase repo name to get docker image name
+      - name: Generate Docker Image Name
+        id: get-docker-image-name
+        run: |
+          echo "docker-image-name=ghcr.io/${GITHUB_REPOSITORY,,}-devcontainer" >>${GITHUB_OUTPUT}
+
+      - uses: actions/checkout@v6
+
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-    -
-        name: Pre-build dev container image
+
+      # Build docker image used for local development (Dev Container) and CI testing
+      - name: Pre-build dev container image
         uses: devcontainers/ci@v0.3
         with:
           subFolder: .github
-          imageName: ${{ env.IMAGE_NAME }}
-          cacheFrom: ${{ env.IMAGE_NAME }}
+          imageName: ${{ steps.get-docker-image-name.outputs.docker-image-name }}
+          imageTag: ${{ matrix.os }}
           push: always
+
+  # Combine the two images into one manifest and push with the :latest tag.
+  combine:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push manifest
+        run: |
+          docker manifest create ${{ needs.build.outputs.docker-image-name }}:latest \
+            --amend ${{ needs.build.outputs.docker-image-name }}:ubuntu-24.04-arm \
+            --amend ${{ needs.build.outputs.docker-image-name }}:ubuntu-latest
+
+          docker manifest push ${{ needs.build.outputs.docker-image-name }}:latest
