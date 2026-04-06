@@ -145,12 +145,12 @@ async function main() {
       longDescription:
         "NightOwl is designed for the growing number of people who do their best work after midnight. It tracks deep-work sessions, manages energy levels, and syncs with health APIs to provide personalized productivity insights. Built with TypeScript and React, we're looking for contributors who love clean UX and care about maker culture.",
       tags: ["TypeScript", "React", "Node.js", "Productivity"],
-      openRoles: ["UI Designer", "Frontend Engineer"],
+      openRoles: [],
       ownerId: "seed-user-samira",
       createdAt: new Date("2026-01-25"),
       githubUrl: null,
       timelineDate: new Date("2026-06-15"),
-      openSlots: null,
+      openSlots: 2,
     },
     {
       id: "seed-project-mapmind",
@@ -209,12 +209,12 @@ async function main() {
       longDescription:
         "FoodGrid is built around the idea that cooking is collaborative. Every recipe can be remixed, annotated, and scaled. We index recipes at the ingredient level so you can search by what's in your fridge. The stack is Next.js for the frontend, PostgreSQL for search and storage, and we're adding image recognition soon. Great project for beginners who want to ship something real.",
       tags: ["Next.js", "PostgreSQL", "React", "Community"],
-      openRoles: ["Frontend Developer", "Backend Developer", "Content Manager"],
+      openRoles: [],
       ownerId: "seed-user-samira",
       createdAt: new Date("2026-02-25"),
       githubUrl: null,
       timelineDate: new Date("2026-10-01"),
-      openSlots: null,
+      openSlots: 3,
     },
     {
       id: "seed-project-sprintsync",
@@ -225,12 +225,12 @@ async function main() {
       longDescription:
         "SprintSync is a minimalist alternative to Jira for teams that live in GitHub. It reads your issues and PRs, lets you drag-drop them into sprint columns, and sends async updates so your distributed team never needs another status meeting. Built with Vue.js for the frontend and Python/FastAPI for the backend, with real-time updates via WebSockets.",
       tags: ["Vue.js", "WebSockets", "Python", "Productivity"],
-      openRoles: ["Frontend Engineer", "Product Designer"],
+      openRoles: [],
       ownerId: "seed-user-alexchen",
       createdAt: new Date("2026-03-05"),
       githubUrl: null,
       timelineDate: new Date("2026-07-15"),
-      openSlots: null,
+      openSlots: 2,
     },
     {
       id: "seed-project-artcanvas",
@@ -241,12 +241,12 @@ async function main() {
       longDescription:
         "ArtCanvas lets you create and animate pixel art with friends in real time. Think Google Docs meets MS Paint. We use the HTML5 Canvas API for rendering, TypeScript throughout, and Redis for pub/sub to sync state between sessions. No installation needed — just share a link and start drawing together. Great for beginners who want to learn WebSockets and canvas graphics.",
       tags: ["Canvas API", "TypeScript", "Redis", "Creative Tools"],
-      openRoles: ["Frontend Developer", "Game Developer"],
+      openRoles: [],
       ownerId: "seed-user-jpark",
       createdAt: new Date("2026-03-15"),
       githubUrl: "https://github.com/example/artcanvas",
       timelineDate: new Date("2026-09-01"),
-      openSlots: null,
+      openSlots: 2,
     },
     {
       id: "seed-project-podcastpal",
@@ -365,23 +365,6 @@ async function main() {
       salary: null,
       difficulty: "beginner" as const,
     },
-    // NightOwl
-    {
-      id: "seed-role-nightowl-1",
-      projectId: "seed-project-nightowl",
-      name: "UI Designer",
-      hourlyRate: "35",
-      salary: null,
-      difficulty: "beginner" as const,
-    },
-    {
-      id: "seed-role-nightowl-2",
-      projectId: "seed-project-nightowl",
-      name: "Frontend Engineer",
-      hourlyRate: "60",
-      salary: null,
-      difficulty: "intermediate" as const,
-    },
     // MapMind
     {
       id: "seed-role-mapmind-1",
@@ -440,65 +423,6 @@ async function main() {
       hourlyRate: "68",
       salary: null,
       difficulty: "intermediate" as const,
-    },
-    // FoodGrid
-    {
-      id: "seed-role-foodgrid-1",
-      projectId: "seed-project-foodgrid",
-      name: "Frontend Developer",
-      hourlyRate: "44",
-      salary: null,
-      difficulty: "beginner" as const,
-    },
-    {
-      id: "seed-role-foodgrid-2",
-      projectId: "seed-project-foodgrid",
-      name: "Backend Developer",
-      hourlyRate: "50",
-      salary: null,
-      difficulty: "beginner" as const,
-    },
-    {
-      id: "seed-role-foodgrid-3",
-      projectId: "seed-project-foodgrid",
-      name: "Content Manager",
-      hourlyRate: "32",
-      salary: null,
-      difficulty: "beginner" as const,
-    },
-    // SprintSync
-    {
-      id: "seed-role-sprintsync-1",
-      projectId: "seed-project-sprintsync",
-      name: "Frontend Engineer",
-      hourlyRate: null,
-      salary: "92000",
-      difficulty: "intermediate" as const,
-    },
-    {
-      id: "seed-role-sprintsync-2",
-      projectId: "seed-project-sprintsync",
-      name: "Product Designer",
-      hourlyRate: "72",
-      salary: null,
-      difficulty: "intermediate" as const,
-    },
-    // ArtCanvas
-    {
-      id: "seed-role-artcanvas-1",
-      projectId: "seed-project-artcanvas",
-      name: "Frontend Developer",
-      hourlyRate: "38",
-      salary: null,
-      difficulty: "beginner" as const,
-    },
-    {
-      id: "seed-role-artcanvas-2",
-      projectId: "seed-project-artcanvas",
-      name: "Game Developer",
-      hourlyRate: "40",
-      salary: null,
-      difficulty: "beginner" as const,
     },
     // PodcastPal
     {

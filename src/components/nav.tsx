@@ -54,12 +54,6 @@ export async function Nav() {
           </Link>
           {username && initials ? (
             <>
-              <Link
-                href="/projects/new"
-                className="rounded-lg bg-zinc-900 px-3 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
-              >
-                + New project
-              </Link>
               <NotificationBell initialUnreadCount={unreadCount} />
               <NavUser initials={initials} userId={username} />
             </>

@@ -98,9 +98,9 @@ export default async function SystemMessagePage({
                   Applying for
                 </h2>
                 <div className="flex flex-wrap gap-2">
-                  {jr.roleNames.map((role) => (
+                  {jr.roleNames.map((role, i) => (
                     <span
-                      key={role}
+                      key={`${role}-${i}`}
                       className="rounded-full border border-zinc-200 px-3 py-1 text-sm text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
                     >
                       {role}
@@ -234,9 +234,9 @@ export default async function SystemMessagePage({
                   You applied for
                 </h2>
                 <div className="flex flex-wrap gap-2">
-                  {jr.roleNames.map((role) => (
+                  {jr.roleNames.map((role, i) => (
                     <span
-                      key={role}
+                      key={`${role}-${i}`}
                       className="rounded-full border border-zinc-200 px-3 py-1 text-sm text-zinc-700 dark:border-zinc-700 dark:text-zinc-300"
                     >
                       {role}

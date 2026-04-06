@@ -50,6 +50,7 @@ export function ProjectCard({
     ? project.timelineDate.toLocaleDateString("en-US", {
         month: "short",
         year: "numeric",
+        timeZone: "UTC",
       })
     : null;
 
@@ -77,7 +78,8 @@ export function ProjectCard({
       </div>
 
       {hasDifficultyData ? (
-        <div className="flex flex-wrap gap-1">
+        <div className="flex flex-wrap items-center gap-1">
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Open Roles:</span>
           {(project.beginnerRoles ?? 0) > 0 && (
             <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
               {project.beginnerRoles} beginner
@@ -95,7 +97,8 @@ export function ProjectCard({
           )}
         </div>
       ) : (roleCount ?? 0) > 0 ? (
-        <div>
+        <div className="flex flex-wrap items-center gap-1">
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Open Roles:</span>
           <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
             {roleLabel}
           </span>

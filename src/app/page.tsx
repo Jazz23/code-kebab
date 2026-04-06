@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { getProjects } from "@/db/queries";
 import { ProjectCard } from "@/components/project-card";
-import { HeroSearch } from "@/components/project-search";
 
 export const dynamic = "force-dynamic";
 
@@ -14,22 +13,13 @@ export default async function Home() {
       <section className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
         <div className="mx-auto max-w-6xl px-6 py-24">
           <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-            Find projects.
-            <br />
-            Build together.
+            Find Projects. Find People. Build Together.
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
-            Browse open projects looking for collaborators, or start your own
-            and find the right people to build with.
+            Browse open projects looking for contributors and find your next
+            collaboration. Or connect with developers who are ready to build — just without a project yet.
           </p>
-          <div className="mt-8 max-w-lg">
-            <HeroSearch projects={allProjects} />
-            <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-400">
-              Press Enter to see all results, or click a project to jump
-              straight in.
-            </p>
-          </div>
-          <div className="mt-6 flex flex-wrap gap-4">
+          <div className="mt-8 flex flex-wrap gap-4">
             <Link
               href="/projects"
               className="rounded-lg bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
@@ -41,12 +31,6 @@ export default async function Home() {
               className="rounded-lg bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
             >
               Browse Posts
-            </Link>
-            <Link
-              href="/projects/new"
-              className="rounded-lg border border-zinc-300 px-5 py-2.5 text-sm font-semibold text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-100 dark:hover:text-zinc-50"
-            >
-              Start a project
             </Link>
           </div>
         </div>
@@ -76,7 +60,7 @@ export default async function Home() {
           <h2 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
             How it works
           </h2>
-          <div className="mt-8 grid gap-8 sm:grid-cols-3">
+          <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             <div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 text-sm font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
                 1
@@ -94,6 +78,18 @@ export default async function Home() {
                 2
               </div>
               <h3 className="mt-4 font-semibold text-zinc-900 dark:text-zinc-50">
+                Discover developers
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+                Browse posts from developers who don&apos;t have a project yet
+                but are looking for collaborators to build something new.
+              </p>
+            </div>
+            <div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 text-sm font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
+                3
+              </div>
+              <h3 className="mt-4 font-semibold text-zinc-900 dark:text-zinc-50">
                 Request to join
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
@@ -103,7 +99,7 @@ export default async function Home() {
             </div>
             <div>
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 text-sm font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
-                3
+                4
               </div>
               <h3 className="mt-4 font-semibold text-zinc-900 dark:text-zinc-50">
                 Build together

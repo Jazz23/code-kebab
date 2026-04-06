@@ -29,7 +29,7 @@ export default async function ProjectsPage({
               Projects
             </h1>
             <p className="mt-2 text-zinc-600 dark:text-zinc-400">
-              Browse open projects looking for collaborators.
+              Browse projects looking for collaborators.
             </p>
           </div>
           {session?.user && (

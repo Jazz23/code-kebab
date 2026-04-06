@@ -75,9 +75,9 @@ export function JoinRequestForm({
             Which role(s) are you applying for?
           </label>
           <div className="flex flex-col gap-2">
-            {allRoles.map((role) => (
+            {allRoles.map((role, i) => (
               <label
-                key={role}
+                key={`${role}-${i}`}
                 className="flex cursor-pointer items-center gap-3 rounded-lg border border-zinc-200 px-4 py-3 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
               >
                 <input

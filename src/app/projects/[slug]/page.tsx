@@ -179,9 +179,9 @@ export default async function ProjectPage({
                   </ul>
                 ) : hasOpenRoles ? (
                   <ul className="mt-3 flex flex-col gap-2">
-                    {project.openRoles.map((role) => (
+                    {project.openRoles.map((role, i) => (
                       <li
-                        key={role}
+                        key={`${role}-${i}`}
                         className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400"
                       >
                         <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />

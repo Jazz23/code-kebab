@@ -14,7 +14,7 @@ export default async function CreatePostPage() {
             Create a post
           </h1>
           <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-            Share your thoughts, questions, or ideas with the community.
+            Connect with other coders, share what you're working on, and find collaborators.
           </p>
         </div>
         <CreatePostForm />

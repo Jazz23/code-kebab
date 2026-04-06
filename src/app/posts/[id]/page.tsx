@@ -84,7 +84,7 @@ export default async function PostPage({
         {!isAuthor && post.authorUsername && (
           <section className="mt-12 border-t border-zinc-200 pt-10 dark:border-zinc-800">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-              Reply to {post.authorName ?? post.authorUsername}
+              Message {post.authorName ?? post.authorUsername}
             </h2>
             <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
               Your reply will be sent as a direct message.

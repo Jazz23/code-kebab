@@ -21,7 +21,7 @@
 	],
 	"postCreateCommand": {
 		"get-secrets": ".devcontainer/get-secrets.sh",
-		"bun-setup": "bun install && docker compose up -d --wait && bun db:migrate && bun db:seed"
+		"bun-setup": "bun install && docker compose up -d --wait && bun run db:migrate && bun run db:seed"
 	},
 	"forwardPorts": [5050]
 }

@@ -76,7 +76,7 @@ export function ReplySection({
   return (
     <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950">
       <h2 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
-        Reply to {applicantName}
+        Message {applicantName}
       </h2>
       <p className="mt-1 text-sm text-zinc-500">
         Send a message to let them know your decision or ask for more information.
