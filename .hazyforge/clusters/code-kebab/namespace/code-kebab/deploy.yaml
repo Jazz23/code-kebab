@@ -1,0 +1,80 @@
+helmChartPath: charts/code-kebab
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/jazz23/code-kebab
+  tag: "v0.0.1"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+gateway:
+  enabled: true
+  gatewayClassName: cilium
+  hostname: code-kebab.dev
+  infrastructure:
+    annotations:
+      load-balancer.hetzner.cloud/location: hil
+      load-balancer.hetzner.cloud/type: lb11
+      external-dns.alpha.kubernetes.io/hostname: code-kebab.dev
+  http:
+    enabled: false
+  https:
+    enabled: true
+    port: 443
+    tlsSecretName: code-kebab-tls
+  route:
+    pathPrefix: /
+  clusterIssuer:
+    create: true
+    name: letsencrypt-prod
+    email: austinpalazzesi@hazyforge.io
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretName: letsencrypt-prod
+    cloudflare:
+      apiTokenSecretRef:
+        name: cloudflare-token
+        key: api-token
+      externalSecret:
+        create: true
+        namespace: cert-manager
+        name: cloudflare-token
+        refreshInterval: 48h
+        secretStoreRef:
+          kind: ClusterSecretStore
+          name: azurekv-cluster-secret-store
+        target:
+          name: cloudflare-token
+          creationPolicy: Owner
+        remoteRef:
+          key: secret/cloudflare-api
+  certificate:
+    create: true
+    name: code-kebab-cert
+    issuerRef:
+      name: letsencrypt-prod
+      kind: ClusterIssuer
+      group: cert-manager.io
+
+envFromSecrets:
+  - code-kebab-env
+
+cnpg:
+  enabled: true
+  instances: 1
+  monitoring:
+    enablePodMonitor: true
+  bootstrap:
+    database: ckebab
+    owner: kebab
+  storage:
+    size: 20Gi
+  walStorage:
+    enabled: true
+    size: 4Gi

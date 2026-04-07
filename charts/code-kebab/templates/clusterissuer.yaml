@@ -1,0 +1,21 @@
+{{- if and .Values.gateway.enabled .Values.gateway.clusterIssuer.create }}
+{{- if not .Values.gateway.clusterIssuer.email }}
+{{- fail "Set gateway.clusterIssuer.email when gateway.clusterIssuer.create=true." }}
+{{- end }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ include "code-kebab.clusterIssuerName" . }}
+spec:
+  acme:
+    email: {{ .Values.gateway.clusterIssuer.email | quote }}
+    server: {{ .Values.gateway.clusterIssuer.server | quote }}
+    privateKeySecretRef:
+      name: {{ include "code-kebab.clusterIssuerPrivateKeySecretName" . }}
+    solvers:
+      - dns01:
+          cloudflare:
+            apiTokenSecretRef:
+              name: {{ .Values.gateway.clusterIssuer.cloudflare.apiTokenSecretRef.name | quote }}
+              key: {{ .Values.gateway.clusterIssuer.cloudflare.apiTokenSecretRef.key | quote }}
+{{- end }}

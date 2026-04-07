@@ -1,0 +1,22 @@
+{{- if and .Values.gateway.enabled .Values.gateway.certificate.create }}
+{{- if not .Values.gateway.https.enabled }}
+{{- fail "gateway.https.enabled must be true when gateway.certificate.create=true." }}
+{{- end }}
+{{- if and (not .Values.gateway.clusterIssuer.create) (not .Values.gateway.certificate.issuerRef.name) }}
+{{- fail "Set gateway.certificate.issuerRef.name when gateway.certificate.create=true and gateway.clusterIssuer.create=false." }}
+{{- end }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "code-kebab.certificateName" . }}
+  labels:
+    {{- include "code-kebab.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "code-kebab.gatewayTlsSecretName" . }}
+  dnsNames:
+    - {{ .Values.gateway.hostname | quote }}
+  issuerRef:
+    name: {{ default (include "code-kebab.clusterIssuerName" .) .Values.gateway.certificate.issuerRef.name | quote }}
+    kind: {{ .Values.gateway.certificate.issuerRef.kind | quote }}
+    group: {{ .Values.gateway.certificate.issuerRef.group | quote }}
+{{- end }}
