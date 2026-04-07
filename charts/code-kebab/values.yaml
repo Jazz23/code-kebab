@@ -100,6 +100,21 @@ env:
 additionalEnv: []
 secretEnv: {}
 envFromSecrets: []
+auth:
+  externalSecret:
+    create: false
+    name: ""
+    refreshInterval: 48h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: azurekv-cluster-secret-store
+    target:
+      name: ""
+      creationPolicy: Owner
+    secretKey: AUTH_SECRET
+    remoteRef:
+      key: secret/authjs-secret
+      property: ""
 
 database:
   url: ""

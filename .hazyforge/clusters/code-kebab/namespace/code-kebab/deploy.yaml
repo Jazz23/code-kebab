@@ -63,7 +63,22 @@ gateway:
       group: cert-manager.io
 
 envFromSecrets:
-  - code-kebab-env
+  - code-kebab-authjs
+
+auth:
+  externalSecret:
+    create: true
+    name: code-kebab-authjs
+    refreshInterval: 48h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: azurekv-cluster-secret-store
+    target:
+      name: code-kebab-authjs
+      creationPolicy: Owner
+    secretKey: AUTH_SECRET
+    remoteRef:
+      key: secret/authjs-secret
 
 cnpg:
   enabled: true
