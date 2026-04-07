@@ -1,0 +1,207 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 1
+
+image:
+  repository: code-kebab
+  pullPolicy: IfNotPresent
+  tag: ""
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  fsGroup: 1001
+
+securityContext:
+  allowPrivilegeEscalation: false
+  runAsUser: 1001
+  runAsGroup: 1001
+  seccompProfile:
+    type: RuntimeDefault
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+gateway:
+  enabled: false
+  gatewayClassName: cilium
+  hostname: code-kebab.example.com
+  annotations: {}
+  labels: {}
+  infrastructure: {}
+  http:
+    enabled: false
+    port: 80
+  https:
+    enabled: false
+    port: 443
+    tlsSecretName: ""
+  route:
+    pathPrefix: /
+  clusterIssuer:
+    create: false
+    name: ""
+    email: ""
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretName: ""
+    cloudflare:
+      apiTokenSecretRef:
+        name: cloudflare-api-token-secret
+        key: api-token
+      externalSecret:
+        create: false
+        namespace: cert-manager
+        name: cloudflare-token
+        refreshInterval: 48h
+        secretStoreRef:
+          kind: ClusterSecretStore
+          name: azurekv-cluster-secret-store
+        target:
+          name: cloudflare-token
+          creationPolicy: Owner
+        remoteRef:
+          key: secret/cloudflare-api
+          property: ""
+  certificate:
+    create: false
+    name: ""
+    issuerRef:
+      name: ""
+      kind: ClusterIssuer
+      group: cert-manager.io
+
+resources: {}
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+env:
+  NODE_ENV: production
+  HOSTNAME: 0.0.0.0
+  PORT: "3000"
+  AUTH_TRUST_HOST: "true"
+
+additionalEnv: []
+secretEnv: {}
+envFromSecrets: []
+auth:
+  externalSecret:
+    create: false
+    name: ""
+    refreshInterval: 48h
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: azurekv-cluster-secret-store
+    target:
+      name: ""
+      creationPolicy: Owner
+    secretKey: AUTH_SECRET
+    remoteRef:
+      key: secret/authjs-secret
+      property: ""
+
+migration:
+  enabled: false
+  hooks:
+    - pre-install
+    - pre-upgrade
+  hookWeight: "-5"
+  hookDeletePolicy:
+    - before-hook-creation
+    - hook-succeeded
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 3600
+  image:
+    repository: ""
+    tag: ""
+    pullPolicy: IfNotPresent
+  command: []
+  args: []
+  env: []
+  resources: {}
+
+database:
+  url: ""
+  existingSecret:
+    name: ""
+    key: DATABASE_URL
+  secretEnvMappings:
+    - name: DATABASE_DBNAME
+      key: dbname
+    - name: DATABASE_FQDN_JDBC_URI
+      key: fqdn-jdbc-uri
+    - name: DATABASE_FQDN_URI
+      key: fqdn-uri
+    - name: DATABASE_HOST
+      key: host
+    - name: DATABASE_JDBC_URI
+      key: jdbc-uri
+    - name: DATABASE_PASSWORD
+      key: password
+    - name: DATABASE_PGPASS
+      key: pgpass
+    - name: DATABASE_PORT
+      key: port
+    - name: DATABASE_URI
+      key: uri
+    - name: DATABASE_USER
+      key: user
+    - name: DATABASE_USERNAME
+      key: username
+
+cnpg:
+  enabled: true
+  clusterName: ""
+  imageName: ghcr.io/cloudnative-pg/postgresql:17
+  imagePullPolicy: IfNotPresent
+  instances: 1
+  enableSuperuserAccess: false
+  primaryUpdateMethod: switchover
+  primaryUpdateStrategy: unsupervised
+  bootstrap:
+    database: ckebab
+    owner: kebab
+    encoding: UTF8
+    localeCollate: C
+    localeCType: C
+  monitoring:
+    enablePodMonitor: false
+  resources: {}
+  storage:
+    size: 8Gi
+    storageClass: ""
+    resizeInUseVolumes: true
+  walStorage:
+    enabled: true
+    size: 1Gi
+    storageClass: ""
+    resizeInUseVolumes: true
+  postgresql:
+    parameters:
+      wal_level: logical
+      max_worker_processes: "16"
+      max_replication_slots: "16"
+      shared_memory_type: mmap
+      dynamic_shared_memory_type: posix
+      log_destination: csvlog
+      logging_collector: "on"
+      log_directory: /controller/log
+      log_filename: postgres
+  generatedSecretKey: uri
+  extraSpec: {}

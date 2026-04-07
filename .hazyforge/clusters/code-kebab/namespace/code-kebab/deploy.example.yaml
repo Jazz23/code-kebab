@@ -1,0 +1,51 @@
+helmChartPath: charts/code-kebab
+
+image:
+  repository: ghcr.io/your-org/code-kebab
+  tag: latest
+
+gateway:
+  enabled: true
+  gatewayClassName: cilium
+  hostname: code-kebab.example.com
+  http:
+    enabled: false
+    port: 80
+  https:
+    enabled: true
+    port: 443
+    tlsSecretName: code-kebab-example-com-tls
+  route:
+    pathPrefix: /
+  clusterIssuer:
+    create: true
+    name: letsencrypt-prod-code-kebab
+    email: you@example.com
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretName: letsencrypt-prod-code-kebab-account-key
+    cloudflare:
+      apiTokenSecretRef:
+        name: cloudflare-api-token-secret
+        key: api-token
+  certificate:
+    create: true
+    issuerRef:
+      name: letsencrypt-prod-code-kebab
+      kind: ClusterIssuer
+      group: cert-manager.io
+
+secretEnv:
+  AUTH_SECRET: replace-me
+  AUTH_GITHUB_ID: replace-me
+  AUTH_GITHUB_SECRET: replace-me
+  AUTH_GOOGLE_ID: replace-me
+  AUTH_GOOGLE_SECRET: replace-me
+
+cnpg:
+  enabled: true
+  instances: 1
+  bootstrap:
+    database: ckebab
+    owner: kebab
+  storage:
+    size: 20Gi

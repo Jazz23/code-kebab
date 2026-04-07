@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "code-kebab.fullname" . }}
+  labels:
+    {{- include "code-kebab.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "code-kebab.selectorLabels" . | nindent 6 }}
+  template:
+    {{- $databaseSecretName := include "code-kebab.databaseSecretName" . }}
+    metadata:
+      labels:
+        {{- include "code-kebab.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      serviceAccountName: {{ include "code-kebab.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ include "code-kebab.name" . }}
+          image: "{{ .Values.image.repository }}:{{ default .Chart.AppVersion .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+          env:
+            - name: DATABASE_URL
+              {{- if $databaseSecretName }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $databaseSecretName }}
+                  key: {{ if .Values.database.existingSecret.name }}{{ .Values.database.existingSecret.key }}{{ else }}{{ .Values.cnpg.generatedSecretKey }}{{ end }}
+              {{- else if .Values.database.url }}
+              value: {{ .Values.database.url | quote }}
+              {{- else }}
+              {{- fail "Set database.existingSecret.name, database.url, or enable cnpg.enabled." }}
+              {{- end }}
+            {{- if $databaseSecretName }}
+            {{- range .Values.database.secretEnvMappings }}
+            - name: {{ .name }}
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $databaseSecretName }}
+                  key: {{ .key }}
+            {{- end }}
+            {{- end }}
+            {{- range $name, $value := .Values.env }}
+            - name: {{ $name }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- with .Values.additionalEnv }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- if or .Values.secretEnv .Values.envFromSecrets }}
+          envFrom:
+            {{- if .Values.secretEnv }}
+            - secretRef:
+                name: {{ include "code-kebab.appEnvSecretName" . }}
+            {{- end }}
+            {{- range .Values.envFromSecrets }}
+            - secretRef:
+                name: {{ . }}
+            {{- end }}
+          {{- end }}
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

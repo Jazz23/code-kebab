@@ -1,0 +1,52 @@
+{{- if .Values.cnpg.enabled }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "code-kebab.cnpgClusterName" . }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    {{- include "code-kebab.labels" . | nindent 4 }}
+spec:
+  affinity:
+    podAntiAffinityType: preferred
+    topologyKey: topology.kubernetes.io/zone
+  bootstrap:
+    initdb:
+      database: {{ .Values.cnpg.bootstrap.database | quote }}
+      owner: {{ .Values.cnpg.bootstrap.owner | quote }}
+      encoding: {{ .Values.cnpg.bootstrap.encoding | quote }}
+      localeCollate: {{ .Values.cnpg.bootstrap.localeCollate | quote }}
+      localeCType: {{ .Values.cnpg.bootstrap.localeCType | quote }}
+  enableSuperuserAccess: {{ .Values.cnpg.enableSuperuserAccess }}
+  imageName: {{ .Values.cnpg.imageName | quote }}
+  imagePullPolicy: {{ .Values.cnpg.imagePullPolicy | quote }}
+  instances: {{ .Values.cnpg.instances }}
+  monitoring:
+    enablePodMonitor: {{ .Values.cnpg.monitoring.enablePodMonitor }}
+    disableDefaultQueries: false
+  postgresql:
+    parameters:
+      {{- toYaml .Values.cnpg.postgresql.parameters | nindent 6 }}
+  primaryUpdateMethod: {{ .Values.cnpg.primaryUpdateMethod | quote }}
+  primaryUpdateStrategy: {{ .Values.cnpg.primaryUpdateStrategy | quote }}
+  resources:
+    {{- toYaml .Values.cnpg.resources | nindent 4 }}
+  storage:
+    size: {{ .Values.cnpg.storage.size | quote }}
+    resizeInUseVolumes: {{ .Values.cnpg.storage.resizeInUseVolumes }}
+    {{- with .Values.cnpg.storage.storageClass }}
+    storageClass: {{ . | quote }}
+    {{- end }}
+  {{- if .Values.cnpg.walStorage.enabled }}
+  walStorage:
+    size: {{ .Values.cnpg.walStorage.size | quote }}
+    resizeInUseVolumes: {{ .Values.cnpg.walStorage.resizeInUseVolumes }}
+    {{- with .Values.cnpg.walStorage.storageClass }}
+    storageClass: {{ . | quote }}
+    {{- end }}
+  {{- end }}
+  {{- with .Values.cnpg.extraSpec }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}

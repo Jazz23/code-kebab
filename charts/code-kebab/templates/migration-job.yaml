@@ -1,0 +1,63 @@
+{{- if .Values.migration.enabled }}
+{{- $databaseSecretName := include "code-kebab.databaseSecretName" . }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "code-kebab.migrationJobName" . }}
+  labels:
+    {{- include "code-kebab.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: {{ join "," .Values.migration.hooks }}
+    helm.sh/hook-weight: {{ .Values.migration.hookWeight | quote }}
+    helm.sh/hook-delete-policy: {{ join "," .Values.migration.hookDeletePolicy }}
+spec:
+  backoffLimit: {{ .Values.migration.backoffLimit }}
+  ttlSecondsAfterFinished: {{ .Values.migration.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "code-kebab.selectorLabels" . | nindent 8 }}
+        job.kubernetes.io/name: {{ include "code-kebab.migrationJobName" . }}
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "code-kebab.serviceAccountName" . }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: migrate
+          image: "{{ include "code-kebab.migratorImageRepository" . }}:{{ include "code-kebab.migratorImageTag" . }}"
+          imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
+          {{- if .Values.migration.command }}
+          command:
+            {{- toYaml .Values.migration.command | nindent 12 }}
+          {{- end }}
+          {{- if .Values.migration.args }}
+          args:
+            {{- toYaml .Values.migration.args | nindent 12 }}
+          {{- end }}
+          {{- if or .Values.database.existingSecret.name .Values.database.url .Values.migration.env }}
+          env:
+            {{- if and .Values.database.existingSecret.name $databaseSecretName }}
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ $databaseSecretName }}
+                  key: {{ .Values.database.existingSecret.key }}
+            {{- else if .Values.database.url }}
+            - name: DATABASE_URL
+              value: {{ .Values.database.url | quote }}
+            {{- end }}
+            {{- with .Values.migration.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          {{- if $databaseSecretName }}
+          envFrom:
+            - secretRef:
+                name: {{ $databaseSecretName }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.migration.resources | nindent 12 }}
+{{- end }}
