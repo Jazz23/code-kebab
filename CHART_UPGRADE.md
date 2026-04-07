@@ -68,3 +68,36 @@ kubectl get gatewayclass
   `.hazyforge/clusters/code-kebab/namespace/code-kebab/deploy.yaml`.
 - If the Gateway updates but never gets an address, that is usually a cluster
   controller problem, not a chart rendering problem.
+
+## Migration Image
+
+This repo now includes a dedicated Docker build target for Drizzle migrations:
+
+```bash
+docker build --target migrator -t ghcr.io/jazz23/code-kebab-migrate:v0.0.1 .
+```
+
+That image includes `bun`, `drizzle.config.ts`, `drizzle/`, and `src/`, and
+defaults to:
+
+```bash
+bun run db:migrate
+```
+
+The migrator entrypoint is CloudNativePG-compatible. It will accept any of:
+
+- `DATABASE_URL`
+- `DATABASE_URI`
+- `uri`
+- `DATABASE_FQDN_URI`
+- the CNPG component fields `host`, `port`, `dbname`, `user`/`username`, `password`
+
+and normalize them to `DATABASE_URL` before running Drizzle.
+
+Use it from a Kubernetes `Job` instead of running migrations in the app
+container on startup.
+
+The chart also includes a Helm-hooked migration Job controlled by
+`migration.enabled`. In this repo's deploy values it is enabled and uses the
+default hook phases `pre-install,pre-upgrade`, which assumes the CNPG cluster
+and `code-kebab-db-app` secret already exist before the Helm app install step.

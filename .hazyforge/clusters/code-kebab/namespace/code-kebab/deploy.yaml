@@ -80,6 +80,9 @@ auth:
     remoteRef:
       key: secret/authjs-secret
 
+migration:
+  enabled: true
+
 cnpg:
   enabled: true
   instances: 1

@@ -23,6 +23,22 @@ COPY . .
 RUN bun run build
 
 
+# MIGRATOR -------------------------------------------------------------------
+
+FROM base AS migrator
+ARG DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres
+ENV DATABASE_URL=$DATABASE_URL
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json bun.lock drizzle.config.ts tsconfig.json ./
+COPY drizzle ./drizzle
+COPY docker/migrator-entrypoint.sh ./docker/migrator-entrypoint.sh
+COPY src ./src
+RUN chmod +x ./docker/migrator-entrypoint.sh
+
+ENTRYPOINT ["./docker/migrator-entrypoint.sh"]
+CMD ["bun", "run", "db:migrate"]
+
+
 # RUNTIME --------------------------------------------------------------------
 
 FROM node:22-alpine AS runner

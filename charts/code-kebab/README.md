@@ -46,6 +46,34 @@ fields into the container environment:
 
 These mappings are controlled by `database.secretEnvMappings`.
 
+## Migration Job
+
+The chart can also render a Helm-hooked migration `Job` using the dedicated
+`-migrate` image.
+
+- enable it with `migration.enabled=true`
+- by default it runs as Helm hooks on `pre-install,pre-upgrade`
+- the default image repository is derived from `image.repository` with
+  `-migrate` appended
+- the default image tag follows `migration.image.tag`, then `image.tag`, then
+  `appVersion`
+
+The migrator image is CloudNativePG-compatible. The Job can work with:
+
+- `DATABASE_URL`
+- CNPG secret key `uri`
+- CNPG component fields such as `host`, `port`, `dbname`, `user`, and `password`
+
+Important assumption:
+
+- the migration hook expects the database to already exist before the Helm
+  install or upgrade step
+- that matches this repo's rollout flow, where the CNPG cluster is created and
+  verified before the full app release install
+- if you try to use `migration.enabled=true` with a first-time standalone Helm
+  install where the database does not already exist, the pre-install hook can
+  fail before the app chart creates the database cluster
+
 ## Gateway API
 
 The chart does not use `Ingress`. If you enable `gateway.enabled`, it renders:

@@ -116,6 +116,26 @@ auth:
       key: secret/authjs-secret
       property: ""
 
+migration:
+  enabled: false
+  hooks:
+    - pre-install
+    - pre-upgrade
+  hookWeight: "-5"
+  hookDeletePolicy:
+    - before-hook-creation
+    - hook-succeeded
+  backoffLimit: 1
+  ttlSecondsAfterFinished: 3600
+  image:
+    repository: ""
+    tag: ""
+    pullPolicy: IfNotPresent
+  command: []
+  args: []
+  env: []
+  resources: {}
+
 database:
   url: ""
   existingSecret:

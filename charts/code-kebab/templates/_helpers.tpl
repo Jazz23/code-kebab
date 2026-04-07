@@ -64,6 +64,28 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}
 
+{{- define "code-kebab.migratorImageRepository" -}}
+{{- if .Values.migration.image.repository -}}
+{{- .Values.migration.image.repository -}}
+{{- else -}}
+{{- printf "%s-migrate" .Values.image.repository -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "code-kebab.migratorImageTag" -}}
+{{- if .Values.migration.image.tag -}}
+{{- .Values.migration.image.tag -}}
+{{- else if .Values.image.tag -}}
+{{- .Values.image.tag -}}
+{{- else -}}
+{{- .Chart.AppVersion -}}
+{{- end -}}
+{{- end -}}
+
+{{- define "code-kebab.migrationJobName" -}}
+{{- printf "%s-db-migrate" (include "code-kebab.fullname" .) | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
 {{- define "code-kebab.gatewayName" -}}
 {{- printf "%s-gateway" (include "code-kebab.fullname" .) | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
