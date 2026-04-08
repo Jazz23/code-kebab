@@ -133,6 +133,7 @@ export async function getUserByUsername(username: string) {
       skills: users.skills,
       timezone: users.timezone,
       socialLinks: users.socialLinks,
+      emailNotifications: users.emailNotifications,
       createdAt: users.createdAt,
     })
     .from(users)

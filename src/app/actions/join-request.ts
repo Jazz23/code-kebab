@@ -3,8 +3,9 @@
 import { eq } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { joinRequests, notifications, projects } from "@/db/schema";
+import { joinRequests, notifications, projects, users } from "@/db/schema";
 import { revalidatePath } from "next/cache";
+import { sendEmail, APP_URL } from "@/lib/email";
 
 type SubmitJoinRequestInput = {
   projectSlug: string;
@@ -24,13 +25,19 @@ export async function submitJoinRequest(
   const userId = session.user.id;
 
   const [project] = await db
-    .select({ id: projects.id, ownerId: projects.ownerId })
+    .select({ id: projects.id, ownerId: projects.ownerId, title: projects.title })
     .from(projects)
     .where(eq(projects.slug, input.projectSlug))
     .limit(1);
 
   if (!project) throw new Error("Project not found");
   if (project.ownerId === userId) throw new Error("Cannot join your own project");
+
+  const [applicant] = await db
+    .select({ name: users.name, username: users.username })
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
 
   const [joinRequest] = await db
     .insert(joinRequests)
@@ -46,11 +53,34 @@ export async function submitJoinRequest(
   if (!joinRequest) throw new Error("Failed to create join request");
 
   // Create notification for project owner
-  await db.insert(notifications).values({
-    userId: project.ownerId,
-    type: "join_request",
-    referenceId: joinRequest.id,
-  });
+  const [ownerNotif] = await db
+    .insert(notifications)
+    .values({
+      userId: project.ownerId,
+      type: "join_request",
+      referenceId: joinRequest.id,
+    })
+    .returning({ id: notifications.id });
+
+  // Send email notification to project owner if enabled
+  const [owner] = await db
+    .select({ email: users.email, name: users.name, emailNotifications: users.emailNotifications })
+    .from(users)
+    .where(eq(users.id, project.ownerId))
+    .limit(1);
+
+  if (owner?.emailNotifications && owner.email && ownerNotif) {
+    const applicantDisplay = applicant?.name
+      ? `${applicant.name} (@${applicant.username})`
+      : `@${applicant?.username ?? "someone"}`;
+    const url = `${APP_URL}/notifications/${ownerNotif.id}`;
+    await sendEmail({
+      to: { email: owner.email, name: owner.name ?? undefined },
+      subject: `New join request for ${project.title}`,
+      htmlContent: `<p>Hi${owner.name ? ` ${owner.name}` : ""},</p><p>${applicantDisplay} has requested to join your project <strong>${project.title}</strong>.</p><p><a href="${url}">Review the request</a></p>`,
+      textContent: `${applicantDisplay} has requested to join your project "${project.title}".\n\nReview it here: ${url}`,
+    });
+  }
 
   return { redirectTo: `/projects/${input.projectSlug}` };
 }
@@ -68,6 +98,7 @@ export async function denyJoinRequest(joinRequestId: string): Promise<void> {
       status: joinRequests.status,
       projectOwnerId: projects.ownerId,
       projectSlug: projects.slug,
+      projectTitle: projects.title,
     })
     .from(joinRequests)
     .innerJoin(projects, eq(joinRequests.projectId, projects.id))
@@ -83,11 +114,31 @@ export async function denyJoinRequest(joinRequestId: string): Promise<void> {
     .set({ status: "rejected" })
     .where(eq(joinRequests.id, joinRequestId));
 
-  await db.insert(notifications).values({
-    userId: jr.applicantId,
-    type: "join_request_denied",
-    referenceId: joinRequestId,
-  });
+  const [applicantNotif] = await db
+    .insert(notifications)
+    .values({
+      userId: jr.applicantId,
+      type: "join_request_denied",
+      referenceId: joinRequestId,
+    })
+    .returning({ id: notifications.id });
+
+  // Send email notification to applicant if enabled
+  const [applicant] = await db
+    .select({ email: users.email, name: users.name, emailNotifications: users.emailNotifications })
+    .from(users)
+    .where(eq(users.id, jr.applicantId))
+    .limit(1);
+
+  if (applicant?.emailNotifications && applicant.email && applicantNotif) {
+    const url = `${APP_URL}/notifications/${applicantNotif.id}`;
+    await sendEmail({
+      to: { email: applicant.email, name: applicant.name ?? undefined },
+      subject: `Your join request for ${jr.projectTitle} was declined`,
+      htmlContent: `<p>Hi${applicant.name ? ` ${applicant.name}` : ""},</p><p>Your request to join <strong>${jr.projectTitle}</strong> has been declined.</p><p><a href="${url}">View notification</a></p>`,
+      textContent: `Your request to join "${jr.projectTitle}" has been declined.\n\nView it here: ${url}`,
+    });
+  }
 
   revalidatePath("/messages");
 }

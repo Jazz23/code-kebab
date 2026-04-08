@@ -17,7 +17,7 @@
 	},
 	"initializeCommand": "touch .env",
 	"runArgs": [
-		"--env-file", ".env"
+		"--env-file", ".env.local"
 	],
 	"postCreateCommand": {
 		"get-secrets": ".devcontainer/get-secrets.sh",

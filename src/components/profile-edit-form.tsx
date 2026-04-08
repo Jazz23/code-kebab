@@ -16,6 +16,7 @@ type UserData = {
   skills: string[] | null;
   timezone: string | null;
   socialLinks: string[] | null;
+  emailNotifications: boolean;
   createdAt: Date | null;
 };
 
@@ -33,11 +34,14 @@ export function ProfileEditForm({ user }: { user: UserData }) {
   const [socialLinks, setSocialLinks] = useState<string[]>(
     user.socialLinks?.length ? user.socialLinks : [""],
   );
+  const [emailNotifications, setEmailNotifications] = useState(
+    user.emailNotifications,
+  );
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
-  const stateRef = useRef({ name, bio, skills, timezone, socialLinks });
+  const stateRef = useRef({ name, bio, skills, timezone, socialLinks, emailNotifications });
 
   const initials = (name || "?")
     .split(" ")
@@ -60,6 +64,7 @@ export function ProfileEditForm({ user }: { user: UserData }) {
           skills: latest.skills,
           timezone: latest.timezone,
           socialLinks: latest.socialLinks.filter((l) => l.trim()),
+          emailNotifications: latest.emailNotifications,
         });
         setSaveStatus("saved");
         setTimeout(() => setSaveStatus("idle"), 2000);
@@ -109,6 +114,12 @@ export function ProfileEditForm({ user }: { user: UserData }) {
     setSocialLinks(next);
     stateRef.current.socialLinks = next;
     scheduleSave({ socialLinks: next });
+  }
+
+  function handleEmailNotificationsChange(v: boolean) {
+    setEmailNotifications(v);
+    stateRef.current.emailNotifications = v;
+    scheduleSave({ emailNotifications: v });
   }
 
   const inputClass =
@@ -347,6 +358,34 @@ export function ProfileEditForm({ user }: { user: UserData }) {
                 </svg>
               </button>
             </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-zinc-200 px-4 py-3 dark:border-zinc-700">
+            <div>
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Email notifications
+              </p>
+              <p className="text-xs text-zinc-400">
+                Receive emails for join requests and other activity
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={emailNotifications}
+              onClick={() => handleEmailNotificationsChange(!emailNotifications)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${
+                emailNotifications
+                  ? "bg-zinc-900 dark:bg-zinc-100"
+                  : "bg-zinc-200 dark:bg-zinc-700"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform dark:bg-zinc-900 ${
+                  emailNotifications ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
           </div>
         </div>
 
