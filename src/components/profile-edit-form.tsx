@@ -28,6 +28,8 @@ export function ProfileEditForm({ user }: { user: UserData }) {
   const [bio, setBio] = useState(user.bio ?? "");
   const [skills, setSkills] = useState<string[]>(user.skills ?? []);
   const [timezone, setTimezone] = useState(user.timezone ?? "");
+  const [timezoneSearch, setTimezoneSearch] = useState(user.timezone ?? "");
+  const [showTzSuggestions, setShowTzSuggestions] = useState(false);
   const [socialLinks, setSocialLinks] = useState<string[]>(
     user.socialLinks?.length ? user.socialLinks : [""],
   );
@@ -85,6 +87,7 @@ export function ProfileEditForm({ user }: { user: UserData }) {
   }
   function handleTimezoneChange(v: string) {
     setTimezone(v);
+    setTimezoneSearch(v);
     stateRef.current.timezone = v;
     scheduleSave({ timezone: v });
   }
@@ -260,20 +263,48 @@ export function ProfileEditForm({ user }: { user: UserData }) {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Timezone
             </label>
-            <select
-              value={timezone}
-              onChange={(e) => handleTimezoneChange(e.target.value)}
+            <input
+              type="text"
+              value={timezoneSearch}
+              onChange={(e) => {
+                const v = e.target.value;
+                setTimezoneSearch(v);
+                setShowTzSuggestions(true);
+                if (v === "") handleTimezoneChange("");
+              }}
+              onFocus={() => setShowTzSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowTzSuggestions(false), 150)}
+              placeholder="Search or enter a timezone…"
               className={inputClass}
-            >
-              <option value="">None</option>
-              {TIMEZONES.map((tz) => (
-                <option key={tz} value={tz}>{tz}</option>
-              ))}
-            </select>
+            />
+            {showTzSuggestions && (
+              <ul className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+                {(timezoneSearch.length > 0
+                  ? TIMEZONES.filter((tz) =>
+                      tz.toLowerCase().includes(timezoneSearch.toLowerCase()),
+                    )
+                  : TIMEZONES
+                ).slice(0, 10)
+                  .map((tz) => (
+                    <li key={tz}>
+                      <button
+                        type="button"
+                        onMouseDown={() => {
+                          handleTimezoneChange(tz);
+                          setShowTzSuggestions(false);
+                        }}
+                        className="w-full px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      >
+                        {tz}
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+            )}
           </div>
 
           <div>

@@ -21,7 +21,6 @@ export function JoinRequestForm({
   const allRoles = namedRoles.length > 0 ? namedRoles : openRoles;
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [description, setDescription] = useState("");
-  const [socialLinks, setSocialLinks] = useState<string[]>([""]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -30,18 +29,6 @@ export function JoinRequestForm({
     setSelectedRoles((prev) =>
       prev.includes(role) ? prev.filter((r) => r !== role) : [...prev, role],
     );
-  }
-
-  function addSocialLink() {
-    setSocialLinks((prev) => [...prev, ""]);
-  }
-
-  function updateSocialLink(index: number, value: string) {
-    setSocialLinks((prev) => prev.map((l, i) => (i === index ? value : l)));
-  }
-
-  function removeSocialLink(index: number) {
-    setSocialLinks((prev) => prev.filter((_, i) => i !== index));
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -57,7 +44,7 @@ export function JoinRequestForm({
         projectSlug,
         roleNames: selectedRoles,
         description,
-        socialLinks: socialLinks.filter((l) => l.trim()),
+        socialLinks: [],
       });
       router.push(redirectTo);
     } catch (err) {
@@ -113,55 +100,6 @@ export function JoinRequestForm({
           placeholder="Tell the team about your background, relevant experience, and what you'd bring to the project..."
           className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
         />
-      </div>
-
-      {/* Social links */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Social links{" "}
-          <span className="font-normal text-zinc-400">(GitHub, LinkedIn, optional)</span>
-        </label>
-
-        <div className="flex flex-col gap-2">
-          {socialLinks.map((link, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <input
-                type="url"
-                value={link}
-                onChange={(e) => updateSocialLink(i, e.target.value)}
-                placeholder="https://..."
-                className="flex-1 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-600 dark:focus:border-zinc-500"
-              />
-              {socialLinks.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeSocialLink(i)}
-                  className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
-                  aria-label="Remove link"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="h-4 w-4"
-                  >
-                    <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22z" />
-                  </svg>
-                </button>
-              )}
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addSocialLink}
-            className="mt-1 flex h-8 w-8 items-center justify-center rounded-lg border border-dashed border-zinc-300 text-zinc-400 transition-colors hover:border-zinc-500 hover:text-zinc-600 dark:border-zinc-700 dark:hover:border-zinc-500 dark:hover:text-zinc-300"
-            aria-label="Add link"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-              <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-            </svg>
-          </button>
-        </div>
       </div>
 
       {error && (
