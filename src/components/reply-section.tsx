@@ -22,7 +22,11 @@ export function ReplySection({
     setSending(true);
     setError(null);
     try {
-      await sendDirectMessage(applicantUsername, `Re: Join request from ${applicantName}`, message.trim());
+      await sendDirectMessage(
+        applicantUsername,
+        `Re: Join request from ${applicantName}`,
+        message.trim(),
+      );
       setSent(true);
     } catch {
       setError("Failed to send message. Please try again.");
@@ -47,7 +51,9 @@ export function ReplySection({
               clipRule="evenodd"
             />
           </svg>
-          <p className="font-medium text-emerald-800 dark:text-emerald-300">Message sent!</p>
+          <p className="font-medium text-emerald-800 dark:text-emerald-300">
+            Message sent!
+          </p>
         </div>
         <p className="mt-1 text-sm text-emerald-700 dark:text-emerald-400">
           Your reply to {applicantName} has been sent.
@@ -79,7 +85,8 @@ export function ReplySection({
         Message {applicantName}
       </h2>
       <p className="mt-1 text-sm text-zinc-500">
-        Send a message to let them know your decision or ask for more information.
+        Send a message to let them know your decision or ask for more
+        information.
       </p>
       {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
       {!applicantUsername && (

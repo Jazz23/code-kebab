@@ -3,17 +3,40 @@ import { verify } from "@node-rs/argon2";
 import { eq } from "drizzle-orm";
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import GitHub from "next-auth/providers/github";
-import Google from "next-auth/providers/google";
+import Zitadel from "next-auth/providers/zitadel";
 import { db } from "@/db";
 import { users } from "@/db/schema";
+import {
+  credentialsFallbackEnabled,
+  zitadelConfigured,
+  zitadelIssuer,
+} from "@/lib/auth-config";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: DrizzleAdapter(db),
-  session: { strategy: "jwt" },
-  providers: [
-    GitHub,
-    Google,
+if (process.env.NODE_ENV === "production" && !zitadelConfigured) {
+  throw new Error(
+    "Missing Zitadel auth configuration. Set AUTH_ZITADEL_ID, AUTH_ZITADEL_SECRET, and AUTH_ZITADEL_ISSUER.",
+  );
+}
+
+const providers = [];
+
+if (zitadelConfigured && zitadelIssuer) {
+  providers.push(
+    Zitadel({
+      clientId: process.env.AUTH_ZITADEL_ID!,
+      clientSecret: process.env.AUTH_ZITADEL_SECRET!,
+      issuer: zitadelIssuer,
+      authorization: {
+        params: {
+          scope: "openid profile email",
+        },
+      },
+    }),
+  );
+}
+
+if (credentialsFallbackEnabled) {
+  providers.push(
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
@@ -50,8 +73,25 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       },
     }),
-  ],
+  );
+}
+
+export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: DrizzleAdapter(db),
+  session: { strategy: "jwt" },
+  providers,
+  pages: {
+    signIn: "/login",
+    error: "/login",
+  },
   callbacks: {
+    signIn: async ({ account, profile }) => {
+      if (account?.provider === "zitadel") {
+        return profile?.email_verified === true;
+      }
+
+      return true;
+    },
     session: async ({ session, token }) => {
       if (token.sub && session.user) {
         session.user.id = token.sub;

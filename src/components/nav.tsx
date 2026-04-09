@@ -24,7 +24,12 @@ export async function Nav() {
 
     username = row?.username ?? null;
     initials = row?.name
-      ? row.name.split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2)
+      ? row.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .toUpperCase()
+          .slice(0, 2)
       : null;
 
     unreadCount = await getTotalUnreadCount();

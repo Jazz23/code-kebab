@@ -41,8 +41,5 @@ export async function updateProfile(input: UpdateProfileInput) {
 
   if (Object.keys(updateData).length === 0) return;
 
-  await db
-    .update(users)
-    .set(updateData)
-    .where(eq(users.id, session.user.id));
+  await db.update(users).set(updateData).where(eq(users.id, session.user.id));
 }

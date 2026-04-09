@@ -105,3 +105,17 @@ helm upgrade --install code-kebab ./charts/code-kebab \
   --create-namespace \
   -f .hazyforge/clusters/code-kebab/namespace/code-kebab/deploy.example.yaml
 ```
+
+## Auth Secrets
+
+Provide the Auth.js secret plus the ZITADEL OIDC settings in your app env
+secret:
+
+- `AUTH_SECRET`
+- `AUTH_ZITADEL_ISSUER`
+- `AUTH_ZITADEL_ID`
+- `AUTH_ZITADEL_SECRET`
+
+If you want the user-facing login page to live at a branded hostname such as
+`auth.hazyforge.io`, that hostname must be configured as a ZITADEL custom
+domain and used as `AUTH_ZITADEL_ISSUER`.

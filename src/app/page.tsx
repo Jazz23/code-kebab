@@ -17,7 +17,8 @@ export default async function Home() {
           </h1>
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-zinc-600 dark:text-zinc-400">
             Browse open projects looking for contributors and find your next
-            collaboration. Or connect with developers who are ready to build — just without a project yet.
+            collaboration. Or connect with developers who are ready to build —
+            just without a project yet.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
             <Link

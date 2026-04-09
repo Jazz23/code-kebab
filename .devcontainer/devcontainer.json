@@ -1,27 +1,25 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/debian
 {
-	"name": "code-kebab",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "ghcr.io/jazz23/code-kebab-devcontainer:latest",
-	"mounts": [
-		"source=claude,target=/home/vscode/.claude,type=volume",
-		"source=zsh-history,target=/commandhistory,type=volume",
-		"source=azure-cli,target=/home/vscode/.azure,type=volume"
-	],
-	"onCreateCommand": {
-		"zshell-history": "sudo chown -R $(whoami) /commandhistory && touch /commandhistory/.zsh_history && echo 'export HISTFILE=/commandhistory/.zsh_history' >> ~/.zshrc",
-		"zsh-aliases": ".devcontainer/aliases.sh",
-		"env": "sudo chown $(whoami):$(whoami) .env",
-		"azure-cli": "sudo chown -R $(whoami) /home/vscode/.azure"
-	},
-	"initializeCommand": "touch .env",
-	"runArgs": [
-		"--env-file", ".env"
-	],
-	"postCreateCommand": {
-		"get-secrets": ".devcontainer/get-secrets.sh",
-		"bun-setup": "bun install && docker compose up -d --wait && bun run db:migrate && bun run db:seed"
-	},
-	"forwardPorts": [5050]
+  "name": "code-kebab",
+  // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+  "image": "ghcr.io/jazz23/code-kebab-devcontainer:latest",
+  "mounts": [
+    "source=claude,target=/home/vscode/.claude,type=volume",
+    "source=zsh-history,target=/commandhistory,type=volume",
+    "source=azure-cli,target=/home/vscode/.azure,type=volume"
+  ],
+  "onCreateCommand": {
+    "zshell-history": "sudo chown -R $(whoami) /commandhistory && touch /commandhistory/.zsh_history && echo 'export HISTFILE=/commandhistory/.zsh_history' >> ~/.zshrc",
+    "zsh-aliases": ".devcontainer/aliases.sh",
+    "env": "sudo chown $(whoami):$(whoami) .env",
+    "azure-cli": "sudo chown -R $(whoami) /home/vscode/.azure"
+  },
+  "initializeCommand": "touch .env",
+  "runArgs": ["--env-file", ".env"],
+  "postCreateCommand": {
+    "get-secrets": ".devcontainer/get-secrets.sh",
+    "bun-setup": "bun install && docker compose up -d --wait && bun run db:migrate && bun run db:seed"
+  },
+  "forwardPorts": [5050]
 }

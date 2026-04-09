@@ -22,7 +22,10 @@ export default async function JoinProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [project, session] = await Promise.all([getProjectBySlug(slug), auth()]);
+  const [project, session] = await Promise.all([
+    getProjectBySlug(slug),
+    auth(),
+  ]);
 
   if (!project) notFound();
 

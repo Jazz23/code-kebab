@@ -93,17 +93,19 @@ export default async function ProfilePage({
               </div>
               {(user.socialLinks ?? []).filter((l) => l.trim()).length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2">
-                  {(user.socialLinks ?? []).filter((l) => l.trim()).map((link) => (
-                    <a
-                      key={link}
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50"
-                    >
-                      {new URL(link).hostname.replace(/^www\./, "")}
-                    </a>
-                  ))}
+                  {(user.socialLinks ?? [])
+                    .filter((l) => l.trim())
+                    .map((link) => (
+                      <a
+                        key={link}
+                        href={link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50"
+                      >
+                        {new URL(link).hostname.replace(/^www\./, "")}
+                      </a>
+                    ))}
                 </div>
               )}
               {user.timezone && (
@@ -113,7 +115,10 @@ export default async function ProfilePage({
               )}
               {user.createdAt && (
                 <p className="mt-1 text-xs text-zinc-400">
-                  Joined {user.createdAt.toLocaleDateString("en-US", { timeZone: "UTC" })}
+                  Joined{" "}
+                  {user.createdAt.toLocaleDateString("en-US", {
+                    timeZone: "UTC",
+                  })}
                 </p>
               )}
             </div>
@@ -132,7 +137,11 @@ export default async function ProfilePage({
                 <ProjectCard
                   key={project.slug}
                   project={project}
-                  editHref={isOwnProfile && project.ownerId === user.id ? `/projects/${project.slug}/edit` : undefined}
+                  editHref={
+                    isOwnProfile && project.ownerId === user.id
+                      ? `/projects/${project.slug}/edit`
+                      : undefined
+                  }
                 />
               ))}
             </div>

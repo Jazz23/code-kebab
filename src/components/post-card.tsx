@@ -24,7 +24,10 @@ export function PostCard({ post }: { post: PostCardData }) {
 
   return (
     <div className="group relative flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700">
-      <Link href={`/posts/${post.id}`} className="absolute inset-0 z-10 rounded-xl">
+      <Link
+        href={`/posts/${post.id}`}
+        className="absolute inset-0 z-10 rounded-xl"
+      >
         <span className="sr-only">{post.title}</span>
       </Link>
 

@@ -14,7 +14,10 @@ function formatDate(date: Date): string {
   const now = new Date();
   const isToday = date.toDateString() === now.toDateString();
   if (isToday) {
-    return date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    return date.toLocaleTimeString(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    });
   }
   const isThisYear = date.getFullYear() === now.getFullYear();
   return date.toLocaleDateString(undefined, {
@@ -26,7 +29,11 @@ function formatDate(date: Date): string {
 
 type Notif = Awaited<ReturnType<typeof getNotifications>>[number];
 
-function notifPreviewText(notif: Notif): { from: string; subject: string; preview: string } {
+function notifPreviewText(notif: Notif): {
+  from: string;
+  subject: string;
+  preview: string;
+} {
   if (notif.type === "join_request" && notif.joinRequest) {
     const { applicantName, projectTitle, roleNames } = notif.joinRequest;
     const name = applicantName ?? "Someone";
@@ -34,7 +41,11 @@ function notifPreviewText(notif: Notif): { from: string; subject: string; previe
       roleNames && roleNames.length > 0
         ? `Join request: ${roleNames.join(", ")} · ${projectTitle}`
         : `Join request · ${projectTitle}`;
-    return { from: name, subject, preview: `${name} wants to join ${projectTitle}` };
+    return {
+      from: name,
+      subject,
+      preview: `${name} wants to join ${projectTitle}`,
+    };
   }
   if (notif.type === "join_request_denied" && notif.joinRequest) {
     return {
@@ -79,7 +90,9 @@ export default async function MessagesPage({
             >
               &larr; Home
             </Link>
-            <h1 className="mt-4 text-2xl font-bold text-zinc-900 dark:text-zinc-50">Messages</h1>
+            <h1 className="mt-4 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
+              Messages
+            </h1>
           </div>
         </div>
 
@@ -129,7 +142,9 @@ export default async function MessagesPage({
                       key={notif.id}
                       href={`/messages/system/${notif.id}`}
                       className={`flex items-start gap-4 px-5 py-4 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900 ${
-                        i !== 0 ? "border-t border-zinc-100 dark:border-zinc-800" : ""
+                        i !== 0
+                          ? "border-t border-zinc-100 dark:border-zinc-800"
+                          : ""
                       } ${isUnread ? "bg-blue-50/40 dark:bg-blue-950/20" : ""}`}
                     >
                       <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-100 dark:bg-zinc-800">
@@ -176,7 +191,9 @@ export default async function MessagesPage({
                         >
                           {subject}
                         </p>
-                        <p className="mt-0.5 truncate text-xs text-zinc-400">{preview}</p>
+                        <p className="mt-0.5 truncate text-xs text-zinc-400">
+                          {preview}
+                        </p>
                       </div>
                     </Link>
                   );
@@ -197,7 +214,9 @@ export default async function MessagesPage({
                       key={msg.id}
                       href={`/messages/${msg.id}`}
                       className={`flex items-start gap-4 px-5 py-4 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900 ${
-                        idx !== 0 ? "border-t border-zinc-100 dark:border-zinc-800" : ""
+                        idx !== 0
+                          ? "border-t border-zinc-100 dark:border-zinc-800"
+                          : ""
                       } ${isUnread ? "bg-blue-50/40 dark:bg-blue-950/20" : ""}`}
                     >
                       <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-xs font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
@@ -260,7 +279,9 @@ export default async function MessagesPage({
                       key={msg.id}
                       href={`/messages/${msg.id}`}
                       className={`flex items-start gap-4 px-5 py-4 transition-colors hover:bg-zinc-50 dark:hover:bg-zinc-900 ${
-                        i !== 0 ? "border-t border-zinc-100 dark:border-zinc-800" : ""
+                        i !== 0
+                          ? "border-t border-zinc-100 dark:border-zinc-800"
+                          : ""
                       }`}
                     >
                       <div className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-zinc-900 text-xs font-bold text-white dark:bg-zinc-100 dark:text-zinc-900">
@@ -271,7 +292,9 @@ export default async function MessagesPage({
                           <span className="truncate text-sm text-zinc-700 dark:text-zinc-300">
                             To: {msg.recipientName}
                             {msg.recipientUsername && (
-                              <span className="ml-1 text-zinc-400">@{msg.recipientUsername}</span>
+                              <span className="ml-1 text-zinc-400">
+                                @{msg.recipientUsername}
+                              </span>
                             )}
                           </span>
                           <span className="shrink-0 text-xs text-zinc-400">

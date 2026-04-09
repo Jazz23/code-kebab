@@ -1,7 +1,10 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/auth";
-import { getNotificationById, markNotificationRead } from "@/app/actions/notifications";
+import {
+  getNotificationById,
+  markNotificationRead,
+} from "@/app/actions/notifications";
 import { ReplySection } from "@/components/reply-section";
 import { JoinRequestActions } from "@/components/join-request-actions";
 
@@ -27,7 +30,9 @@ export default async function SystemMessagePage({
     const jr = notif.joinRequest;
     if (!jr) notFound();
 
-    const profileHref = jr.applicantUsername ? `/profile/${jr.applicantUsername}` : null;
+    const profileHref = jr.applicantUsername
+      ? `/profile/${jr.applicantUsername}`
+      : null;
 
     return (
       <main className="flex-1">
@@ -224,8 +229,8 @@ export default async function SystemMessagePage({
             </div>
 
             <p className="mt-4 text-sm text-zinc-500">
-              The project owner reviewed your application and decided not to move forward at this
-              time.
+              The project owner reviewed your application and decided not to
+              move forward at this time.
             </p>
 
             {jr.roleNames && jr.roleNames.length > 0 && (

@@ -36,10 +36,9 @@ gateway:
 
 secretEnv:
   AUTH_SECRET: replace-me
-  AUTH_GITHUB_ID: replace-me
-  AUTH_GITHUB_SECRET: replace-me
-  AUTH_GOOGLE_ID: replace-me
-  AUTH_GOOGLE_SECRET: replace-me
+  AUTH_ZITADEL_ISSUER: https://auth.example.com
+  AUTH_ZITADEL_ID: replace-me
+  AUTH_ZITADEL_SECRET: replace-me
 
 cnpg:
   enabled: true

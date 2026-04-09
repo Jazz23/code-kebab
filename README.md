@@ -46,6 +46,40 @@ App connection string:
 DATABASE_URL=postgresql://kebab:7b992bb4c32ef2bf8ec30818f7e75e02c34756120cc38011@localhost:5432/ckebab
 ```
 
+## Authentication
+
+The app now uses ZITADEL OIDC through Auth.js.
+
+Required env vars:
+
+```text
+AUTH_SECRET=...
+AUTH_ZITADEL_ISSUER=https://auth.hazyforge.io
+AUTH_ZITADEL_ID=...
+AUTH_ZITADEL_SECRET=...
+```
+
+If you have not configured a ZITADEL custom domain yet, use your cloud issuer
+instead:
+
+```text
+AUTH_ZITADEL_ISSUER=https://hazyforge1-azsbgb.us1.zitadel.cloud
+```
+
+Important domain split:
+
+- `AUTH_ZITADEL_ISSUER` should point at the ZITADEL issuer domain that serves the login UI
+- the Auth.js callback still lives on this app at `https://<your-app-domain>/api/auth/callback/zitadel`
+- if you want users to see `auth.hazyforge.io` during sign-in, `auth.hazyforge.io` must be configured as a ZITADEL custom domain, not just as a separate frontend you host elsewhere
+
+For local development, if the ZITADEL vars are omitted, the app falls back to
+the seeded credentials login:
+
+```text
+email=alex@example.com
+password=password
+```
+
 pgAdmin runs at `http://localhost:5050` by default with:
 
 ```text

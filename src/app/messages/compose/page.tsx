@@ -12,7 +12,11 @@ export const metadata = {
 export default async function ComposePage({
   searchParams,
 }: {
-  searchParams: Promise<{ to?: string; subject?: string; parentMessageId?: string }>;
+  searchParams: Promise<{
+    to?: string;
+    subject?: string;
+    parentMessageId?: string;
+  }>;
 }) {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");

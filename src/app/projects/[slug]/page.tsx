@@ -24,7 +24,10 @@ export default async function ProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [project, session] = await Promise.all([getProjectBySlug(slug), auth()]);
+  const [project, session] = await Promise.all([
+    getProjectBySlug(slug),
+    auth(),
+  ]);
   if (!project) notFound();
 
   const isOwner = session?.user?.id === project.ownerId;
@@ -156,13 +159,15 @@ export default async function ProjectPage({
                           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-500" />
                           <span className="font-medium">{role.name}</span>
                           {role.difficulty && (
-                            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                              role.difficulty === "beginner"
-                                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
-                                : role.difficulty === "intermediate"
-                                  ? "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
-                                  : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400"
-                            }`}>
+                            <span
+                              className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                                role.difficulty === "beginner"
+                                  ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
+                                  : role.difficulty === "intermediate"
+                                    ? "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-400"
+                                    : "bg-red-50 text-red-700 dark:bg-red-950 dark:text-red-400"
+                              }`}
+                            >
                               {role.difficulty}
                             </span>
                           )}
@@ -245,7 +250,10 @@ export default async function ProjectPage({
                         rel="noopener noreferrer"
                         className="max-w-40 truncate text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
                       >
-                        {project.githubUrl.replace(/^https?:\/\/(www\.)?github\.com\//, "")}
+                        {project.githubUrl.replace(
+                          /^https?:\/\/(www\.)?github\.com\//,
+                          "",
+                        )}
                       </a>
                     </dd>
                   </div>

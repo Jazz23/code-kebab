@@ -31,7 +31,10 @@ type UpdateProjectInput = {
   members: MemberInput[];
 };
 
-export async function updateProject(projectId: string, input: UpdateProjectInput) {
+export async function updateProject(
+  projectId: string,
+  input: UpdateProjectInput,
+) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
 
@@ -92,7 +95,10 @@ export async function updateProject(projectId: string, input: UpdateProjectInput
     .where(
       and(
         eq(projectMembers.projectId, projectId),
-        or(ne(projectMembers.userId, session.user.id), isNull(projectMembers.userId)),
+        or(
+          ne(projectMembers.userId, session.user.id),
+          isNull(projectMembers.userId),
+        ),
       ),
     );
 
@@ -102,7 +108,12 @@ export async function updateProject(projectId: string, input: UpdateProjectInput
       if (!m.name && !m.username) continue;
       if (m.resolvedUserId) {
         if (m.resolvedUserId === session.user.id) continue;
-        memberInserts.push({ projectId, userId: m.resolvedUserId, name: null, role: null });
+        memberInserts.push({
+          projectId,
+          userId: m.resolvedUserId,
+          name: null,
+          role: null,
+        });
       } else {
         memberInserts.push({
           projectId,

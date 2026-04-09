@@ -5,14 +5,22 @@ import { getMessage, markMessageRead } from "@/app/actions/messages";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const msg = await getMessage(id);
   if (!msg) return { title: "Messages - code-kebab" };
   return { title: `${msg.subject} - Messages - code-kebab` };
 }
 
-export default async function EmailViewPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function EmailViewPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
@@ -25,7 +33,9 @@ export default async function EmailViewPage({ params }: { params: Promise<{ id: 
   }
 
   const backHref = msg.isFromMe ? "/messages?tab=sent" : "/messages";
-  const replySubject = msg.subject.startsWith("Re: ") ? msg.subject : `Re: ${msg.subject}`;
+  const replySubject = msg.subject.startsWith("Re: ")
+    ? msg.subject
+    : `Re: ${msg.subject}`;
   const replyTo = msg.isFromMe ? msg.recipientUsername : msg.senderUsername;
   const replyHref = replyTo
     ? `/messages/compose?to=${encodeURIComponent(replyTo)}&subject=${encodeURIComponent(replySubject)}&parentMessageId=${encodeURIComponent(msg.id)}`
@@ -92,7 +102,9 @@ export default async function EmailViewPage({ params }: { params: Promise<{ id: 
           <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
             {/* Email header */}
             <div className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
-              <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">{msg.subject}</h1>
+              <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+                {msg.subject}
+              </h1>
 
               <div className="mt-4 flex flex-col gap-2">
                 <div className="flex items-baseline gap-2 text-sm">
