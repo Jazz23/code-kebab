@@ -1,6 +1,7 @@
 #!/bin/sh
 VAULT_NAME="CodeKebab"
-ENV_FILE="/workspaces/code-kebab/.env.local"
+GIT_ROOT=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)
+ENV_FILE="$GIT_ROOT/.env.local"
 
 if ! az account show > /dev/null 2>&1; then
   echo "Not logged in to Azure CLI, skipping secret fetch."
