@@ -27,7 +27,10 @@ export default async function EditProjectPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [project, session] = await Promise.all([getProjectBySlug(slug), auth()]);
+  const [project, session] = await Promise.all([
+    getProjectBySlug(slug),
+    auth(),
+  ]);
 
   if (!project) notFound();
 
@@ -74,7 +77,11 @@ export default async function EditProjectPage({
     name: r.name,
     hourlyRate: r.hourlyRate ?? "",
     salary: r.salary ?? "",
-    difficulty: (r.difficulty ?? "") as "" | "beginner" | "intermediate" | "advanced",
+    difficulty: (r.difficulty ?? "") as
+      | ""
+      | "beginner"
+      | "intermediate"
+      | "advanced",
   }));
 
   const initialData: ProjectFormInitialData = {
@@ -85,7 +92,18 @@ export default async function EditProjectPage({
     tags: project.tags,
     rolesMode,
     openSlots: project.openSlots?.toString() ?? "",
-    roles: roleEntries.length > 0 ? roleEntries : [{ id: crypto.randomUUID(), name: "", hourlyRate: "", salary: "", difficulty: "" as const }],
+    roles:
+      roleEntries.length > 0
+        ? roleEntries
+        : [
+            {
+              id: crypto.randomUUID(),
+              name: "",
+              hourlyRate: "",
+              salary: "",
+              difficulty: "" as const,
+            },
+          ],
     timelineMode,
     timelineDate,
     members: memberEntries,

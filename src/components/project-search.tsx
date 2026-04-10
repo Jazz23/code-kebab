@@ -277,7 +277,9 @@ function SearchInput({
         <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl border border-zinc-200 bg-white p-4 shadow-2xl dark:border-zinc-700 dark:bg-zinc-950">
           <p className="mb-3 text-xs font-medium text-zinc-500 dark:text-zinc-400">
             {suggestions.length}{" "}
-            {suggestions.length === 1 ? "matching project" : "matching projects"}
+            {suggestions.length === 1
+              ? "matching project"
+              : "matching projects"}
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {suggestions.map((p) => (

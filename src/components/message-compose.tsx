@@ -26,17 +26,29 @@ export function MessageCompose({
     setSending(true);
     setError(null);
     try {
-      await sendDirectMessage(to.trim(), subject.trim(), body.trim(), parentMessageId);
+      await sendDirectMessage(
+        to.trim(),
+        subject.trim(),
+        body.trim(),
+        parentMessageId,
+      );
       router.push("/messages?tab=sent");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send. Please try again.");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to send. Please try again.",
+      );
     } finally {
       setSending(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col divide-y divide-zinc-100 dark:divide-zinc-800"
+    >
       {/* To */}
       <div className="flex items-center gap-3 px-5 py-3.5">
         <label className="w-16 shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-400">
@@ -79,11 +91,7 @@ export function MessageCompose({
 
       {/* Footer */}
       <div className="flex items-center justify-between gap-3 px-5 py-3.5">
-        {error ? (
-          <p className="text-xs text-red-500">{error}</p>
-        ) : (
-          <span />
-        )}
+        {error ? <p className="text-xs text-red-500">{error}</p> : <span />}
         <button
           type="submit"
           disabled={!to.trim() || !body.trim() || sending}

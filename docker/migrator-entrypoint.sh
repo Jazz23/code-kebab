@@ -1,6 +1,12 @@
 #!/bin/sh
 set -eu
 
+DEFAULT_DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/postgres"
+
+if [ "${DATABASE_URL:-}" = "${DEFAULT_DATABASE_URL}" ]; then
+  unset DATABASE_URL
+fi
+
 if [ -z "${DATABASE_URL:-}" ]; then
   if [ -n "${DATABASE_URI:-}" ]; then
     export DATABASE_URL="${DATABASE_URI}"

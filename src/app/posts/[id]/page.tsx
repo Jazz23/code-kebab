@@ -33,8 +33,17 @@ export default async function PostPage({
           href="/posts"
           className="mb-8 inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-            <path fillRule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clipRule="evenodd" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="h-4 w-4"
+          >
+            <path
+              fillRule="evenodd"
+              d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z"
+              clipRule="evenodd"
+            />
           </svg>
           All posts
         </Link>
@@ -98,7 +107,10 @@ export default async function PostPage({
               ) : (
                 <div className="px-5 py-8 text-center">
                   <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    <Link href="/login" className="font-medium text-zinc-900 underline underline-offset-4 dark:text-zinc-50">
+                    <Link
+                      href="/login"
+                      className="font-medium text-zinc-900 underline underline-offset-4 dark:text-zinc-50"
+                    >
                       Sign in
                     </Link>{" "}
                     to reply to this post.

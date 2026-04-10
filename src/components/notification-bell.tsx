@@ -3,7 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { getNotifications, getUnreadCount } from "@/app/actions/notifications";
-import { getInboxMessages, getUnreadDirectMessageCount } from "@/app/actions/messages";
+import {
+  getInboxMessages,
+  getUnreadDirectMessageCount,
+} from "@/app/actions/messages";
 
 type Notification = Awaited<ReturnType<typeof getNotifications>>[number];
 type InboxMessage = Awaited<ReturnType<typeof getInboxMessages>>[number];
@@ -30,7 +33,9 @@ function notificationLabel(notif: Notification): string {
   }
   if (notif.type === "join_request_denied") {
     const project = notif.joinRequest?.projectTitle;
-    return project ? `Your request to join ${project} was denied` : "Your join request was denied";
+    return project
+      ? `Your request to join ${project} was denied`
+      : "Your join request was denied";
   }
   return "New notification";
 }
@@ -54,7 +59,10 @@ export function NotificationBell({
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
@@ -77,10 +85,23 @@ export function NotificationBell({
   }, []);
 
   async function refreshItems() {
-    const [notifs, msgs] = await Promise.all([getNotifications(5), getInboxMessages()]);
+    const [notifs, msgs] = await Promise.all([
+      getNotifications(5),
+      getInboxMessages(),
+    ]);
     const combined: DropdownItem[] = [
-      ...notifs.map((n) => ({ kind: "notification" as const, notif: n, date: new Date(n.createdAt) })),
-      ...msgs.slice(0, 5).map((m) => ({ kind: "dm" as const, msg: m, date: new Date(m.createdAt) })),
+      ...notifs.map((n) => ({
+        kind: "notification" as const,
+        notif: n,
+        date: new Date(n.createdAt),
+      })),
+      ...msgs
+        .slice(0, 5)
+        .map((m) => ({
+          kind: "dm" as const,
+          msg: m,
+          date: new Date(m.createdAt),
+        })),
     ];
     combined.sort((a, b) => b.date.getTime() - a.date.getTime());
     setItems(combined.slice(0, 7));
@@ -127,7 +148,9 @@ export function NotificationBell({
       {isOpen && (
         <div className="absolute right-0 top-10 z-50 w-80 rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
           <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-zinc-800">
-            <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Messages</span>
+            <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+              Messages
+            </span>
             {unreadCount > 0 && (
               <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600 dark:bg-red-950 dark:text-red-400">
                 {unreadCount} unread
@@ -169,7 +192,9 @@ export function NotificationBell({
                         <p className="text-sm leading-snug text-zinc-700 dark:text-zinc-300">
                           {notificationLabel(notif)}
                         </p>
-                        <p className="mt-0.5 text-xs text-zinc-400">{timeAgo(item.date)}</p>
+                        <p className="mt-0.5 text-xs text-zinc-400">
+                          {timeAgo(item.date)}
+                        </p>
                       </Link>
                     </div>
                   );
@@ -212,7 +237,9 @@ export function NotificationBell({
                       <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
                         {msg.subject}
                       </p>
-                      <p className="mt-0.5 text-xs text-zinc-400">{timeAgo(item.date)}</p>
+                      <p className="mt-0.5 text-xs text-zinc-400">
+                        {timeAgo(item.date)}
+                      </p>
                     </Link>
                   </div>
                 );

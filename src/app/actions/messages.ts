@@ -23,7 +23,8 @@ export async function sendDirectMessage(
     .limit(1);
 
   if (!recipient) throw new Error("User not found");
-  if (recipient.id === session.user.id) throw new Error("Cannot message yourself");
+  if (recipient.id === session.user.id)
+    throw new Error("Cannot message yourself");
 
   const [sender] = await db
     .select({ name: users.name, username: users.username })
@@ -193,7 +194,7 @@ export async function getMessage(id: string) {
   if (!msg) return null;
 
   // Walk up the ancestor chain to build thread history (oldest first)
-  const ancestors: typeof msg[] = [];
+  const ancestors: (typeof msg)[] = [];
   let currentParentId = msg.parentMessageId;
   while (currentParentId) {
     const [parent] = await db
@@ -243,7 +244,10 @@ export async function markMessageRead(id: string) {
     .update(directMessages)
     .set({ read: true })
     .where(
-      and(eq(directMessages.id, id), eq(directMessages.recipientId, session.user.id)),
+      and(
+        eq(directMessages.id, id),
+        eq(directMessages.recipientId, session.user.id),
+      ),
     );
 }
 
@@ -254,7 +258,12 @@ export async function getUnreadDirectMessageCount(): Promise<number> {
   const msgs = await db
     .select({ id: directMessages.id })
     .from(directMessages)
-    .where(and(eq(directMessages.recipientId, session.user.id), eq(directMessages.read, false)));
+    .where(
+      and(
+        eq(directMessages.recipientId, session.user.id),
+        eq(directMessages.read, false),
+      ),
+    );
 
   return msgs.length;
 }
@@ -272,7 +281,10 @@ export async function getTotalUnreadCount(): Promise<number> {
       .select({ id: directMessages.id })
       .from(directMessages)
       .where(
-        and(eq(directMessages.recipientId, session.user.id), eq(directMessages.read, false)),
+        and(
+          eq(directMessages.recipientId, session.user.id),
+          eq(directMessages.read, false),
+        ),
       ),
   ]);
 

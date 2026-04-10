@@ -31,7 +31,8 @@ export async function submitJoinRequest(
     .limit(1);
 
   if (!project) throw new Error("Project not found");
-  if (project.ownerId === userId) throw new Error("Cannot join your own project");
+  if (project.ownerId === userId)
+    throw new Error("Cannot join your own project");
 
   const [applicant] = await db
     .select({ name: users.name, username: users.username })
@@ -107,7 +108,8 @@ export async function denyJoinRequest(joinRequestId: string): Promise<void> {
 
   if (!jr) throw new Error("Join request not found");
   if (jr.projectOwnerId !== userId) throw new Error("Not authorized");
-  if (jr.status !== "pending") throw new Error("Join request is no longer pending");
+  if (jr.status !== "pending")
+    throw new Error("Join request is no longer pending");
 
   await db
     .update(joinRequests)

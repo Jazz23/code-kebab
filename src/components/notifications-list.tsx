@@ -33,7 +33,9 @@ function notificationLabel(notif: Notification): string {
   }
   if (notif.type === "join_request_denied") {
     const project = notif.joinRequest?.projectTitle;
-    return project ? `Your request to join ${project} was denied` : "Your join request was denied";
+    return project
+      ? `Your request to join ${project} was denied`
+      : "Your join request was denied";
   }
   if (notif.type === "join_request") {
     const project = notif.joinRequest?.projectTitle;

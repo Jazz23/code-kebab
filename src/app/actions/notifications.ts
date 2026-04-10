@@ -41,7 +41,10 @@ export async function getNotifications(limit?: number) {
   // Enrich with join request details
   const enriched = await Promise.all(
     rows.map(async (notif) => {
-      if (notif.type === "join_request" || notif.type === "join_request_denied") {
+      if (
+        notif.type === "join_request" ||
+        notif.type === "join_request_denied"
+      ) {
         const [jr] = await db
           .select({
             id: joinRequests.id,
@@ -146,9 +149,7 @@ export async function deleteNotification(notificationId: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
 
-  await db
-    .delete(notifications)
-    .where(eq(notifications.id, notificationId));
+  await db.delete(notifications).where(eq(notifications.id, notificationId));
 }
 
 export async function getUnreadCount(): Promise<number> {

@@ -16,7 +16,12 @@ export async function GET(request: NextRequest) {
     .limit(1);
 
   if (user) {
-    return NextResponse.json({ exists: true, id: user.id, name: user.name, username: user.username });
+    return NextResponse.json({
+      exists: true,
+      id: user.id,
+      name: user.name,
+      username: user.username,
+    });
   }
   return NextResponse.json({ exists: false });
 }

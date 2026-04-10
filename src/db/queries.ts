@@ -15,22 +15,22 @@ export async function getProjects() {
       timelineDate: projects.timelineDate,
       createdAt: projects.createdAt,
       ownerName: users.name,
-      memberCount:
-        sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
-      beginnerRoles:
-        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'beginner')::int`,
-      intermediateRoles:
-        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'intermediate')::int`,
-      advancedRoles:
-        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'advanced')::int`,
-      minHourlyRate:
-        sql<number | null>`(select min("hourlyRate"::float8) from "projectRole" where "projectId" = ${projects.id} and "hourlyRate" is not null)`,
-      maxHourlyRate:
-        sql<number | null>`(select max("hourlyRate"::float8) from "projectRole" where "projectId" = ${projects.id} and "hourlyRate" is not null)`,
-      minSalary:
-        sql<number | null>`(select min("salary"::float8) from "projectRole" where "projectId" = ${projects.id} and "salary" is not null)`,
-      maxSalary:
-        sql<number | null>`(select max("salary"::float8) from "projectRole" where "projectId" = ${projects.id} and "salary" is not null)`,
+      memberCount: sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
+      beginnerRoles: sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'beginner')::int`,
+      intermediateRoles: sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'intermediate')::int`,
+      advancedRoles: sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'advanced')::int`,
+      minHourlyRate: sql<
+        number | null
+      >`(select min("hourlyRate"::float8) from "projectRole" where "projectId" = ${projects.id} and "hourlyRate" is not null)`,
+      maxHourlyRate: sql<
+        number | null
+      >`(select max("hourlyRate"::float8) from "projectRole" where "projectId" = ${projects.id} and "hourlyRate" is not null)`,
+      minSalary: sql<
+        number | null
+      >`(select min("salary"::float8) from "projectRole" where "projectId" = ${projects.id} and "salary" is not null)`,
+      maxSalary: sql<
+        number | null
+      >`(select max("salary"::float8) from "projectRole" where "projectId" = ${projects.id} and "salary" is not null)`,
     })
     .from(projects)
     .innerJoin(users, eq(projects.ownerId, users.id))
@@ -159,14 +159,10 @@ export async function getUserProjects(username: string) {
       timelineDate: projects.timelineDate,
       ownerName: users.name,
       ownerId: projects.ownerId,
-      memberCount:
-        sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
-      beginnerRoles:
-        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'beginner')::int`,
-      intermediateRoles:
-        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'intermediate')::int`,
-      advancedRoles:
-        sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'advanced')::int`,
+      memberCount: sql<number>`(select count(*) from "projectMember" where "projectId" = ${projects.id})::int`,
+      beginnerRoles: sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'beginner')::int`,
+      intermediateRoles: sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'intermediate')::int`,
+      advancedRoles: sql<number>`(select count(*) from "projectRole" where "projectId" = ${projects.id} and difficulty = 'advanced')::int`,
     })
     .from(projects)
     .innerJoin(users, eq(projects.ownerId, users.id))

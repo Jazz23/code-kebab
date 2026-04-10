@@ -75,9 +75,7 @@ export function JoinRequestActions({
 
   return (
     <div className="flex flex-col gap-2">
-      {error && (
-        <p className="text-sm text-red-500">{error}</p>
-      )}
+      {error && <p className="text-sm text-red-500">{error}</p>}
       <div className="flex gap-2">
         <button
           onClick={handleDeny}

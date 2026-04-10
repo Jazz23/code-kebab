@@ -40,9 +40,11 @@ export function ProjectCard({
 
   const payLabel = (() => {
     if (project.maxHourlyRate != null) return `$${project.maxHourlyRate}/hr`;
-    if (project.maxSalary != null) return `$${Math.round(project.maxSalary / 1000)}k/yr`;
+    if (project.maxSalary != null)
+      return `$${Math.round(project.maxSalary / 1000)}k/yr`;
     if (project.minHourlyRate != null) return `$${project.minHourlyRate}+/hr`;
-    if (project.minSalary != null) return `$${Math.round(project.minSalary / 1000)}k+/yr`;
+    if (project.minSalary != null)
+      return `$${Math.round(project.minSalary / 1000)}k+/yr`;
     return null;
   })();
 
@@ -57,7 +59,10 @@ export function ProjectCard({
   return (
     <div className="group relative flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700">
       {/* Stretched link covering the whole card */}
-      <Link href={`/projects/${project.slug}`} className="absolute inset-0 z-10 rounded-xl">
+      <Link
+        href={`/projects/${project.slug}`}
+        className="absolute inset-0 z-10 rounded-xl"
+      >
         <span className="sr-only">{project.title}</span>
       </Link>
 
@@ -79,7 +84,9 @@ export function ProjectCard({
 
       {hasDifficultyData ? (
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Open Roles:</span>
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            Open Roles:
+          </span>
           {(project.beginnerRoles ?? 0) > 0 && (
             <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
               {project.beginnerRoles} beginner
@@ -98,7 +105,9 @@ export function ProjectCard({
         </div>
       ) : (roleCount ?? 0) > 0 ? (
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">Open Roles:</span>
+          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+            Open Roles:
+          </span>
           <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
             {roleLabel}
           </span>
@@ -142,7 +151,9 @@ export function ProjectCard({
         {payLabel && (
           <>
             <span>&middot;</span>
-            <span className="font-medium text-emerald-600 dark:text-emerald-400">{payLabel}</span>
+            <span className="font-medium text-emerald-600 dark:text-emerald-400">
+              {payLabel}
+            </span>
           </>
         )}
       </div>

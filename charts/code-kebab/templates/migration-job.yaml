@@ -1,5 +1,9 @@
 {{- if .Values.migration.enabled }}
 {{- $databaseSecretName := include "code-kebab.databaseSecretName" . }}
+{{- $databaseSecretKey := .Values.cnpg.generatedSecretKey }}
+{{- if .Values.database.existingSecret.name }}
+{{- $databaseSecretKey = .Values.database.existingSecret.key }}
+{{- end }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -21,6 +25,8 @@ spec:
     spec:
       restartPolicy: Never
       serviceAccountName: {{ include "code-kebab.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -29,6 +35,8 @@ spec:
         - name: migrate
           image: "{{ include "code-kebab.migratorImageRepository" . }}:{{ include "code-kebab.migratorImageTag" . }}"
           imagePullPolicy: {{ .Values.migration.image.pullPolicy }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           {{- if .Values.migration.command }}
           command:
             {{- toYaml .Values.migration.command | nindent 12 }}
@@ -37,17 +45,17 @@ spec:
           args:
             {{- toYaml .Values.migration.args | nindent 12 }}
           {{- end }}
-          {{- if or .Values.database.existingSecret.name .Values.database.url .Values.migration.env }}
+          {{- if or $databaseSecretName .Values.database.url .Values.migration.env }}
           env:
-            {{- if and .Values.database.existingSecret.name $databaseSecretName }}
+            {{- if .Values.database.url }}
+            - name: DATABASE_URL
+              value: {{ .Values.database.url | quote }}
+            {{- else if $databaseSecretName }}
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: {{ $databaseSecretName }}
-                  key: {{ .Values.database.existingSecret.key }}
-            {{- else if .Values.database.url }}
-            - name: DATABASE_URL
-              value: {{ .Values.database.url | quote }}
+                  key: {{ $databaseSecretKey }}
             {{- end }}
             {{- with .Values.migration.env }}
             {{- toYaml . | nindent 12 }}

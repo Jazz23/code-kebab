@@ -24,7 +24,10 @@ async function main() {
       username: "alexchen",
       bio: "Full-stack developer passionate about open source and developer tools.",
       skills: ["TypeScript", "React", "Node.js", "PostgreSQL"],
-      socialLinks: ["https://github.com/alexchen", "https://linkedin.com/in/alexchen"],
+      socialLinks: [
+        "https://github.com/alexchen",
+        "https://linkedin.com/in/alexchen",
+      ],
       createdAt: new Date("2025-08-12"),
       image: null,
       password: hashedPassword,
@@ -37,7 +40,10 @@ async function main() {
       username: "samira",
       bio: "UI/UX designer and frontend engineer. Love building delightful experiences.",
       skills: ["Figma", "React", "CSS", "Accessibility"],
-      socialLinks: ["https://github.com/samiraosei", "https://dribbble.com/samiraosei"],
+      socialLinks: [
+        "https://github.com/samiraosei",
+        "https://dribbble.com/samiraosei",
+      ],
       createdAt: new Date("2025-09-03"),
       image: null,
       password: hashedPassword,
@@ -63,7 +69,10 @@ async function main() {
       username: "mrivera",
       bio: "Mobile developer and CS student. Always learning something new.",
       skills: ["Swift", "Kotlin", "React Native", "Firebase"],
-      socialLinks: ["https://github.com/mrivera", "https://linkedin.com/in/mariafrivera"],
+      socialLinks: [
+        "https://github.com/mrivera",
+        "https://linkedin.com/in/mariafrivera",
+      ],
       createdAt: new Date("2026-01-15"),
       image: null,
       password: hashedPassword,
@@ -638,41 +647,53 @@ async function main() {
   ];
 
   console.log("Seeding users...");
-  await db.insert(users).values(seedUsers).onConflictDoUpdate({
-    target: users.id,
-    set: {
-      username: sql`excluded.username`,
-      bio: sql`excluded.bio`,
-      skills: sql`excluded.skills`,
-      socialLinks: sql`excluded."socialLinks"`,
-      createdAt: sql`excluded."createdAt"`,
-    },
-  });
+  await db
+    .insert(users)
+    .values(seedUsers)
+    .onConflictDoUpdate({
+      target: users.id,
+      set: {
+        username: sql`excluded.username`,
+        bio: sql`excluded.bio`,
+        skills: sql`excluded.skills`,
+        socialLinks: sql`excluded."socialLinks"`,
+        createdAt: sql`excluded."createdAt"`,
+      },
+    });
 
   console.log("Seeding projects...");
-  await db.insert(projects).values(seedProjects).onConflictDoUpdate({
-    target: projects.id,
-    set: {
-      slug: sql`excluded.slug`,
-      title: sql`excluded.title`,
-      description: sql`excluded.description`,
-      longDescription: sql`excluded."longDescription"`,
-      tags: sql`excluded.tags`,
-      openRoles: sql`excluded."openRoles"`,
-      githubUrl: sql`excluded."githubUrl"`,
-      timelineDate: sql`excluded."timelineDate"`,
-      openSlots: sql`excluded."openSlots"`,
-    },
-  });
+  await db
+    .insert(projects)
+    .values(seedProjects)
+    .onConflictDoUpdate({
+      target: projects.id,
+      set: {
+        slug: sql`excluded.slug`,
+        title: sql`excluded.title`,
+        description: sql`excluded.description`,
+        longDescription: sql`excluded."longDescription"`,
+        tags: sql`excluded.tags`,
+        openRoles: sql`excluded."openRoles"`,
+        githubUrl: sql`excluded."githubUrl"`,
+        timelineDate: sql`excluded."timelineDate"`,
+        openSlots: sql`excluded."openSlots"`,
+      },
+    });
 
   // Delete and re-insert roles and members for seed projects to avoid stale rows
   const seedProjectIds = seedProjects.map((p) => p.id);
   console.log("Clearing seed project roles and members...");
   await db.delete(projectRoles).where(
-    sql`${projectRoles.projectId} = ANY(ARRAY[${sql.join(seedProjectIds.map((id) => sql`${id}`), sql`, `)}])`,
+    sql`${projectRoles.projectId} = ANY(ARRAY[${sql.join(
+      seedProjectIds.map((id) => sql`${id}`),
+      sql`, `,
+    )}])`,
   );
   await db.delete(projectMembers).where(
-    sql`${projectMembers.projectId} = ANY(ARRAY[${sql.join(seedProjectIds.map((id) => sql`${id}`), sql`, `)}])`,
+    sql`${projectMembers.projectId} = ANY(ARRAY[${sql.join(
+      seedProjectIds.map((id) => sql`${id}`),
+      sql`, `,
+    )}])`,
   );
 
   console.log("Seeding project roles...");
@@ -685,7 +706,8 @@ async function main() {
   const seedPosts = [
     {
       id: "seed-post-1",
-      title: "Looking for a co-founder / coding partner for a SaaS side project",
+      title:
+        "Looking for a co-founder / coding partner for a SaaS side project",
       description: `Hey everyone! I've been heads-down on a dev tools SaaS idea for the past month and I'm at the point where I really need someone to build with. Flying solo is getting lonely and I keep context-switching between frontend and backend when I should be going deep on one.
 
 I'm building a lightweight code review tool for small teams who find GitHub's PR review UX too heavy. Think focused inline comments, async approval flows, and a clean diff view — without the GitHub overhead. Early prototype is working, a few friends are already using it.
@@ -703,7 +725,8 @@ If this sounds interesting, send me a message with something you've built — do
     },
     {
       id: "seed-post-2",
-      title: "Wanting to find a backend dev to pair with on weekends — accessibility tooling project",
+      title:
+        "Wanting to find a backend dev to pair with on weekends — accessibility tooling project",
       description: `I'm a frontend/design-leaning developer and I've been prototyping an automated accessibility auditing tool that goes beyond what axe and Lighthouse currently offer. I have the UI and the browser extension shell built, but I'm stuck on the backend — and honestly, I don't enjoy backend work enough to do it well.
 
 The tool crawls a site, runs a suite of WCAG checks, stores historical results, and surfaces regressions in a dashboard. The crawler and audit runner need to be robust, scalable, and fast. That's the part I need help with.
@@ -715,13 +738,20 @@ I'm not looking for someone to just write code I spec out. I want a real collabo
 Time commitment is probably 4–6 hours a week to start. No crunch, no deadlines. We go at a pace that keeps it fun.
 
 Drop me a message if you're interested. Would love to jump on a quick call first to see if we click.`,
-      tags: ["Node.js", "Accessibility", "TypeScript", "Developer Tools", "Open Source"],
+      tags: [
+        "Node.js",
+        "Accessibility",
+        "TypeScript",
+        "Developer Tools",
+        "Open Source",
+      ],
       authorId: "seed-user-samira",
       createdAt: new Date("2026-02-22"),
     },
     {
       id: "seed-post-3",
-      title: "Anyone want to build a distributed tracing side project together? (Go / Rust)",
+      title:
+        "Anyone want to build a distributed tracing side project together? (Go / Rust)",
       description: `I work on data infrastructure professionally and I want to scratch an itch that my day job doesn't let me: building a lightweight, self-hosted distributed tracing system — basically a stripped-down Jaeger/Tempo that's easy to run on a single VPS without Kubernetes.
 
 Most observability tooling assumes you have a big infrastructure budget or are comfortable with heavy operational overhead. I want something you can "docker compose up" and forget.
@@ -739,7 +769,8 @@ Async-first. Weekly sync call optional. I use a shared Linear board to track wor
     },
     {
       id: "seed-post-4",
-      title: "CS student looking for a more experienced dev to build something real with",
+      title:
+        "CS student looking for a more experienced dev to build something real with",
       description: `I'm a second-year CS student and I've hit the ceiling of what I can learn from tutorials and toy projects. I want to build something real with someone who's been in the industry — not a mentor relationship exactly, more of a genuine collaboration where I'm a useful contributor, not just a passenger.
 
 What I can bring: mobile development (I'm most comfortable with React Native and have shipped two small apps to the App Store), Firebase and Supabase backend integration, time (I'm a student, I can put in real hours), and fresh eyes on product decisions.
@@ -767,13 +798,20 @@ A great fit would be someone with experience maintaining or contributing to an o
 This isn't a startup. There's no monetization plan. It's about building something useful for the community and doing it properly.
 
 If you want to see the current state of the library before deciding, just ask and I'll share the private repo link.`,
-      tags: ["React", "TypeScript", "Tailwind CSS", "Open Source", "Accessibility"],
+      tags: [
+        "React",
+        "TypeScript",
+        "Tailwind CSS",
+        "Open Source",
+        "Accessibility",
+      ],
       authorId: "seed-user-samira",
       createdAt: new Date("2026-03-19"),
     },
     {
       id: "seed-post-6",
-      title: "Pair programming partner wanted — I'll help with your project if you help with mine",
+      title:
+        "Pair programming partner wanted — I'll help with your project if you help with mine",
       description: `Simple proposition: I'm looking for a developer to do regular pair programming sessions with. I'll help with your project, you help with mine. Structured knowledge exchange, not mentorship, not freelancing — just two people building together.
 
 I'm a full-stack developer, strongest in TypeScript and the React/Next.js ecosystem. I've been writing code professionally for four years. Currently working on a local-first notes app that syncs across devices. The hard part is the sync engine — I'm implementing a simple event log approach and would love a second brain on it.
@@ -792,14 +830,17 @@ If you're interested, message me with a one-liner about what you're building. We
   ];
 
   console.log("Seeding posts...");
-  await db.insert(posts).values(seedPosts).onConflictDoUpdate({
-    target: posts.id,
-    set: {
-      title: sql`excluded.title`,
-      description: sql`excluded.description`,
-      tags: sql`excluded.tags`,
-    },
-  });
+  await db
+    .insert(posts)
+    .values(seedPosts)
+    .onConflictDoUpdate({
+      target: posts.id,
+      set: {
+        title: sql`excluded.title`,
+        description: sql`excluded.description`,
+        tags: sql`excluded.tags`,
+      },
+    });
 
   console.log(`Done. (password for all users: "${SEED_PASSWORD}")`);
   process.exit(0);

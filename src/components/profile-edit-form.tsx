@@ -164,27 +164,28 @@ export function ProfileEditForm({ user }: { user: UserData }) {
           </div>
           {socialLinks.filter((l) => l.trim()).length > 0 && (
             <div className="mt-3 flex flex-wrap gap-2">
-              {socialLinks.filter((l) => l.trim()).map((link) => (
-                <a
-                  key={link}
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50"
-                >
-                  {new URL(link).hostname.replace(/^www\./, "")}
-                </a>
-              ))}
+              {socialLinks
+                .filter((l) => l.trim())
+                .map((link) => (
+                  <a
+                    key={link}
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-zinc-500 underline underline-offset-2 hover:text-zinc-900 dark:hover:text-zinc-50"
+                  >
+                    {new URL(link).hostname.replace(/^www\./, "")}
+                  </a>
+                ))}
             </div>
           )}
           {timezone && (
-            <p className="mt-2 text-xs text-zinc-400">
-              Timezone: {timezone}
-            </p>
+            <p className="mt-2 text-xs text-zinc-400">Timezone: {timezone}</p>
           )}
           {user.createdAt && (
             <p className="mt-1 text-xs text-zinc-400">
-              Joined {user.createdAt.toLocaleDateString("en-US", { timeZone: "UTC" })}
+              Joined{" "}
+              {user.createdAt.toLocaleDateString("en-US", { timeZone: "UTC" })}
             </p>
           )}
         </div>
@@ -321,7 +322,9 @@ export function ProfileEditForm({ user }: { user: UserData }) {
           <div>
             <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Social links{" "}
-              <span className="font-normal text-zinc-400">(GitHub, LinkedIn, portfolio…)</span>
+              <span className="font-normal text-zinc-400">
+                (GitHub, LinkedIn, portfolio…)
+              </span>
             </label>
             <div className="flex flex-col gap-2">
               {socialLinks.map((link, i) => (
@@ -340,7 +343,12 @@ export function ProfileEditForm({ user }: { user: UserData }) {
                       className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                       aria-label="Remove link"
                     >
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="h-4 w-4"
+                      >
                         <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22z" />
                       </svg>
                     </button>
@@ -353,7 +361,12 @@ export function ProfileEditForm({ user }: { user: UserData }) {
                 className="mt-1 flex h-8 w-8 items-center justify-center rounded-lg border border-dashed border-zinc-300 text-zinc-400 transition-colors hover:border-zinc-500 hover:text-zinc-600 dark:border-zinc-700 dark:hover:border-zinc-500 dark:hover:text-zinc-300"
                 aria-label="Add link"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="h-4 w-4"
+                >
                   <path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
                 </svg>
               </button>
@@ -390,13 +403,12 @@ export function ProfileEditForm({ user }: { user: UserData }) {
         </div>
 
         {timezone && (
-          <p className="mt-2 text-xs text-zinc-400">
-            Timezone: {timezone}
-          </p>
+          <p className="mt-2 text-xs text-zinc-400">Timezone: {timezone}</p>
         )}
         {user.createdAt && (
           <p className="mt-1 text-xs text-zinc-400">
-            Joined {user.createdAt.toLocaleDateString("en-US", { timeZone: "UTC" })}
+            Joined{" "}
+            {user.createdAt.toLocaleDateString("en-US", { timeZone: "UTC" })}
           </p>
         )}
       </div>

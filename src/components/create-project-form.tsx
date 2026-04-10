@@ -90,10 +90,18 @@ function MemberRow({
           resolvedName: data.name,
         });
       } else {
-        onChange({ ...member, checkState: "not-found", resolvedUserId: undefined });
+        onChange({
+          ...member,
+          checkState: "not-found",
+          resolvedUserId: undefined,
+        });
       }
     } catch {
-      onChange({ ...member, checkState: "not-found", resolvedUserId: undefined });
+      onChange({
+        ...member,
+        checkState: "not-found",
+        resolvedUserId: undefined,
+      });
     }
   }
 
@@ -106,7 +114,11 @@ function MemberRow({
               type="text"
               value={member.name}
               onChange={(e) =>
-                onChange({ ...member, name: e.target.value, checkState: "idle" })
+                onChange({
+                  ...member,
+                  name: e.target.value,
+                  checkState: "idle",
+                })
               }
               placeholder="Name"
               className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400"
@@ -154,7 +166,10 @@ function MemberRow({
             </span>
           )}
           {member.checkState === "not-found" && (
-            <span className="absolute right-2.5 top-2.5 text-xs text-red-400" title="User not found">
+            <span
+              className="absolute right-2.5 top-2.5 text-xs text-red-400"
+              title="User not found"
+            >
               ✗
             </span>
           )}
@@ -186,8 +201,8 @@ function MemberRow({
       )}
       {member.checkState === "not-found" && member.username.trim() && (
         <p className="text-xs text-red-500 dark:text-red-400">
-          No user found with username &ldquo;{member.username}&rdquo;. They will be added as a
-          guest.
+          No user found with username &ldquo;{member.username}&rdquo;. They will
+          be added as a guest.
         </p>
       )}
     </div>
@@ -230,11 +245,15 @@ function RoleRow({
             Hourly rate (optional)
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-2 text-sm text-zinc-400">$</span>
+            <span className="absolute left-3 top-2 text-sm text-zinc-400">
+              $
+            </span>
             <input
               type="text"
               value={role.hourlyRate}
-              onChange={(e) => onChange({ ...role, hourlyRate: e.target.value })}
+              onChange={(e) =>
+                onChange({ ...role, hourlyRate: e.target.value })
+              }
               placeholder="0.00/hr"
               className="w-full rounded-lg border border-zinc-300 bg-white py-2 pl-6 pr-3 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400"
             />
@@ -245,7 +264,9 @@ function RoleRow({
             Annual salary (optional)
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-2 text-sm text-zinc-400">$</span>
+            <span className="absolute left-3 top-2 text-sm text-zinc-400">
+              $
+            </span>
             <input
               type="text"
               value={role.salary}
@@ -261,22 +282,26 @@ function RoleRow({
           Difficulty (optional)
         </label>
         <div className="flex gap-3">
-          {(["", "beginner", "intermediate", "advanced"] as const).map((level) => (
-            <label
-              key={level}
-              className="flex cursor-pointer items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400"
-            >
-              <input
-                type="radio"
-                name={`difficulty-${role.id}`}
-                value={level}
-                checked={role.difficulty === level}
-                onChange={() => onChange({ ...role, difficulty: level })}
-                className="accent-zinc-900 dark:accent-zinc-50"
-              />
-              {level === "" ? "None" : level.charAt(0).toUpperCase() + level.slice(1)}
-            </label>
-          ))}
+          {(["", "beginner", "intermediate", "advanced"] as const).map(
+            (level) => (
+              <label
+                key={level}
+                className="flex cursor-pointer items-center gap-1.5 text-xs text-zinc-600 dark:text-zinc-400"
+              >
+                <input
+                  type="radio"
+                  name={`difficulty-${role.id}`}
+                  value={level}
+                  checked={role.difficulty === level}
+                  onChange={() => onChange({ ...role, difficulty: level })}
+                  className="accent-zinc-900 dark:accent-zinc-50"
+                />
+                {level === ""
+                  ? "None"
+                  : level.charAt(0).toUpperCase() + level.slice(1)}
+              </label>
+            ),
+          )}
         </div>
       </div>
     </div>
@@ -286,7 +311,13 @@ function RoleRow({
 // ─── Main form ────────────────────────────────────────────────────────────────
 
 function newRole(): RoleEntry {
-  return { id: crypto.randomUUID(), name: "", hourlyRate: "", salary: "", difficulty: "" };
+  return {
+    id: crypto.randomUUID(),
+    name: "",
+    hourlyRate: "",
+    salary: "",
+    difficulty: "",
+  };
 }
 
 function newMember(): MemberEntry {
@@ -313,31 +344,63 @@ export function CreateProjectForm({
 
   // Core fields
   const [title, setTitle] = useState(initialData?.title ?? "");
-  const [description, setDescription] = useState(initialData?.description ?? "");
+  const [description, setDescription] = useState(
+    initialData?.description ?? "",
+  );
   const [githubUrl, setGithubUrl] = useState(initialData?.githubUrl ?? "");
   const [tags, setTags] = useState<string[]>(initialData?.tags ?? []);
 
   // Roles
-  const [rolesMode, setRolesMode] = useState<RolesMode>(initialData?.rolesMode ?? "none");
+  const [rolesMode, setRolesMode] = useState<RolesMode>(
+    initialData?.rolesMode ?? "none",
+  );
   const [openSlots, setOpenSlots] = useState(initialData?.openSlots ?? "");
-  const [roles, setRoles] = useState<RoleEntry[]>(initialData?.roles ?? [newRole()]);
+  const [roles, setRoles] = useState<RoleEntry[]>(
+    initialData?.roles ?? [newRole()],
+  );
 
   // Timeline
-  const [timelineMode, setTimelineMode] = useState<TimelineMode>(initialData?.timelineMode ?? "none");
-  const [timelineDate, setTimelineDate] = useState(initialData?.timelineDate ?? "");
+  const [timelineMode, setTimelineMode] = useState<TimelineMode>(
+    initialData?.timelineMode ?? "none",
+  );
+  const [timelineDate, setTimelineDate] = useState(
+    initialData?.timelineDate ?? "",
+  );
 
   // Members
-  const [members, setMembers] = useState<MemberEntry[]>(initialData?.members ?? []);
+  const [members, setMembers] = useState<MemberEntry[]>(
+    initialData?.members ?? [],
+  );
 
   // Auto-save refs
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
+    undefined,
+  );
   const stateRef = useRef({
-    title, description, githubUrl, tags, rolesMode, openSlots, roles, timelineMode, timelineDate, members,
+    title,
+    description,
+    githubUrl,
+    tags,
+    rolesMode,
+    openSlots,
+    roles,
+    timelineMode,
+    timelineDate,
+    members,
   });
 
   function updateStateRef() {
     stateRef.current = {
-      title, description, githubUrl, tags, rolesMode, openSlots, roles, timelineMode, timelineDate, members,
+      title,
+      description,
+      githubUrl,
+      tags,
+      rolesMode,
+      openSlots,
+      roles,
+      timelineMode,
+      timelineDate,
+      members,
     };
   }
 
@@ -355,10 +418,19 @@ export function CreateProjectForm({
           githubUrl: latest.githubUrl.trim() || undefined,
           tags: latest.tags,
           rolesMode: latest.rolesMode,
-          openSlots: latest.rolesMode === "slots" ? Number(latest.openSlots) || undefined : undefined,
-          roles: latest.rolesMode === "named" ? latest.roles.filter((r) => r.name.trim()).map((r) => ({ ...r, difficulty: r.difficulty || undefined })) : [],
+          openSlots:
+            latest.rolesMode === "slots"
+              ? Number(latest.openSlots) || undefined
+              : undefined,
+          roles:
+            latest.rolesMode === "named"
+              ? latest.roles
+                  .filter((r) => r.name.trim())
+                  .map((r) => ({ ...r, difficulty: r.difficulty || undefined }))
+              : [],
           timelineMode: latest.timelineMode,
-          timelineDate: latest.timelineMode === "date" ? latest.timelineDate : undefined,
+          timelineDate:
+            latest.timelineMode === "date" ? latest.timelineDate : undefined,
           members: latest.members
             .filter((m) => m.name.trim() || m.username.trim())
             .map((m) => ({
@@ -457,8 +529,14 @@ export function CreateProjectForm({
           githubUrl: githubUrl.trim() || undefined,
           tags,
           rolesMode,
-          openSlots: rolesMode === "slots" ? Number(openSlots) || undefined : undefined,
-          roles: rolesMode === "named" ? roles.filter((r) => r.name.trim()).map((r) => ({ ...r, difficulty: r.difficulty || undefined })) : [],
+          openSlots:
+            rolesMode === "slots" ? Number(openSlots) || undefined : undefined,
+          roles:
+            rolesMode === "named"
+              ? roles
+                  .filter((r) => r.name.trim())
+                  .map((r) => ({ ...r, difficulty: r.difficulty || undefined }))
+              : [],
           timelineMode,
           timelineDate: timelineMode === "date" ? timelineDate : undefined,
           members: members
@@ -499,15 +577,20 @@ export function CreateProjectForm({
       }
       setIsDeleting(false);
       setShowDeleteConfirm(false);
-      setError(err instanceof Error ? err.message : "Failed to delete project.");
+      setError(
+        err instanceof Error ? err.message : "Failed to delete project.",
+      );
     }
   }
 
   const inputClass =
     "w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 focus:border-zinc-500 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:focus:border-zinc-400";
-  const labelClass = "mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300";
-  const sectionClass = "rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950";
-  const sectionTitle = "mb-4 text-base font-semibold text-zinc-900 dark:text-zinc-50";
+  const labelClass =
+    "mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300";
+  const sectionClass =
+    "rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-950";
+  const sectionTitle =
+    "mb-4 text-base font-semibold text-zinc-900 dark:text-zinc-50";
 
   return (
     <>
@@ -576,7 +659,11 @@ export function CreateProjectForm({
             </div>
             <div>
               <label className={labelClass}>Tags</label>
-              <TagInput tags={tags} onChange={handleTagsChange} suggestions={SUGGESTED_TAGS} />
+              <TagInput
+                tags={tags}
+                onChange={handleTagsChange}
+                suggestions={SUGGESTED_TAGS}
+              />
             </div>
           </div>
         </div>
@@ -611,7 +698,10 @@ export function CreateProjectForm({
             {timelineMode === "date" && (
               <div>
                 <label className={labelClass}>Target end date</label>
-                <DateInput value={timelineDate} onChange={handleTimelineDateChange} />
+                <DateInput
+                  value={timelineDate}
+                  onChange={handleTimelineDateChange}
+                />
               </div>
             )}
           </div>
@@ -621,7 +711,8 @@ export function CreateProjectForm({
         <div className={sectionClass}>
           <h2 className={sectionTitle}>Open roles (optional)</h2>
           <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-            If omitted, the project will accept an unlimited number of collaborators.
+            If omitted, the project will accept an unlimited number of
+            collaborators.
           </p>
           <div className="flex flex-col gap-3">
             <div className="flex flex-wrap gap-3">
@@ -670,7 +761,9 @@ export function CreateProjectForm({
                     key={role.id}
                     role={role}
                     onChange={(r) => updateRole(role.id, r)}
-                    onRemove={() => handleRolesChange(roles.filter((r) => r.id !== role.id))}
+                    onRemove={() =>
+                      handleRolesChange(roles.filter((r) => r.id !== role.id))
+                    }
                   />
                 ))}
                 <button
@@ -689,8 +782,8 @@ export function CreateProjectForm({
         <div className={sectionClass}>
           <h2 className={sectionTitle}>Existing team members (optional)</h2>
           <p className="mb-4 text-sm text-zinc-500 dark:text-zinc-400">
-            Add people already on the team. Enter a display name and optionally a
-            code-kebab username to link their account.
+            Add people already on the team. Enter a display name and optionally
+            a code-kebab username to link their account.
           </p>
           <div className="flex flex-col gap-3">
             {members.map((member) => (
@@ -698,7 +791,9 @@ export function CreateProjectForm({
                 key={member.id}
                 member={member}
                 onChange={(m) => updateMember(member.id, m)}
-                onRemove={() => handleMembersChange(members.filter((m) => m.id !== member.id))}
+                onRemove={() =>
+                  handleMembersChange(members.filter((m) => m.id !== member.id))
+                }
               />
             ))}
             <button
@@ -759,7 +854,8 @@ export function CreateProjectForm({
               Delete project?
             </h2>
             <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-              This will permanently delete the project and all its data. This action cannot be undone.
+              This will permanently delete the project and all its data. This
+              action cannot be undone.
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button

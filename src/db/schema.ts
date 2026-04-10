@@ -101,7 +101,9 @@ export const projectRoles = pgTable("projectRole", {
   name: text("name").notNull(),
   hourlyRate: text("hourlyRate"),
   salary: text("salary"),
-  difficulty: text("difficulty").$type<"beginner" | "intermediate" | "advanced">(),
+  difficulty: text("difficulty").$type<
+    "beginner" | "intermediate" | "advanced"
+  >(),
 });
 
 export const projectMembers = pgTable("projectMember", {
@@ -129,7 +131,10 @@ export const joinRequests = pgTable("joinRequest", {
   roleNames: text("roleNames").array().notNull().default([]),
   description: text("description").notNull(),
   socialLinks: text("socialLinks").array().notNull().default([]),
-  status: text("status").$type<"pending" | "accepted" | "rejected">().notNull().default("pending"),
+  status: text("status")
+    .$type<"pending" | "accepted" | "rejected">()
+    .notNull()
+    .default("pending"),
   createdAt: timestamp("createdAt", { mode: "date" }).notNull().defaultNow(),
 });
 
