@@ -1,12 +1,16 @@
 import "dotenv/config";
 import { hash } from "@node-rs/argon2";
 import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
 import { sql } from "drizzle-orm";
 import { posts, projectMembers, projectRoles, projects, users } from "./schema";
 
-const client = postgres(process.env.DATABASE_URL!);
-const db = drizzle(client);
+const connectionString = process.env.DATABASE_URL;
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set");
+}
+
+const db = drizzle(connectionString);
 
 const SEED_PASSWORD = "password";
 
