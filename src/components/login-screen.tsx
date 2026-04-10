@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { useState } from "react";
 
 type LoginScreenProps = {
   callbackUrl: string;
@@ -19,11 +19,11 @@ function getErrorMessage(error: string | null) {
   }
 
   if (error === "AccessDenied") {
-    return "Sign-in was denied. Verify the account exists in Zitadel and has a verified email address.";
+    return "Sign-in was denied after the Zitadel login completed. If this keeps happening, check whether Zitadel is reporting the email as unverified.";
   }
 
   if (error === "CallbackRouteError" || error === "OAuthCallbackError") {
-    return "The login flow did not complete. Check the Zitadel issuer, client ID, secret, and callback URL.";
+    return "The login flow did not complete. Check the ZITADEL issuer, client ID, secret, and callback URL.";
   }
 
   return "Sign-in failed. Check the auth configuration and try again.";

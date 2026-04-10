@@ -1,17 +1,20 @@
-import Link from "next/link";
 import { eq } from "drizzle-orm";
+import Link from "next/link";
+import { getTotalUnreadCount } from "@/app/actions/messages";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { NavUser } from "./nav-user";
 import { NotificationBell } from "./notification-bell";
-import { getTotalUnreadCount } from "@/app/actions/messages";
 
 export async function Nav() {
   const session = await auth();
   const userId = session?.user?.id;
+  const sessionName = session?.user?.name?.trim() || null;
+  const sessionEmail = session?.user?.email?.trim() || null;
 
   let username: string | null = null;
+  let displayName: string | null = null;
   let initials: string | null = null;
   let unreadCount = 0;
 
@@ -23,8 +26,9 @@ export async function Nav() {
       .limit(1);
 
     username = row?.username ?? null;
-    initials = row?.name
-      ? row.name
+    displayName = row?.name ?? sessionName ?? row?.username ?? sessionEmail;
+    initials = displayName
+      ? displayName
           .split(" ")
           .map((n) => n[0])
           .join("")
@@ -57,10 +61,14 @@ export async function Nav() {
           >
             Posts
           </Link>
-          {username && initials ? (
+          {userId && displayName && initials ? (
             <>
               <NotificationBell initialUnreadCount={unreadCount} />
-              <NavUser initials={initials} userId={username} />
+              <NavUser
+                initials={initials}
+                name={displayName}
+                profileHref={username ? `/profile/${username}` : null}
+              />
             </>
           ) : (
             <Link

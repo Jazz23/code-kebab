@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { LoginScreen } from "@/components/login-screen";
 import {
   credentialsFallbackEnabled,
@@ -14,10 +15,15 @@ type LoginPageProps = {
 
 export default async function LoginPage({ searchParams }: LoginPageProps) {
   const params = await searchParams;
+  const callbackUrl = params.callbackUrl ?? "/";
+
+  if (zitadelConfigured && !params.error) {
+    redirect(`/api/auth/start?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+  }
 
   return (
     <LoginScreen
-      callbackUrl={params.callbackUrl ?? "/"}
+      callbackUrl={callbackUrl}
       credentialsFallbackEnabled={credentialsFallbackEnabled}
       oidcEnabled={zitadelConfigured}
       oidcHost={zitadelHost}
