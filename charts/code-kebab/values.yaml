@@ -6,7 +6,7 @@ replicaCount: 1
 image:
   repository: code-kebab
   pullPolicy: IfNotPresent
-  tag: "v0.0.3"
+  tag: "v0.0.4"
 
 imagePullSecrets: []
 
@@ -115,6 +115,7 @@ auth:
     remoteRef:
       key: secret/authjs-secret
       property: ""
+    extraData: []
 
 migration:
   enabled: false

@@ -8,7 +8,6 @@ using the repo-local values file:
 ## Upgrade Command
 
 ```bash
-KUBECONFIG=/home/palehazy/CodingFiles/HAZYFORGE/anvil-primaris/secrets/code-kebab-kubeconfig.yaml \
 helm upgrade --install code-kebab ./charts/code-kebab \
   --namespace code-kebab \
   --create-namespace \

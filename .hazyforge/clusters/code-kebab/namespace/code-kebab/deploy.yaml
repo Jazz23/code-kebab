@@ -4,7 +4,7 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/jazz23/code-kebab
-  tag: "v0.0.3"
+  tag: "v0.0.4"
 
 resources:
   requests:
@@ -79,6 +79,13 @@ auth:
     secretKey: AUTH_SECRET
     remoteRef:
       key: secret/authjs-secret
+    extraData:
+      - secretKey: AUTH_ZITADEL_ISSUER
+        remoteRef:
+          key: secret/auth-zitadel-issuer
+      - secretKey: AUTH_ZITADEL_ID
+        remoteRef:
+          key: secret/auth-zitadel-id
 
 migration:
   enabled: true

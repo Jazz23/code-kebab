@@ -119,3 +119,8 @@ secret:
 If you want the user-facing login page to live at a branded hostname such as
 `auth.hazyforge.io`, that hostname must be configured as a ZITADEL custom
 domain and used as `AUTH_ZITADEL_ISSUER`.
+
+When using the chart-managed auth `ExternalSecret`, keep `AUTH_SECRET` on
+`auth.externalSecret.secretKey`/`remoteRef` and add other Vault-backed env vars
+such as `AUTH_ZITADEL_ISSUER` and `AUTH_ZITADEL_ID` under
+`auth.externalSecret.extraData`.

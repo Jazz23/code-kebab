@@ -41,11 +41,13 @@ function getStringClaim(profile: unknown, claim: string) {
     return null;
   }
 
-  if (!(claim in profile) || typeof profile[claim] !== "string") {
+  const claims = profile as Record<string, unknown>;
+
+  if (!(claim in claims) || typeof claims[claim] !== "string") {
     return null;
   }
 
-  const value = profile[claim].trim();
+  const value = claims[claim].trim();
   return value || null;
 }
 
@@ -119,16 +121,13 @@ async function syncZitadelProfile(userId: string, profile: unknown) {
   await db.update(users).set(updateData).where(eq(users.id, userId));
 }
 
-if (process.env.NODE_ENV === "production" && !zitadelConfigured) {
-  throw new Error(
-    "Missing Zitadel auth configuration. Set AUTH_ZITADEL_ID and AUTH_ZITADEL_ISSUER. AUTH_ZITADEL_SECRET is optional for PKCE flows.",
-  );
-}
-
 const providers = [];
 
 if (zitadelConfigured && zitadelIssuer && zitadelClientId) {
-  const zitadelConfig: Parameters<typeof Zitadel>[0] = {
+  const zitadelConfig: Parameters<typeof Zitadel>[0] & {
+    clientSecret?: string;
+    idToken?: boolean;
+  } = {
     clientId: zitadelClientId,
     issuer: zitadelIssuer,
     idToken: false,
