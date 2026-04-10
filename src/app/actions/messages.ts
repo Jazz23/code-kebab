@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { directMessages, notifications, users } from "@/db/schema";
+import { sendEmail, APP_URL } from "@/lib/email";
 
 export async function sendDirectMessage(
   recipientUsername: string,
@@ -16,7 +17,7 @@ export async function sendDirectMessage(
   if (!session?.user?.id) throw new Error("Not authenticated");
 
   const [recipient] = await db
-    .select({ id: users.id })
+    .select({ id: users.id, email: users.email, name: users.name, emailNotifications: users.emailNotifications })
     .from(users)
     .where(eq(users.username, recipientUsername))
     .limit(1);
@@ -25,13 +26,34 @@ export async function sendDirectMessage(
   if (recipient.id === session.user.id)
     throw new Error("Cannot message yourself");
 
-  await db.insert(directMessages).values({
-    senderId: session.user.id,
-    recipientId: recipient.id,
-    subject: subject.trim() || "(no subject)",
-    content: content.trim(),
-    parentMessageId: parentMessageId ?? null,
-  });
+  const [sender] = await db
+    .select({ name: users.name, username: users.username })
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
+
+  const [inserted] = await db
+    .insert(directMessages)
+    .values({
+      senderId: session.user.id,
+      recipientId: recipient.id,
+      subject: subject.trim() || "(no subject)",
+      content: content.trim(),
+      parentMessageId: parentMessageId ?? null,
+    })
+    .returning({ id: directMessages.id });
+
+  if (recipient.emailNotifications && recipient.email && inserted) {
+    const senderDisplay = sender?.name ?? sender?.username ?? "Someone";
+    const trimmedSubject = subject.trim() || "(no subject)";
+    const url = `${APP_URL}/messages/${inserted.id}`;
+    await sendEmail({
+      to: { email: recipient.email, name: recipient.name ?? undefined },
+      subject: `New message from ${senderDisplay}: ${trimmedSubject}`,
+      htmlContent: `<p>Hi${recipient.name ? ` ${recipient.name}` : ""},</p><p>You have a new message from <strong>${senderDisplay}</strong>.</p><p><strong>Subject:</strong> ${trimmedSubject}</p><blockquote style="border-left:3px solid #ccc;margin:0;padding:0 1em;color:#555">${content.trim().replace(/\n/g, "<br>")}</blockquote><p><a href="${url}">View message</a></p>`,
+      textContent: `New message from ${senderDisplay}\nSubject: ${trimmedSubject}\n\n${content.trim()}\n\nView it here: ${url}`,
+    });
+  }
 
   revalidatePath("/messages");
 }

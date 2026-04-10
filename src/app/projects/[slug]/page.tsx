@@ -124,12 +124,18 @@ export default async function ProjectPage({
                       size="sm"
                     />
                     <div>
-                      <Link
-                        href={`/profile/${member.username ?? member.id}`}
-                        className="text-sm font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
-                      >
-                        {member.name}
-                      </Link>
+                      {member.username ? (
+                        <Link
+                          href={`/profile/${member.username}`}
+                          className="text-sm font-medium text-blue-600 underline-offset-2 hover:underline dark:text-blue-400"
+                        >
+                          {member.name}
+                        </Link>
+                      ) : (
+                        <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">
+                          {member.name}
+                        </span>
+                      )}
                       {member.userId === project.ownerId && (
                         <span className="ml-2 rounded-full bg-zinc-100 px-2 py-0.5 text-xs text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
                           Owner

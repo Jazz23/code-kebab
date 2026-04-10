@@ -22,6 +22,7 @@ export const users = pgTable("user", {
   skills: text("skills").array(),
   timezone: text("timezone"),
   socialLinks: text("socialLinks").array().notNull().default([]),
+  emailNotifications: boolean("emailNotifications").notNull().default(true),
   createdAt: timestamp("createdAt", { mode: "date" }).defaultNow(),
 });
 

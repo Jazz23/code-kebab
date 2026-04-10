@@ -11,6 +11,7 @@ type UpdateProfileInput = {
   skills?: string[];
   timezone?: string;
   socialLinks?: string[];
+  emailNotifications?: boolean;
 };
 
 export async function updateProfile(input: UpdateProfileInput) {
@@ -37,6 +38,10 @@ export async function updateProfile(input: UpdateProfileInput) {
 
   if (input.socialLinks !== undefined) {
     updateData.socialLinks = input.socialLinks;
+  }
+
+  if (input.emailNotifications !== undefined) {
+    updateData.emailNotifications = input.emailNotifications;
   }
 
   if (Object.keys(updateData).length === 0) return;

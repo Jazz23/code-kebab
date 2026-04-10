@@ -16,6 +16,7 @@ type UserData = {
   skills: string[] | null;
   timezone: string | null;
   socialLinks: string[] | null;
+  emailNotifications: boolean;
   createdAt: Date | null;
 };
 
@@ -28,14 +29,19 @@ export function ProfileEditForm({ user }: { user: UserData }) {
   const [bio, setBio] = useState(user.bio ?? "");
   const [skills, setSkills] = useState<string[]>(user.skills ?? []);
   const [timezone, setTimezone] = useState(user.timezone ?? "");
+  const [timezoneSearch, setTimezoneSearch] = useState(user.timezone ?? "");
+  const [showTzSuggestions, setShowTzSuggestions] = useState(false);
   const [socialLinks, setSocialLinks] = useState<string[]>(
     user.socialLinks?.length ? user.socialLinks : [""],
+  );
+  const [emailNotifications, setEmailNotifications] = useState(
+    user.emailNotifications,
   );
 
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(
     undefined,
   );
-  const stateRef = useRef({ name, bio, skills, timezone, socialLinks });
+  const stateRef = useRef({ name, bio, skills, timezone, socialLinks, emailNotifications });
 
   const initials = (name || "?")
     .split(" ")
@@ -58,6 +64,7 @@ export function ProfileEditForm({ user }: { user: UserData }) {
           skills: latest.skills,
           timezone: latest.timezone,
           socialLinks: latest.socialLinks.filter((l) => l.trim()),
+          emailNotifications: latest.emailNotifications,
         });
         setSaveStatus("saved");
         setTimeout(() => setSaveStatus("idle"), 2000);
@@ -85,6 +92,7 @@ export function ProfileEditForm({ user }: { user: UserData }) {
   }
   function handleTimezoneChange(v: string) {
     setTimezone(v);
+    setTimezoneSearch(v);
     stateRef.current.timezone = v;
     scheduleSave({ timezone: v });
   }
@@ -106,6 +114,12 @@ export function ProfileEditForm({ user }: { user: UserData }) {
     setSocialLinks(next);
     stateRef.current.socialLinks = next;
     scheduleSave({ socialLinks: next });
+  }
+
+  function handleEmailNotificationsChange(v: boolean) {
+    setEmailNotifications(v);
+    stateRef.current.emailNotifications = v;
+    scheduleSave({ emailNotifications: v });
   }
 
   const inputClass =
@@ -261,22 +275,48 @@ export function ProfileEditForm({ user }: { user: UserData }) {
             />
           </div>
 
-          <div>
+          <div className="relative">
             <label className="mb-1.5 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Timezone
             </label>
-            <select
-              value={timezone}
-              onChange={(e) => handleTimezoneChange(e.target.value)}
+            <input
+              type="text"
+              value={timezoneSearch}
+              onChange={(e) => {
+                const v = e.target.value;
+                setTimezoneSearch(v);
+                setShowTzSuggestions(true);
+                if (v === "") handleTimezoneChange("");
+              }}
+              onFocus={() => setShowTzSuggestions(true)}
+              onBlur={() => setTimeout(() => setShowTzSuggestions(false), 150)}
+              placeholder="Search or enter a timezone…"
               className={inputClass}
-            >
-              <option value="">None</option>
-              {TIMEZONES.map((tz) => (
-                <option key={tz} value={tz}>
-                  {tz}
-                </option>
-              ))}
-            </select>
+            />
+            {showTzSuggestions && (
+              <ul className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-zinc-200 bg-white py-1 shadow-lg dark:border-zinc-700 dark:bg-zinc-900">
+                {(timezoneSearch.length > 0
+                  ? TIMEZONES.filter((tz) =>
+                      tz.toLowerCase().includes(timezoneSearch.toLowerCase()),
+                    )
+                  : TIMEZONES
+                ).slice(0, 10)
+                  .map((tz) => (
+                    <li key={tz}>
+                      <button
+                        type="button"
+                        onMouseDown={() => {
+                          handleTimezoneChange(tz);
+                          setShowTzSuggestions(false);
+                        }}
+                        className="w-full px-3 py-2 text-left text-sm text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      >
+                        {tz}
+                      </button>
+                    </li>
+                  ))}
+              </ul>
+            )}
           </div>
 
           <div>
@@ -331,6 +371,34 @@ export function ProfileEditForm({ user }: { user: UserData }) {
                 </svg>
               </button>
             </div>
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-zinc-200 px-4 py-3 dark:border-zinc-700">
+            <div>
+              <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                Email notifications
+              </p>
+              <p className="text-xs text-zinc-400">
+                Receive emails for join requests and other activity
+              </p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={emailNotifications}
+              onClick={() => handleEmailNotificationsChange(!emailNotifications)}
+              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${
+                emailNotifications
+                  ? "bg-zinc-900 dark:bg-zinc-100"
+                  : "bg-zinc-200 dark:bg-zinc-700"
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform dark:bg-zinc-900 ${
+                  emailNotifications ? "translate-x-5" : "translate-x-0"
+                }`}
+              />
+            </button>
           </div>
         </div>
 

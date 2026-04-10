@@ -13,6 +13,8 @@ const SEED_PASSWORD = "password";
 async function main() {
   const hashedPassword = await hash(SEED_PASSWORD);
 
+  const testEmail = process.env.PRIVATE_EMAIL_TEST;
+
   // --- Users ---
   const seedUsers = [
     {
@@ -76,6 +78,23 @@ async function main() {
       password: hashedPassword,
       emailVerified: null,
     },
+    ...(testEmail
+      ? [
+          {
+            id: "seed-user-test",
+            name: "Test User",
+            email: testEmail,
+            username: "testuser",
+            bio: "Test account.",
+            skills: [],
+            socialLinks: [] as string[],
+            createdAt: new Date("2026-01-01"),
+            image: null,
+            password: hashedPassword,
+            emailVerified: null,
+          },
+        ]
+      : []),
   ];
 
   // --- Projects ---
