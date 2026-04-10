@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "biome check",
     "format": "biome format --write",
+    "release:tag": "node scripts/release-tag.mjs",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit generate && drizzle-kit migrate",
     "db:push": "drizzle-kit push",
