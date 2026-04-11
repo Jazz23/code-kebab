@@ -34,6 +34,7 @@ export default function RootLayout({
         <SessionProvider>
           <Nav />
           {children}
+
         </SessionProvider>
       </body>
     </html>
