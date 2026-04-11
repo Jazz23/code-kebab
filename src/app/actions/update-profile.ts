@@ -1,6 +1,6 @@
 "use server";
 
-import { eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
@@ -12,9 +12,10 @@ type UpdateProfileInput = {
   timezone?: string;
   socialLinks?: string[];
   emailNotifications?: boolean;
+  username?: string;
 };
 
-export async function updateProfile(input: UpdateProfileInput) {
+export async function updateProfile(input: UpdateProfileInput): Promise<{ newUsername?: string }> {
   const session = await auth();
   if (!session?.user?.id) throw new Error("Not authenticated");
 
@@ -44,7 +45,28 @@ export async function updateProfile(input: UpdateProfileInput) {
     updateData.emailNotifications = input.emailNotifications;
   }
 
-  if (Object.keys(updateData).length === 0) return;
+  if (input.username !== undefined) {
+    const u = input.username.trim();
+    if (!/^[a-zA-Z0-9_-]{3,20}$/.test(u)) {
+      throw new Error(
+        "Username must be 3–20 characters and contain only letters, numbers, underscores, or hyphens",
+      );
+    }
+    const [existing] = await db
+      .select({ id: users.id })
+      .from(users)
+      .where(and(eq(users.username, u), ne(users.id, session.user.id)))
+      .limit(1);
+    if (existing) throw new Error("Username is already taken");
+    updateData.username = u;
+  }
+
+  if (Object.keys(updateData).length === 0) return {};
 
   await db.update(users).set(updateData).where(eq(users.id, session.user.id));
+
+  if (input.username !== undefined) {
+    return { newUsername: input.username.trim() };
+  }
+  return {};
 }
