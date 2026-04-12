@@ -16,6 +16,10 @@ export async function sendEmail(opts: {
     return;
   }
 
+  if (opts.to.email.endsWith("@example.com")) {
+    return;
+  }
+
   const brevo = new BrevoClient({ apiKey: process.env.BREVO_API_KEY });
 
   try {

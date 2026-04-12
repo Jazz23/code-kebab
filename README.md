@@ -29,7 +29,7 @@ docker compose up -d
 2. Copy and fill in environment variables (all unfilled env vars are optional):
 
 ```bash
-cp .env.example .env
+cp .env.example .env.local
 ```
 
 3. Run migrations and seed the database:
@@ -54,6 +54,8 @@ All test users use the password `password`. Example user:
 email=alex@example.com
 password=password
 ```
+
+If you want to test the email service, you can set the `PRIVATE_EMAIL_TEST` environment variable to an email address you have access to. This will auto create an account (password: `password`) that you can login to.
 
 ### Database
 
