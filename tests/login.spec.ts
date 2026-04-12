@@ -13,7 +13,7 @@ test.describe("Login", () => {
 
     await page.getByLabel("Email").fill("wrong@example.com");
     await page.getByLabel("Password").fill("wrongpassword");
-    await page.getByRole("button", { name: "Sign in" }).click();
+    await page.getByRole("button", { name: "Use local seed account" }).click();
 
     await expect(page.getByText("Invalid email or password.")).toBeVisible({ timeout: 10000 });
   });

@@ -18,6 +18,10 @@ function getErrorMessage(error: string | null) {
     return null;
   }
 
+  if (error === "CredentialsSignin" || error === "invalid_credentials") {
+    return "Invalid email or password.";
+  }
+
   if (error === "AccessDenied") {
     return "Sign-in was denied after the Zitadel login completed. If this keeps happening, check whether Zitadel is reporting the email as unverified.";
   }
@@ -62,7 +66,11 @@ export function LoginScreen({
     });
 
     if (result?.error) {
-      setError("Invalid email or password.");
+      setError(
+        result.code === "invalid_credentials"
+          ? "Invalid email or password."
+          : "Sign-in failed. Please try again.",
+      );
       setPendingProvider(null);
       return;
     }

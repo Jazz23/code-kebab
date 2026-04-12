@@ -1,9 +1,13 @@
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { verify } from "@node-rs/argon2";
 import { eq } from "drizzle-orm";
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Zitadel from "next-auth/providers/zitadel";
+
+class InvalidCredentialsError extends CredentialsSignin {
+  code = "invalid_credentials";
+}
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import {
@@ -157,7 +161,7 @@ if (credentialsFallbackEnabled) {
         const password = credentials.password as string;
 
         if (!email || !password) {
-          return null;
+          throw new InvalidCredentialsError();
         }
 
         const [user] = await db
@@ -167,12 +171,12 @@ if (credentialsFallbackEnabled) {
           .limit(1);
 
         if (!user?.password) {
-          return null;
+          throw new InvalidCredentialsError();
         }
 
         const valid = await verify(user.password, password);
         if (!valid) {
-          return null;
+          throw new InvalidCredentialsError();
         }
 
         return {
@@ -190,6 +194,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: DrizzleAdapter(db),
   session: { strategy: "jwt" },
   providers,
+  logger: {
+    error(error) {
+      if (error instanceof CredentialsSignin) return;
+      console.error(error);
+    },
+  },
   pages: {
     signIn: "/login",
     error: "/login",
