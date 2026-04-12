@@ -30,7 +30,9 @@ export const zitadelConfigured = Boolean(
 );
 
 export const credentialsFallbackEnabled =
-  process.env.NODE_ENV !== "production" && !zitadelConfigured;
+  (process.env.NODE_ENV !== "production" ||
+    process.env.AUTH_CREDENTIALS_FALLBACK === "true") &&
+  !zitadelConfigured;
 
 export const zitadelClientId = normalizedZitadelClientId;
 export const zitadelClientSecret = normalizedZitadelClientSecret;

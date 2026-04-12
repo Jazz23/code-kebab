@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "bun --bun next dev",
     "build": "bun --bun next build",
-    "start": "bun --bun next start",
+    "start": "cp -r public .next/standalone/ && cp -r .next/static .next/standalone/.next/ && bun run .next/standalone/server.js",
     "lint": "biome check",
     "format": "biome format --write",
     "release:tag": "node scripts/release-tag.mjs",
