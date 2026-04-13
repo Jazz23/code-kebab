@@ -62,6 +62,9 @@ gateway:
       kind: ClusterIssuer
       group: cert-manager.io
 
+env:
+  AUTH_URL: https://code-kebab.dev
+
 envFromSecrets:
   - code-kebab-authjs
 

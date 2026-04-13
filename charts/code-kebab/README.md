@@ -116,9 +116,16 @@ secret:
 - `AUTH_ZITADEL_ID`
 - `AUTH_ZITADEL_SECRET`
 
+Also set the public app origin as a normal env var:
+
+- `AUTH_URL`
+
 If you want the user-facing login page to live at a branded hostname such as
 `auth.hazyforge.io`, that hostname must be configured as a ZITADEL custom
 domain and used as `AUTH_ZITADEL_ISSUER`.
+
+`AUTH_URL` should be the browser-facing base URL of this app, for example
+`https://code-kebab.dev`.
 
 When using the chart-managed auth `ExternalSecret`, keep `AUTH_SECRET` on
 `auth.externalSecret.secretKey`/`remoteRef` and add other Vault-backed env vars
