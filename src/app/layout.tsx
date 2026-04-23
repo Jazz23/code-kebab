@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Nav } from "@/components/nav";
 import SessionProvider from "@/components/SessionProvider";
+import { WebGLBackground } from "@/components/webgl-background";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,10 +38,13 @@ export default function RootLayout({
           defer
         />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full">
+        <WebGLBackground />
         <SessionProvider>
-          <Nav />
-          {children}
+          <div className="relative z-10 flex min-h-screen flex-col">
+            <Nav />
+            {children}
+          </div>
         </SessionProvider>
       </body>
     </html>

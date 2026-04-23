@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { getNotifications, getUnreadCount } from "@/app/actions/notifications";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   getInboxMessages,
   getUnreadDirectMessageCount,
 } from "@/app/actions/messages";
+import { getNotifications, getUnreadCount } from "@/app/actions/notifications";
 
 type Notification = Awaited<ReturnType<typeof getNotifications>>[number];
 type InboxMessage = Awaited<ReturnType<typeof getInboxMessages>>[number];
@@ -57,6 +57,27 @@ export function NotificationBell({
   const isOpenRef = useRef(isOpen);
   isOpenRef.current = isOpen;
 
+  const refreshItems = useCallback(async () => {
+    const [notifs, msgs] = await Promise.all([
+      getNotifications(5),
+      getInboxMessages(),
+    ]);
+    const combined: DropdownItem[] = [
+      ...notifs.map((n) => ({
+        kind: "notification" as const,
+        notif: n,
+        date: new Date(n.createdAt),
+      })),
+      ...msgs.slice(0, 5).map((m) => ({
+        kind: "dm" as const,
+        msg: m,
+        date: new Date(m.createdAt),
+      })),
+    ];
+    combined.sort((a, b) => b.date.getTime() - a.date.getTime());
+    setItems(combined.slice(0, 7));
+  }, []);
+
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (
@@ -82,30 +103,7 @@ export function NotificationBell({
       }
     }, 10_000);
     return () => clearInterval(interval);
-  }, []);
-
-  async function refreshItems() {
-    const [notifs, msgs] = await Promise.all([
-      getNotifications(5),
-      getInboxMessages(),
-    ]);
-    const combined: DropdownItem[] = [
-      ...notifs.map((n) => ({
-        kind: "notification" as const,
-        notif: n,
-        date: new Date(n.createdAt),
-      })),
-      ...msgs
-        .slice(0, 5)
-        .map((m) => ({
-          kind: "dm" as const,
-          msg: m,
-          date: new Date(m.createdAt),
-        })),
-    ];
-    combined.sort((a, b) => b.date.getTime() - a.date.getTime());
-    setItems(combined.slice(0, 7));
-  }
+  }, [refreshItems]);
 
   async function handleOpen() {
     const next = !isOpen;
@@ -120,11 +118,13 @@ export function NotificationBell({
   return (
     <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={handleOpen}
-        className="relative flex h-8 w-8 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-zinc-50"
+        className="relative flex h-8 w-8 items-center justify-center rounded-lg text-[#7a7490] transition-colors hover:bg-[#00f0ff]/10 hover:text-[#00f0ff]"
         aria-label="Messages"
       >
         <svg
+          aria-hidden="true"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           fill="none"
@@ -139,20 +139,18 @@ export function NotificationBell({
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold leading-none text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff2d8f] px-1 text-[10px] font-bold leading-none text-white">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-10 z-50 w-80 rounded-xl border border-zinc-200 bg-white shadow-lg dark:border-zinc-800 dark:bg-zinc-950">
-          <div className="flex items-center justify-between border-b border-zinc-100 px-4 py-3 dark:border-zinc-800">
-            <span className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-              Messages
-            </span>
+        <div className="ck-panel absolute right-0 top-10 z-50 w-80 rounded-xl">
+          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+            <span className="text-sm font-semibold text-white">Messages</span>
             {unreadCount > 0 && (
-              <span className="rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600 dark:bg-red-950 dark:text-red-400">
+              <span className="rounded-full border border-[#ff2d8f]/25 bg-[#ff2d8f]/10 px-2 py-0.5 text-xs font-medium text-[#ff2d8f]">
                 {unreadCount} unread
               </span>
             )}
@@ -161,14 +159,14 @@ export function NotificationBell({
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <span className="text-sm text-zinc-400">Loading…</span>
+                <span className="text-sm text-[#7a7490]">Loading…</span>
               </div>
             ) : !items || items.length === 0 ? (
               <div className="flex items-center justify-center py-8">
-                <span className="text-sm text-zinc-400">No messages yet</span>
+                <span className="text-sm text-[#7a7490]">No messages yet</span>
               </div>
             ) : (
-              items.map((item, i) => {
+              items.map((item) => {
                 if (item.kind === "notification") {
                   const { notif } = item;
                   const isUnread = !notif.read;
@@ -177,22 +175,22 @@ export function NotificationBell({
                       key={notif.id}
                       className={`group flex items-start gap-3 border-b px-4 py-3 last:border-0 ${
                         isUnread
-                          ? "border-zinc-100 bg-blue-50/40 dark:border-zinc-800 dark:bg-blue-950/20"
-                          : "border-zinc-100 dark:border-zinc-800"
+                          ? "border-white/10 bg-[#00f0ff]/10"
+                          : "border-white/10"
                       }`}
                     >
                       {isUnread && (
-                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00f0ff]" />
                       )}
                       <Link
                         href={`/messages/system/${notif.id}`}
                         onClick={() => setIsOpen(false)}
                         className={`min-w-0 flex-1 hover:opacity-80 ${!isUnread ? "pl-5" : ""}`}
                       >
-                        <p className="text-sm leading-snug text-zinc-700 dark:text-zinc-300">
+                        <p className="text-sm leading-snug text-[#c6c0da]">
                           {notificationLabel(notif)}
                         </p>
-                        <p className="mt-0.5 text-xs text-zinc-400">
+                        <p className="mt-0.5 text-xs text-[#7a7490]">
                           {timeAgo(item.date)}
                         </p>
                       </Link>
@@ -214,12 +212,12 @@ export function NotificationBell({
                     key={msg.id}
                     className={`group flex items-start gap-3 border-b px-4 py-3 last:border-0 ${
                       isUnread
-                        ? "border-zinc-100 bg-blue-50/40 dark:border-zinc-800 dark:bg-blue-950/20"
-                        : "border-zinc-100 dark:border-zinc-800"
+                        ? "border-white/10 bg-[#00f0ff]/10"
+                        : "border-white/10"
                     }`}
                   >
                     {isUnread && (
-                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00f0ff]" />
                     )}
                     <Link
                       href={`/messages/${msg.id}`}
@@ -227,17 +225,17 @@ export function NotificationBell({
                       className={`min-w-0 flex-1 hover:opacity-80 ${!isUnread ? "pl-5" : ""}`}
                     >
                       <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-zinc-800 text-[9px] font-bold text-white dark:bg-zinc-200 dark:text-zinc-900">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#00f0ff] text-[9px] font-bold text-[#050408]">
                           {initials}
                         </div>
-                        <p className="truncate text-sm font-medium leading-snug text-zinc-700 dark:text-zinc-300">
+                        <p className="truncate text-sm font-medium leading-snug text-[#c6c0da]">
                           {msg.senderName}
                         </p>
                       </div>
-                      <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+                      <p className="mt-0.5 truncate text-xs text-[#7a7490]">
                         {msg.subject}
                       </p>
-                      <p className="mt-0.5 text-xs text-zinc-400">
+                      <p className="mt-0.5 text-xs text-[#7a7490]">
                         {timeAgo(item.date)}
                       </p>
                     </Link>
@@ -247,11 +245,11 @@ export function NotificationBell({
             )}
           </div>
 
-          <div className="border-t border-zinc-100 px-4 py-3 dark:border-zinc-800">
+          <div className="border-t border-white/10 px-4 py-3">
             <Link
               href="/messages"
               onClick={() => setIsOpen(false)}
-              className="block text-center text-xs font-medium text-zinc-500 transition-colors hover:text-zinc-900 dark:hover:text-zinc-50"
+              className="block text-center text-xs font-medium text-[#00f0ff] transition-colors hover:text-[#8fffff]"
             >
               View all messages →
             </Link>

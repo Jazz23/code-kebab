@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 import { ProjectCard } from "@/components/project-card";
 import { TagInput } from "@/components/tag-input";
 
@@ -43,21 +43,15 @@ const DIFFICULTY_LABELS: Record<Difficulty, string> = {
 };
 
 const DIFFICULTY_COLORS: Record<Difficulty, string> = {
-  beginner:
-    "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-800",
-  intermediate:
-    "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",
-  advanced:
-    "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+  beginner: "border-[#00ff94]/25 bg-[#00ff94]/10 text-[#00ff94]",
+  intermediate: "border-[#ff9e2c]/25 bg-[#ff9e2c]/10 text-[#ff9e2c]",
+  advanced: "border-[#ff2d8f]/25 bg-[#ff2d8f]/10 text-[#ff2d8f]",
 };
 
 const DIFFICULTY_ACTIVE: Record<Difficulty, string> = {
-  beginner:
-    "bg-emerald-100 text-emerald-800 border-emerald-400 dark:bg-emerald-900 dark:text-emerald-200 dark:border-emerald-600",
-  intermediate:
-    "bg-amber-100 text-amber-800 border-amber-400 dark:bg-amber-900 dark:text-amber-200 dark:border-amber-600",
-  advanced:
-    "bg-red-100 text-red-800 border-red-400 dark:bg-red-900 dark:text-red-200 dark:border-red-600",
+  beginner: "border-[#00ff94]/80 bg-[#00ff94] text-[#050408]",
+  intermediate: "border-[#ff9e2c]/80 bg-[#ff9e2c] text-[#050408]",
+  advanced: "border-[#ff2d8f]/80 bg-[#ff2d8f] text-white",
 };
 
 function applySortAndFilter(
@@ -102,7 +96,7 @@ function applySortAndFilter(
 
   // Min open roles
   const minRolesNum = parseInt(opts.minRoles, 10);
-  if (!isNaN(minRolesNum) && minRolesNum > 0) {
+  if (!Number.isNaN(minRolesNum) && minRolesNum > 0) {
     filtered = filtered.filter((p) => {
       const count =
         p.openRoles.length > 0 ? p.openRoles.length : (p.openSlots ?? 0);
@@ -114,7 +108,7 @@ function applySortAndFilter(
   // Salary values in the db are raw dollars; filter inputs are in thousands for salary mode
   const payMinNum = parseFloat(opts.payMin);
   const payMaxNum = parseFloat(opts.payMax);
-  const hasPayFilter = !isNaN(payMinNum) || !isNaN(payMaxNum);
+  const hasPayFilter = !Number.isNaN(payMinNum) || !Number.isNaN(payMaxNum);
   if (hasPayFilter) {
     filtered = filtered.filter((p) => {
       let lo: number | null;
@@ -127,10 +121,10 @@ function applySortAndFilter(
         hi = p.maxSalary !== null ? p.maxSalary / 1000 : null;
       }
       if (lo === null && hi === null) return false;
-      const effectiveLo = lo ?? hi!;
-      const effectiveHi = hi ?? lo!;
-      if (!isNaN(payMinNum) && effectiveHi < payMinNum) return false;
-      if (!isNaN(payMaxNum) && effectiveLo > payMaxNum) return false;
+      const effectiveLo = lo ?? hi ?? 0;
+      const effectiveHi = hi ?? lo ?? 0;
+      if (!Number.isNaN(payMinNum) && effectiveHi < payMinNum) return false;
+      if (!Number.isNaN(payMaxNum) && effectiveLo > payMaxNum) return false;
       return true;
     });
   }
@@ -188,6 +182,8 @@ function applySortAndFilter(
             : (b.minSalary ?? Infinity);
         return aV - bV;
       }
+      default:
+        return 0;
     }
   });
 
@@ -201,7 +197,6 @@ function SearchInput({
   onClear,
   onKeyDown,
   suggestions,
-  onSuggestionClick,
   placeholder = "Search projects by name…",
   inputClassName,
 }: {
@@ -210,7 +205,6 @@ function SearchInput({
   onClear: () => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   suggestions: ProjectSearchData[];
-  onSuggestionClick: (slug: string) => void;
   placeholder?: string;
   inputClassName?: string;
 }) {
@@ -220,7 +214,8 @@ function SearchInput({
     <div className="relative">
       <div className="relative flex items-center">
         <svg
-          className="pointer-events-none absolute left-3.5 h-4 w-4 text-zinc-400"
+          aria-hidden="true"
+          className="pointer-events-none absolute left-3.5 h-4 w-4 text-[#00f0ff]"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -246,17 +241,18 @@ function SearchInput({
           placeholder={placeholder}
           className={
             inputClassName ??
-            "w-full rounded-xl border border-zinc-300 bg-white py-3 pl-10 pr-10 text-sm text-zinc-900 shadow-sm outline-none placeholder:text-zinc-400 focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-zinc-400"
+            "ck-input w-full rounded-xl py-3 pl-10 pr-10 text-sm"
           }
         />
         {value && (
           <button
             type="button"
             onClick={onClear}
-            className="absolute right-3 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300"
+            className="absolute right-3 text-[#7a7490] hover:text-[#00f0ff]"
             aria-label="Clear search"
           >
             <svg
+              aria-hidden="true"
               className="h-4 w-4"
               fill="none"
               viewBox="0 0 24 24"
@@ -274,8 +270,8 @@ function SearchInput({
       </div>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-xl border border-zinc-200 bg-white p-4 shadow-2xl dark:border-zinc-700 dark:bg-zinc-950">
-          <p className="mb-3 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+        <div className="ck-panel absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-2xl p-4">
+          <p className="mb-3 font-mono text-xs font-medium uppercase tracking-[0.08em] text-[#7a7490]">
             {suggestions.length}{" "}
             {suggestions.length === 1
               ? "matching project"
@@ -283,11 +279,7 @@ function SearchInput({
           </p>
           <div className="grid gap-4 sm:grid-cols-2">
             {suggestions.map((p) => (
-              <div
-                key={p.slug}
-                className="cursor-pointer"
-                onMouseDown={() => onSuggestionClick(p.slug)}
-              >
+              <div key={p.slug}>
                 <ProjectCard project={p} />
               </div>
             ))}
@@ -306,7 +298,6 @@ export function ProjectSearch({
   projects: ProjectSearchData[];
   initialQuery?: string;
 }) {
-  const router = useRouter();
   const [query, setQuery] = useState(initialQuery);
   const [filterTags, setFilterTags] = useState<string[]>([]);
   const [difficulties, setDifficulties] = useState<Set<Difficulty>>(new Set());
@@ -363,13 +354,6 @@ export function ProjectSearch({
     });
   }
 
-  // Auto-suggest by title
-  const suggestions = useMemo(() => {
-    if (!query.trim()) return [];
-    const q = query.toLowerCase();
-    return projects.filter((p) => p.title.toLowerCase().includes(q));
-  }, [projects, query]);
-
   // Full filtered + sorted results (separate from suggestions — suggestions are for the dropdown, results for the grid)
   const results = useMemo(
     () =>
@@ -400,8 +384,7 @@ export function ProjectSearch({
     ],
   );
 
-  const inputClass =
-    "rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none placeholder:text-zinc-400 focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-50 dark:placeholder:text-zinc-500 dark:focus:border-zinc-400";
+  const inputClass = "ck-input rounded-lg px-3 py-2 text-sm";
 
   return (
     <div>
@@ -411,16 +394,19 @@ export function ProjectSearch({
         onChange={setQuery}
         onClear={() => setQuery("")}
         suggestions={[]}
-        onSuggestionClick={(slug) => router.push(`/projects/${slug}`)}
       />
 
       {/* Sort + filter toggle row */}
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">
-          <label className="text-sm text-zinc-600 dark:text-zinc-400">
+          <label
+            htmlFor="project-sort"
+            className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]"
+          >
             Sort:
           </label>
           <select
+            id="project-sort"
             value={sortKey}
             onChange={(e) => setSortKey(e.target.value as SortKey)}
             className={inputClass}
@@ -441,13 +427,14 @@ export function ProjectSearch({
         <button
           type="button"
           onClick={() => setShowFilters((v) => !v)}
-          className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+          className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.08em] transition-colors ${
             showFilters || hasActiveFilters
-              ? "border-zinc-900 bg-zinc-900 text-white dark:border-zinc-100 dark:bg-zinc-100 dark:text-zinc-900"
-              : "border-zinc-300 text-zinc-700 hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-400 dark:hover:text-zinc-100"
+              ? "border-[#00f0ff]/80 bg-[#00f0ff] text-[#050408]"
+              : "border-[#00f0ff]/35 bg-[#00f0ff]/10 text-[#00f0ff] hover:border-[#00f0ff]/70"
           }`}
         >
           <svg
+            aria-hidden="true"
             className="h-4 w-4"
             fill="none"
             viewBox="0 0 24 24"
@@ -462,7 +449,7 @@ export function ProjectSearch({
           </svg>
           Filters
           {activeFilterCount > 0 && (
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-xs font-bold text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#050408] text-xs font-bold text-[#00f0ff]">
               {activeFilterCount}
             </span>
           )}
@@ -472,7 +459,7 @@ export function ProjectSearch({
           <button
             type="button"
             onClick={clearFilters}
-            className="text-sm text-zinc-500 underline-offset-2 hover:text-zinc-700 hover:underline dark:text-zinc-400 dark:hover:text-zinc-200"
+            className="text-sm text-[#7a7490] underline-offset-2 hover:text-[#ff9e2c] hover:underline"
           >
             Clear filters
           </button>
@@ -481,13 +468,13 @@ export function ProjectSearch({
 
       {/* Filters panel */}
       {showFilters && (
-        <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-800 dark:bg-zinc-900/60">
+        <div className="ck-panel mt-4 rounded-2xl p-5">
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Tags */}
             <div className="lg:col-span-2">
-              <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
                 Tags
-              </label>
+              </div>
               <TagInput
                 tags={filterTags}
                 onChange={setFilterTags}
@@ -498,9 +485,9 @@ export function ProjectSearch({
 
             {/* Difficulty */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
                 Role difficulty
-              </label>
+              </div>
               <div className="flex flex-wrap gap-2">
                 {(["beginner", "intermediate", "advanced"] as Difficulty[]).map(
                   (d) => (
@@ -508,7 +495,7 @@ export function ProjectSearch({
                       key={d}
                       type="button"
                       onClick={() => toggleDifficulty(d)}
-                      className={`rounded-full border px-3 py-1 text-xs font-medium transition-colors ${
+                      className={`rounded-full border px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.08em] transition-colors ${
                         difficulties.has(d)
                           ? DIFFICULTY_ACTIVE[d]
                           : DIFFICULTY_COLORS[d]
@@ -523,10 +510,14 @@ export function ProjectSearch({
 
             {/* Min open roles */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <label
+                htmlFor="min-open-roles"
+                className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]"
+              >
                 Min open roles
               </label>
               <input
+                id="min-open-roles"
                 type="number"
                 min="1"
                 value={minRoles}
@@ -539,17 +530,17 @@ export function ProjectSearch({
             {/* Pay range */}
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                <div className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
                   Pay range
-                </label>
-                <div className="flex rounded-lg border border-zinc-300 text-xs dark:border-zinc-700">
+                </div>
+                <div className="flex rounded-lg border border-[#00f0ff]/25 text-xs">
                   <button
                     type="button"
                     onClick={() => setPayMode("hourly")}
                     className={`rounded-l-lg px-2.5 py-1 font-medium transition-colors ${
                       payMode === "hourly"
-                        ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                        : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                        ? "bg-[#00f0ff] text-[#050408]"
+                        : "text-[#7a7490] hover:text-[#00f0ff]"
                     }`}
                   >
                     $/hr
@@ -559,8 +550,8 @@ export function ProjectSearch({
                     onClick={() => setPayMode("salary")}
                     className={`rounded-r-lg px-2.5 py-1 font-medium transition-colors ${
                       payMode === "salary"
-                        ? "bg-zinc-900 text-white dark:bg-zinc-100 dark:text-zinc-900"
-                        : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+                        ? "bg-[#00f0ff] text-[#050408]"
+                        : "text-[#7a7490] hover:text-[#00f0ff]"
                     }`}
                   >
                     $/yr
@@ -576,7 +567,7 @@ export function ProjectSearch({
                   placeholder={payMode === "salary" ? "Min (k)" : "Min"}
                   className={`w-full ${inputClass}`}
                 />
-                <span className="text-zinc-400">–</span>
+                <span className="text-[#7a7490]">-</span>
                 <input
                   type="number"
                   min="0"
@@ -587,7 +578,7 @@ export function ProjectSearch({
                 />
               </div>
               {payMode === "salary" && (
-                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                <p className="mt-1 text-xs text-[#7a7490]">
                   Values in thousands (e.g. 90 = $90k/yr)
                 </p>
               )}
@@ -595,9 +586,9 @@ export function ProjectSearch({
 
             {/* Timeline */}
             <div>
-              <label className="mb-2 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
                 Timeline
-              </label>
+              </div>
               <div className="flex items-center gap-2">
                 <input
                   type="date"
@@ -606,7 +597,7 @@ export function ProjectSearch({
                   className={`w-full ${inputClass}`}
                   title="From"
                 />
-                <span className="text-zinc-400">–</span>
+                <span className="text-[#7a7490]">-</span>
                 <input
                   type="date"
                   value={timelineTo}
@@ -615,7 +606,7 @@ export function ProjectSearch({
                   title="To"
                 />
               </div>
-              <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+              <p className="mt-1 text-xs text-[#7a7490]">
                 Only shows projects with a set deadline
               </p>
             </div>
@@ -624,7 +615,7 @@ export function ProjectSearch({
       )}
 
       {/* Results count */}
-      <p className="mt-6 text-sm text-zinc-500 dark:text-zinc-400">
+      <p className="mt-6 font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
         {results.length === projects.length
           ? `${results.length} ${results.length === 1 ? "project" : "projects"}`
           : `${results.length} of ${projects.length} ${projects.length === 1 ? "project" : "projects"}`}
@@ -639,14 +630,12 @@ export function ProjectSearch({
         </div>
       ) : (
         <div className="mt-12 text-center">
-          <p className="text-zinc-500 dark:text-zinc-400">
-            No projects match your filters.
-          </p>
+          <p className="text-[#7a7490]">No projects match your filters.</p>
           {hasActiveFilters && (
             <button
               type="button"
               onClick={clearFilters}
-              className="mt-3 text-sm font-medium text-zinc-700 underline underline-offset-2 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-zinc-100"
+              className="mt-3 text-sm font-medium text-[#00f0ff] underline underline-offset-2 hover:text-[#8fffff]"
             >
               Clear all filters
             </button>
@@ -681,9 +670,8 @@ export function HeroSearch({ projects }: { projects: ProjectSearchData[] }) {
       onClear={() => setQuery("")}
       onKeyDown={handleKeyDown}
       suggestions={suggestions}
-      onSuggestionClick={(slug) => router.push(`/projects/${slug}`)}
       placeholder="Search projects…"
-      inputClassName="w-full rounded-xl border border-zinc-300 bg-white py-3 pl-10 pr-10 text-sm text-zinc-900 shadow-sm outline-none placeholder:text-zinc-400 focus:border-zinc-500"
+      inputClassName="ck-input w-full rounded-xl py-3 pl-10 pr-10 text-sm"
     />
   );
 }

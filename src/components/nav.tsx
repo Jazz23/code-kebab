@@ -40,22 +40,23 @@ export async function Nav() {
   }
 
   return (
-    <header className="border-b border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#050408]/72 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link
             href="/"
-            className="text-xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50"
+            className="whitespace-nowrap text-lg font-black tracking-tight text-white sm:text-xl"
           >
-            code-kebab
+            code<span className="text-[#ff9e2c]">-</span>kebab
           </Link>
           <a
             href="https://github.com/Jazz23/code-kebab"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Source on GitHub"
-            className="text-zinc-400 transition-colors hover:text-zinc-900 dark:text-zinc-500 dark:hover:text-zinc-50"
+            className="hidden text-[#7a7490] transition-colors hover:text-[#00f0ff] sm:block"
           >
+            <span className="sr-only">Source on GitHub</span>
             <svg
               viewBox="0 0 24 24"
               fill="currentColor"
@@ -66,16 +67,16 @@ export async function Nav() {
             </svg>
           </a>
         </div>
-        <nav className="flex items-center gap-6 text-sm font-medium">
+        <nav className="flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-[0.08em] sm:gap-6 sm:text-xs">
           <Link
             href="/projects"
-            className="text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="text-[#7a7490] transition-colors hover:text-[#00f0ff]"
           >
             Projects
           </Link>
           <Link
             href="/posts"
-            className="text-zinc-600 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+            className="text-[#7a7490] transition-colors hover:text-[#00f0ff]"
           >
             Posts
           </Link>
@@ -91,7 +92,7 @@ export async function Nav() {
           ) : (
             <Link
               href="/login"
-              className="rounded-lg border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-700 transition-colors hover:border-zinc-900 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-zinc-100 dark:hover:text-zinc-50"
+              className="ck-button-secondary px-2.5 py-1.5 sm:px-3"
             >
               Sign in
             </Link>

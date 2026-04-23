@@ -57,17 +57,17 @@ export function ProjectCard({
     : null;
 
   return (
-    <div className="group relative flex flex-col gap-3 rounded-xl border border-zinc-200 bg-white p-6 transition-all hover:border-zinc-300 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700">
+    <div className="ck-panel group relative flex flex-col gap-3 rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1">
       {/* Stretched link covering the whole card */}
       <Link
         href={`/projects/${project.slug}`}
-        className="absolute inset-0 z-10 rounded-xl"
+        className="absolute inset-0 z-10 rounded-2xl"
       >
         <span className="sr-only">{project.title}</span>
       </Link>
 
       <div className="relative z-20 flex items-start justify-between gap-2">
-        <h3 className="text-lg font-semibold text-zinc-900 group-hover:text-zinc-700 dark:text-zinc-50 dark:group-hover:text-zinc-200">
+        <h3 className="text-lg font-bold text-white transition-colors group-hover:text-[#bffbff]">
           <Link href={`/projects/${project.slug}`} className="hover:underline">
             {project.title}
           </Link>
@@ -75,7 +75,7 @@ export function ProjectCard({
         {editHref && (
           <Link
             href={editHref}
-            className="relative z-30 shrink-0 rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-zinc-500 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:text-zinc-50"
+            className="relative z-30 shrink-0 rounded-md border border-[#00f0ff]/25 bg-[#00f0ff]/10 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-[#00f0ff] transition-colors hover:border-[#00f0ff]/60"
           >
             Edit
           </Link>
@@ -84,52 +84,49 @@ export function ProjectCard({
 
       {hasDifficultyData ? (
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+          <span className="font-mono text-xs font-medium text-[#7a7490]">
             Open Roles:
           </span>
           {(project.beginnerRoles ?? 0) > 0 && (
-            <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+            <span className="rounded-full border border-[#00ff94]/20 bg-[#00ff94]/10 px-2.5 py-0.5 text-xs font-medium text-[#00ff94]">
               {project.beginnerRoles} beginner
             </span>
           )}
           {(project.intermediateRoles ?? 0) > 0 && (
-            <span className="rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-950 dark:text-amber-400">
+            <span className="rounded-full border border-[#ff9e2c]/20 bg-[#ff9e2c]/10 px-2.5 py-0.5 text-xs font-medium text-[#ff9e2c]">
               {project.intermediateRoles} intermediate
             </span>
           )}
           {(project.advancedRoles ?? 0) > 0 && (
-            <span className="rounded-full bg-red-50 px-2.5 py-0.5 text-xs font-medium text-red-700 dark:bg-red-950 dark:text-red-400">
+            <span className="rounded-full border border-[#ff2d8f]/20 bg-[#ff2d8f]/10 px-2.5 py-0.5 text-xs font-medium text-[#ff2d8f]">
               {project.advancedRoles} advanced
             </span>
           )}
         </div>
       ) : (roleCount ?? 0) > 0 ? (
         <div className="flex flex-wrap items-center gap-1">
-          <span className="text-xs font-medium text-zinc-500 dark:text-zinc-400">
+          <span className="font-mono text-xs font-medium text-[#7a7490]">
             Open Roles:
           </span>
-          <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+          <span className="rounded-full border border-[#00ff94]/20 bg-[#00ff94]/10 px-2.5 py-0.5 text-xs font-medium text-[#00ff94]">
             {roleLabel}
           </span>
         </div>
       ) : null}
 
-      <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm leading-relaxed text-[#aaa3bf]">
         {project.description}
       </p>
 
       <div className="flex flex-wrap gap-1.5">
         {project.tags.map((tag) => (
-          <span
-            key={tag}
-            className="rounded-md bg-zinc-100 px-2 py-0.5 text-xs text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
-          >
+          <span key={tag} className="ck-chip rounded-md px-2 py-0.5">
             {tag}
           </span>
         ))}
       </div>
 
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 text-xs text-zinc-500 dark:text-zinc-500">
+      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 font-mono text-[11px] text-[#7a7490]">
         <span>by {project.ownerName}</span>
         <span>&middot;</span>
         <span>
@@ -145,15 +142,13 @@ export function ProjectCard({
         {project.githubUrl && (
           <>
             <span>&middot;</span>
-            <span className="text-zinc-400 dark:text-zinc-600">GitHub</span>
+            <span className="text-[#00f0ff]">GitHub</span>
           </>
         )}
         {payLabel && (
           <>
             <span>&middot;</span>
-            <span className="font-medium text-emerald-600 dark:text-emerald-400">
-              {payLabel}
-            </span>
+            <span className="font-medium text-[#00ff94]">{payLabel}</span>
           </>
         )}
       </div>
