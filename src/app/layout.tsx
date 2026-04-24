@@ -30,11 +30,17 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          src="https://rybbit.hazycloud.io/api/script.js"
+          data-site-id="53c4c43ef566"
+          defer
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <SessionProvider>
           <Nav />
           {children}
-
         </SessionProvider>
       </body>
     </html>
