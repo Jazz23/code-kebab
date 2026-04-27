@@ -6,6 +6,7 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 import { NavUser } from "./nav-user";
 import { NotificationBell } from "./notification-bell";
+import { ThemeToggle } from "./theme-toggle";
 
 export async function Nav() {
   const session = await auth();
@@ -80,6 +81,7 @@ export async function Nav() {
           >
             Posts
           </Link>
+          <ThemeToggle />
           {userId && displayName && initials ? (
             <>
               <NotificationBell initialUnreadCount={unreadCount} />

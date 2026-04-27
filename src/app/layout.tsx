@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import { Nav } from "@/components/nav";
 import SessionProvider from "@/components/SessionProvider";
 import { WebGLBackground } from "@/components/webgl-background";
@@ -32,6 +33,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
     >
       <head>
+        <Script id="theme-init" strategy="beforeInteractive">
+          {`try{var t=localStorage.getItem("theme");if(t==="light"){document.documentElement.classList.remove("dark");document.documentElement.classList.add("light");document.documentElement.style.colorScheme="light";}}catch(e){}`}
+        </Script>
         <script
           src="https://rybbit.hazycloud.io/api/script.js"
           data-site-id="53c4c43ef566"

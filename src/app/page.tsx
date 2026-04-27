@@ -14,10 +14,10 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#050408]/5 via-[#050408]/20 to-[#050408]" />
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-20 lg:grid-cols-[1fr_380px]">
           <div>
-            <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#00ff94]/30 bg-[#00ff94]/10 px-4 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-[#00ff94]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#00ff94] shadow-[0_0_12px_rgba(0,255,148,0.8)]" />
+            <div className="ck-status-badge mb-8 inline-flex items-center gap-2 rounded-full border border-[#00ff94]/30 bg-[#00ff94]/10 px-4 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-[#00ff94]">
+              <span className="ck-status-dot h-1.5 w-1.5 rounded-full bg-[#00ff94] shadow-[0_0_12px_rgba(0,255,148,0.8)]" />
               Network Online
-              <span className="text-[#00ff94]/40">/</span>
+              <span className="ck-status-divider text-[#00ff94]/40">/</span>
               {allProjects.length.toLocaleString()} Projects
             </div>
             <h1 className="max-w-4xl text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-7xl lg:text-8xl">
