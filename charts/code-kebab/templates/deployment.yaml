@@ -51,6 +51,11 @@ spec:
               {{- else }}
               {{- fail "Set database.existingSecret.name, database.url, or enable cnpg.enabled." }}
               {{- end }}
+            {{- $appURL := (get .Values.env "APP_URL") | default (get .Values.env "AUTH_URL") }}
+            {{- if $appURL }}
+            - name: APP_URL
+              value: {{ $appURL | quote }}
+            {{- end }}
             {{- if $databaseSecretName }}
             {{- range .Values.database.secretEnvMappings }}
             - name: {{ .name }}
@@ -61,8 +66,10 @@ spec:
             {{- end }}
             {{- end }}
             {{- range $name, $value := .Values.env }}
+            {{- if ne $name "APP_URL" }}
             - name: {{ $name }}
               value: {{ $value | quote }}
+            {{- end }}
             {{- end }}
             {{- with .Values.additionalEnv }}
             {{- toYaml . | nindent 12 }}

@@ -4,7 +4,7 @@ fullnameOverride: ""
 replicaCount: 1
 
 image:
-  repository: code-kebab
+  repository: ghcr.io/jazz23/code-kebab
   pullPolicy: IfNotPresent
   tag: "v0.0.4"
 
@@ -96,6 +96,7 @@ env:
   HOSTNAME: 0.0.0.0
   PORT: "3000"
   AUTH_URL: ""
+  APP_URL: ""
   AUTH_TRUST_HOST: "true"
 
 additionalEnv: []

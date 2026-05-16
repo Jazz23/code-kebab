@@ -114,11 +114,13 @@ secret:
 - `AUTH_SECRET`
 - `AUTH_ZITADEL_ISSUER`
 - `AUTH_ZITADEL_ID`
-- `AUTH_ZITADEL_SECRET`
+- `AUTH_ZITADEL_SECRET` if your ZITADEL client requires one
 
 Also set the public app origin as a normal env var:
 
 - `AUTH_URL`
+- `APP_URL` for links in outbound email; if omitted, the chart defaults it to
+  `AUTH_URL`
 
 If you want the user-facing login page to live at a branded hostname such as
 `auth.hazyforge.io`, that hostname must be configured as a ZITADEL custom
