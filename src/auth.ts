@@ -50,6 +50,9 @@ function getUsernameFromProfile(profile: unknown) {
 }
 
 const plugins: BetterAuthPlugin[] = [nextCookies()];
+const zitadelRedirectURI = authUrl
+  ? `${authUrl.replace(/\/$/, "")}/api/auth/callback/zitadel`
+  : undefined;
 
 if (zitadelConfigured && zitadelIssuer && zitadelClientId) {
   plugins.push(
@@ -59,6 +62,7 @@ if (zitadelConfigured && zitadelIssuer && zitadelClientId) {
           providerId: "zitadel",
           clientId: zitadelClientId,
           clientSecret: zitadelClientSecret ?? undefined,
+          redirectURI: zitadelRedirectURI,
           discoveryUrl: `${zitadelIssuer}/.well-known/openid-configuration`,
           issuer: zitadelIssuer,
           scopes: ["openid", "profile", "email"],
