@@ -4,7 +4,8 @@ replicaCount: 1
 
 image:
   repository: ghcr.io/jazz23/code-kebab
-  tag: "v0.0.4"
+  pullPolicy: Always
+  tag: "v0.0.5"
 
 resources:
   requests:
@@ -64,6 +65,7 @@ gateway:
 
 env:
   AUTH_URL: https://code-kebab.dev
+  BETTER_AUTH_URL: https://code-kebab.dev
 
 envFromSecrets:
   - code-kebab-authjs
@@ -89,6 +91,12 @@ auth:
       - secretKey: AUTH_ZITADEL_ID
         remoteRef:
           key: secret/auth-zitadel-id
+      - secretKey: AUTH_GITHUB_ID
+        remoteRef:
+          key: secret/auth-github-id
+      - secretKey: AUTH_GITHUB_SECRET
+        remoteRef:
+          key: secret/auth-github-secret
 
 migration:
   enabled: true

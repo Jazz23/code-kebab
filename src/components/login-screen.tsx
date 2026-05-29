@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 type LoginScreenProps = {
   callbackUrl: string;
   credentialsFallbackEnabled: boolean;
-  oidcEnabled: boolean;
-  oidcHost: string | null;
+  githubEnabled: boolean;
+  zitadelEnabled: boolean;
+  zitadelHost: string | null;
   initialError: string | null;
 };
 
@@ -36,20 +37,49 @@ function getErrorMessage(error: string | null) {
 export function LoginScreen({
   callbackUrl,
   credentialsFallbackEnabled,
-  oidcEnabled,
-  oidcHost,
+  githubEnabled,
+  zitadelEnabled,
+  zitadelHost,
   initialError,
 }: LoginScreenProps) {
   const router = useRouter();
   const [error, setError] = useState(getErrorMessage(initialError));
   const [pendingProvider, setPendingProvider] = useState<
-    "credentials" | "zitadel" | null
+    "credentials" | "github" | "zitadel" | null
   >(null);
 
-  async function handleOidcSignIn() {
+  async function handleGithubSignIn() {
+    setError(null);
+    setPendingProvider("github");
+
+    const result = await authClient.signIn.social({
+      provider: "github",
+      callbackURL: callbackUrl,
+    });
+
+    if (result.error) {
+      setError(
+        "GitHub sign-in failed. Check the OAuth app configuration and try again.",
+      );
+      setPendingProvider(null);
+    }
+  }
+
+  async function handleZitadelSignIn() {
     setError(null);
     setPendingProvider("zitadel");
-    await signIn("zitadel", { callbackUrl });
+
+    const result = await authClient.signIn.oauth2({
+      providerId: "zitadel",
+      callbackURL: callbackUrl,
+    });
+
+    if (result.error) {
+      setError(
+        "HazyForge sign-in failed. Check the ZITADEL configuration and try again.",
+      );
+      setPendingProvider(null);
+    }
   }
 
   async function handleCredentialsSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -58,24 +88,19 @@ export function LoginScreen({
     setError(null);
 
     const form = new FormData(e.currentTarget);
-    const result = await signIn("credentials", {
-      email: form.get("email"),
-      password: form.get("password"),
-      callbackUrl,
-      redirect: false,
+    const result = await authClient.signIn.email({
+      email: String(form.get("email") ?? ""),
+      password: String(form.get("password") ?? ""),
+      rememberMe: true,
     });
 
-    if (result?.error) {
-      setError(
-        result.code === "invalid_credentials"
-          ? "Invalid email or password."
-          : "Sign-in failed. Please try again.",
-      );
+    if (result.error) {
+      setError("Invalid email or password.");
       setPendingProvider(null);
       return;
     }
 
-    router.push(result?.url ?? callbackUrl);
+    router.push(callbackUrl);
     router.refresh();
   }
 
@@ -84,36 +109,54 @@ export function LoginScreen({
       <div className="w-full max-w-sm">
         <Link
           href="/"
-          className="text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
+          className="text-sm text-[#a59cb8] transition-colors hover:text-[#fff1da]"
         >
           &larr; Back
         </Link>
 
-        <h1 className="mt-6 text-2xl font-bold text-zinc-900 dark:text-zinc-50">
-          Sign in
-        </h1>
+        <h1 className="mt-6 text-2xl font-bold text-white">Sign in</h1>
 
-        {oidcEnabled ? (
+        {githubEnabled || zitadelEnabled ? (
           <>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-              Continue with your HazyForge account.
-              {oidcHost ? ` You will be redirected to ${oidcHost}.` : null}
+            <p className="mt-2 text-sm text-[#d6d0e5]">
+              Continue with GitHub
+              {zitadelEnabled ? " or your HazyForge account" : ""}.
+              {zitadelEnabled && zitadelHost
+                ? ` HazyForge redirects through ${zitadelHost}.`
+                : null}
             </p>
 
-            <button
-              type="button"
-              onClick={handleOidcSignIn}
-              disabled={pendingProvider !== null}
-              className="mt-6 w-full rounded-lg bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-800 disabled:opacity-50 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
-            >
-              {pendingProvider === "zitadel"
-                ? "Redirecting…"
-                : "Continue with HazyForge"}
-            </button>
+            <div className="mt-6 space-y-3">
+              {githubEnabled ? (
+                <button
+                  type="button"
+                  onClick={handleGithubSignIn}
+                  disabled={pendingProvider !== null}
+                  className="ck-button-primary w-full px-4 py-2.5 text-sm disabled:opacity-50"
+                >
+                  {pendingProvider === "github"
+                    ? "Redirecting..."
+                    : "Continue with GitHub"}
+                </button>
+              ) : null}
+
+              {zitadelEnabled ? (
+                <button
+                  type="button"
+                  onClick={handleZitadelSignIn}
+                  disabled={pendingProvider !== null}
+                  className="ck-button-secondary w-full px-4 py-2.5 text-sm disabled:opacity-50"
+                >
+                  {pendingProvider === "zitadel"
+                    ? "Redirecting..."
+                    : "Continue with HazyForge"}
+                </button>
+              ) : null}
+            </div>
           </>
         ) : (
-          <p className="mt-2 text-sm text-amber-700 dark:text-amber-300">
-            Zitadel OIDC is not configured. Using the local development fallback
+          <p className="mt-2 text-sm text-[#ffb04a]">
+            OAuth is not configured. Using the local development fallback
             instead.
           </p>
         )}
@@ -123,7 +166,7 @@ export function LoginScreen({
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                className="block text-sm font-medium text-[#ddd7ef]"
               >
                 Email
               </label>
@@ -134,7 +177,7 @@ export function LoginScreen({
                 required
                 autoComplete="email"
                 defaultValue="alex@example.com"
-                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder-zinc-500 dark:focus:border-zinc-100"
+                className="ck-input mt-1 block w-full rounded-lg px-3 py-2 text-sm"
                 placeholder="alex@example.com"
               />
             </div>
@@ -142,7 +185,7 @@ export function LoginScreen({
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-zinc-700 dark:text-zinc-300"
+                className="block text-sm font-medium text-[#ddd7ef]"
               >
                 Password
               </label>
@@ -153,7 +196,7 @@ export function LoginScreen({
                 required
                 autoComplete="current-password"
                 defaultValue="password"
-                className="mt-1 block w-full rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 placeholder-zinc-400 focus:border-zinc-900 focus:outline-none dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-50 dark:placeholder-zinc-500 dark:focus:border-zinc-100"
+                className="ck-input mt-1 block w-full rounded-lg px-3 py-2 text-sm"
                 placeholder="••••••••"
               />
             </div>
@@ -161,18 +204,16 @@ export function LoginScreen({
             <button
               type="submit"
               disabled={pendingProvider !== null}
-              className="w-full rounded-lg border border-zinc-300 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition-colors hover:border-zinc-900 disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-50 dark:hover:border-zinc-100"
+              className="ck-button-secondary w-full px-4 py-2.5 text-sm disabled:opacity-50"
             >
               {pendingProvider === "credentials"
-                ? "Signing in…"
+                ? "Signing in..."
                 : "Use local seed account"}
             </button>
           </form>
         ) : null}
 
-        {error ? (
-          <p className="mt-4 text-sm text-red-600 dark:text-red-400">{error}</p>
-        ) : null}
+        {error ? <p className="mt-4 text-sm text-red-300">{error}</p> : null}
       </div>
     </main>
   );

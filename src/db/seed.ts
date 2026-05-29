@@ -1,8 +1,15 @@
 import "dotenv/config";
 import { hash } from "@node-rs/argon2";
-import { drizzle } from "drizzle-orm/postgres-js";
 import { sql } from "drizzle-orm";
-import { posts, projectMembers, projectRoles, projects, users } from "./schema";
+import { drizzle } from "drizzle-orm/postgres-js";
+import {
+  accounts,
+  posts,
+  projectMembers,
+  projectRoles,
+  projects,
+  users,
+} from "./schema";
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -34,8 +41,7 @@ async function main() {
       ],
       createdAt: new Date("2025-08-12"),
       image: null,
-      password: hashedPassword,
-      emailVerified: null,
+      emailVerified: true,
     },
     {
       id: "seed-user-samira",
@@ -50,8 +56,7 @@ async function main() {
       ],
       createdAt: new Date("2025-09-03"),
       image: null,
-      password: hashedPassword,
-      emailVerified: null,
+      emailVerified: true,
     },
     {
       id: "seed-user-jpark",
@@ -63,8 +68,7 @@ async function main() {
       socialLinks: ["https://github.com/jordanpark"],
       createdAt: new Date("2025-10-21"),
       image: null,
-      password: hashedPassword,
-      emailVerified: null,
+      emailVerified: true,
     },
     {
       id: "seed-user-mrivera",
@@ -79,8 +83,7 @@ async function main() {
       ],
       createdAt: new Date("2026-01-15"),
       image: null,
-      password: hashedPassword,
-      emailVerified: null,
+      emailVerified: true,
     },
     ...(testEmail
       ? [
@@ -94,8 +97,7 @@ async function main() {
             socialLinks: [] as string[],
             createdAt: new Date("2026-01-01"),
             image: null,
-            password: hashedPassword,
-            emailVerified: null,
+            emailVerified: true,
           },
         ]
       : []),
@@ -662,6 +664,27 @@ async function main() {
         skills: sql`excluded.skills`,
         socialLinks: sql`excluded."socialLinks"`,
         createdAt: sql`excluded."createdAt"`,
+        emailVerified: sql`excluded."emailVerified"`,
+      },
+    });
+
+  console.log("Seeding credential accounts...");
+  await db
+    .insert(accounts)
+    .values(
+      seedUsers.map((user) => ({
+        id: `seed-account-${user.id}`,
+        accountId: user.id,
+        providerId: "credential",
+        userId: user.id,
+        password: hashedPassword,
+      })),
+    )
+    .onConflictDoUpdate({
+      target: accounts.id,
+      set: {
+        password: sql`excluded.password`,
+        updatedAt: sql`now()`,
       },
     });
 

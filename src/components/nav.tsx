@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import Image from "next/image";
 import Link from "next/link";
 import { getTotalUnreadCount } from "@/app/actions/messages";
 import { auth } from "@/auth";
@@ -41,21 +42,29 @@ export async function Nav() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#050408]/72 backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#140f18]/78 backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link
             href="/"
-            className="whitespace-nowrap text-lg font-black tracking-tight text-white sm:text-xl"
+            aria-label="code-kebab home"
+            className="flex items-center"
           >
-            code<span className="text-[#ff9e2c]">-</span>kebab
+            <Image
+              src="/code-kebab-logo.svg"
+              alt="code-kebab"
+              width={200}
+              height={63}
+              priority
+              className="h-11 w-auto sm:h-12"
+            />
           </Link>
           <a
             href="https://github.com/Jazz23/code-kebab"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Source on GitHub"
-            className="hidden text-[#7a7490] transition-colors hover:text-[#00f0ff] sm:block"
+            className="hidden text-[#a59cb8] transition-colors hover:text-[#7ef2cb] sm:block"
           >
             <span className="sr-only">Source on GitHub</span>
             <svg
@@ -71,13 +80,13 @@ export async function Nav() {
         <nav className="flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-[0.08em] sm:gap-6 sm:text-xs">
           <Link
             href="/projects"
-            className="text-[#7a7490] transition-colors hover:text-[#00f0ff]"
+            className="text-[#a59cb8] transition-colors hover:text-[#7ef2cb]"
           >
             Projects
           </Link>
           <Link
             href="/posts"
-            className="text-[#7a7490] transition-colors hover:text-[#00f0ff]"
+            className="text-[#a59cb8] transition-colors hover:text-[#7ef2cb]"
           >
             Posts
           </Link>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { Nav } from "@/components/nav";
-import SessionProvider from "@/components/SessionProvider";
 import { WebGLBackground } from "@/components/webgl-background";
 import "./globals.css";
 
@@ -44,12 +43,10 @@ export default function RootLayout({
       </head>
       <body className="min-h-full">
         <WebGLBackground />
-        <SessionProvider>
-          <div className="relative z-10 flex min-h-screen flex-col">
-            <Nav />
-            {children}
-          </div>
-        </SessionProvider>
+        <div className="relative z-10 flex min-h-screen flex-col">
+          <Nav />
+          {children}
+        </div>
       </body>
     </html>
   );

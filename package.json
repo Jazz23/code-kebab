@@ -1,6 +1,6 @@
 {
   "name": "code-kebab",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": true,
   "scripts": {
     "dev": "bun --bun next dev",
@@ -19,13 +19,13 @@
     "test:ui": "playwright test --ui"
   },
   "dependencies": {
-    "@auth/drizzle-adapter": "^1.11.1",
+    "@better-auth/drizzle-adapter": "^1.6.11",
     "@getbrevo/brevo": "^5.0.3",
     "@node-rs/argon2": "^2.0.2",
+    "better-auth": "^1.6.11",
     "dotenv": "^17.4.0",
     "drizzle-orm": "^0.45.2",
     "next": "16.2.2",
-    "next-auth": "5.0.0-beta.30",
     "pg": "^8.20.0",
     "postgres": "^3.4.8",
     "react": "19.2.4",

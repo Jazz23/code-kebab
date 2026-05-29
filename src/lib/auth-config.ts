@@ -24,17 +24,34 @@ const normalizedZitadelClientId = normalizeEnv(process.env.AUTH_ZITADEL_ID);
 const normalizedZitadelClientSecret = normalizeEnv(
   process.env.AUTH_ZITADEL_SECRET,
 );
+const normalizedGithubClientId = normalizeEnv(process.env.AUTH_GITHUB_ID);
+const normalizedGithubClientSecret = normalizeEnv(
+  process.env.AUTH_GITHUB_SECRET,
+);
+const normalizedAuthUrl = normalizeUrl(
+  process.env.BETTER_AUTH_URL ?? process.env.AUTH_URL,
+);
 
 export const zitadelConfigured = Boolean(
   normalizedZitadelClientId && normalizedZitadelIssuer,
 );
 
+const credentialsFallbackRequested =
+  process.env.AUTH_CREDENTIALS_FALLBACK === "true";
+
 export const credentialsFallbackEnabled =
-  (process.env.NODE_ENV !== "production" ||
-    process.env.AUTH_CREDENTIALS_FALLBACK === "true") &&
-  !zitadelConfigured;
+  credentialsFallbackRequested ||
+  (process.env.NODE_ENV !== "production" &&
+    !zitadelConfigured &&
+    !(normalizedGithubClientId && normalizedGithubClientSecret));
 
 export const zitadelClientId = normalizedZitadelClientId;
 export const zitadelClientSecret = normalizedZitadelClientSecret;
 export const zitadelIssuer = normalizedZitadelIssuer;
 export const zitadelHost = getUrlHost(zitadelIssuer);
+export const githubClientId = normalizedGithubClientId ?? "";
+export const githubClientSecret = normalizedGithubClientSecret ?? "";
+export const githubConfigured = Boolean(
+  normalizedGithubClientId && normalizedGithubClientSecret,
+);
+export const authUrl = normalizedAuthUrl;

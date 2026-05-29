@@ -6,7 +6,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/jazz23/code-kebab
   pullPolicy: IfNotPresent
-  tag: "v0.0.4"
+  tag: "v0.0.5"
 
 imagePullSecrets: []
 
@@ -96,6 +96,7 @@ env:
   HOSTNAME: 0.0.0.0
   PORT: "3000"
   AUTH_URL: ""
+  BETTER_AUTH_URL: ""
   APP_URL: ""
   AUTH_TRUST_HOST: "true"
 

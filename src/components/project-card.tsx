@@ -67,7 +67,7 @@ export function ProjectCard({
       </Link>
 
       <div className="relative z-20 flex items-start justify-between gap-2">
-        <h3 className="text-lg font-bold text-white transition-colors group-hover:text-[#bffbff]">
+        <h3 className="text-lg font-bold text-white transition-colors group-hover:text-[#fff1da]">
           <Link href={`/projects/${project.slug}`} className="hover:underline">
             {project.title}
           </Link>
@@ -75,7 +75,7 @@ export function ProjectCard({
         {editHref && (
           <Link
             href={editHref}
-            className="relative z-30 shrink-0 rounded-md border border-[#00f0ff]/25 bg-[#00f0ff]/10 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-[#00f0ff] transition-colors hover:border-[#00f0ff]/60"
+            className="relative z-30 shrink-0 rounded-md border border-[#00a876]/25 bg-[#00a876]/12 px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-[#7ef2cb] transition-colors hover:border-[#00a876]/60"
           >
             Edit
           </Link>
@@ -84,11 +84,11 @@ export function ProjectCard({
 
       {hasDifficultyData ? (
         <div className="flex flex-wrap items-center gap-1">
-          <span className="font-mono text-xs font-medium text-[#7a7490]">
+          <span className="font-mono text-xs font-medium text-[#a59cb8]">
             Open Roles:
           </span>
           {(project.beginnerRoles ?? 0) > 0 && (
-            <span className="rounded-full border border-[#00ff94]/20 bg-[#00ff94]/10 px-2.5 py-0.5 text-xs font-medium text-[#00ff94]">
+            <span className="rounded-full border border-[#00a876]/20 bg-[#00a876]/10 px-2.5 py-0.5 text-xs font-medium text-[#7ef2cb]">
               {project.beginnerRoles} beginner
             </span>
           )}
@@ -98,23 +98,23 @@ export function ProjectCard({
             </span>
           )}
           {(project.advancedRoles ?? 0) > 0 && (
-            <span className="rounded-full border border-[#ff2d8f]/20 bg-[#ff2d8f]/10 px-2.5 py-0.5 text-xs font-medium text-[#ff2d8f]">
+            <span className="rounded-full border border-[#c6c0da]/25 bg-[#c6c0da]/10 px-2.5 py-0.5 text-xs font-medium text-[#ddd7ef]">
               {project.advancedRoles} advanced
             </span>
           )}
         </div>
       ) : (roleCount ?? 0) > 0 ? (
         <div className="flex flex-wrap items-center gap-1">
-          <span className="font-mono text-xs font-medium text-[#7a7490]">
+          <span className="font-mono text-xs font-medium text-[#a59cb8]">
             Open Roles:
           </span>
-          <span className="rounded-full border border-[#00ff94]/20 bg-[#00ff94]/10 px-2.5 py-0.5 text-xs font-medium text-[#00ff94]">
+          <span className="rounded-full border border-[#00a876]/20 bg-[#00a876]/10 px-2.5 py-0.5 text-xs font-medium text-[#7ef2cb]">
             {roleLabel}
           </span>
         </div>
       ) : null}
 
-      <p className="text-sm leading-relaxed text-[#aaa3bf]">
+      <p className="text-sm leading-relaxed text-[#d6d0e5]">
         {project.description}
       </p>
 
@@ -126,7 +126,7 @@ export function ProjectCard({
         ))}
       </div>
 
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 font-mono text-[11px] text-[#7a7490]">
+      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 font-mono text-[11px] text-[#a59cb8]">
         <span>by {project.ownerName}</span>
         <span>&middot;</span>
         <span>
@@ -142,13 +142,13 @@ export function ProjectCard({
         {project.githubUrl && (
           <>
             <span>&middot;</span>
-            <span className="text-[#00f0ff]">GitHub</span>
+            <span className="text-[#7ef2cb]">GitHub</span>
           </>
         )}
         {payLabel && (
           <>
             <span>&middot;</span>
-            <span className="font-medium text-[#00ff94]">{payLabel}</span>
+            <span className="font-medium text-[#ffb04a]">{payLabel}</span>
           </>
         )}
       </div>

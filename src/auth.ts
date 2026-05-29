@@ -1,44 +1,23 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { verify } from "@node-rs/argon2";
-import { eq } from "drizzle-orm";
-import NextAuth, { CredentialsSignin } from "next-auth";
-import Credentials from "next-auth/providers/credentials";
-import Zitadel from "next-auth/providers/zitadel";
-
-class InvalidCredentialsError extends CredentialsSignin {
-  code = "invalid_credentials";
-}
+import type { BetterAuthPlugin } from "@better-auth/core";
+import { drizzleAdapter } from "@better-auth/drizzle-adapter";
+import { hash, verify } from "@node-rs/argon2";
+import { betterAuth } from "better-auth";
+import { nextCookies } from "better-auth/next-js";
+import { genericOAuth } from "better-auth/plugins";
+import { headers } from "next/headers";
 import { db } from "@/db";
-import { users } from "@/db/schema";
+import { accounts, sessions, users, verifications } from "@/db/schema";
 import {
+  authUrl,
   credentialsFallbackEnabled,
+  githubClientId,
+  githubClientSecret,
+  githubConfigured,
   zitadelClientId,
   zitadelClientSecret,
   zitadelConfigured,
   zitadelIssuer,
 } from "@/lib/auth-config";
-
-function getZitadelUsernameCandidates(profile: unknown) {
-  if (!profile || typeof profile !== "object") {
-    return [];
-  }
-
-  const preferredUsername =
-    "preferred_username" in profile &&
-    typeof profile.preferred_username === "string"
-      ? profile.preferred_username.trim()
-      : "";
-
-  if (!preferredUsername) {
-    return [];
-  }
-
-  const localPart = preferredUsername.includes("@")
-    ? (preferredUsername.split("@")[0]?.trim() ?? "")
-    : "";
-
-  return [...new Set([localPart, preferredUsername].filter(Boolean))];
-}
 
 function getStringClaim(profile: unknown, claim: string) {
   if (!profile || typeof profile !== "object") {
@@ -55,203 +34,129 @@ function getStringClaim(profile: unknown, claim: string) {
   return value || null;
 }
 
-async function syncZitadelProfile(userId: string, profile: unknown) {
-  const [currentUser] = await db
-    .select({
-      name: users.name,
-      email: users.email,
-      image: users.image,
-      username: users.username,
-    })
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1);
+function getUsernameFromProfile(profile: unknown) {
+  const username =
+    getStringClaim(profile, "login") ??
+    getStringClaim(profile, "preferred_username") ??
+    null;
 
-  if (!currentUser) {
-    return;
+  if (!username) {
+    return null;
   }
 
-  const updateData: Partial<{
-    name: string;
-    email: string;
-    image: string;
-    username: string;
-  }> = {};
-
-  if (!currentUser.name) {
-    const name = getStringClaim(profile, "name");
-    if (name) {
-      updateData.name = name;
-    }
-  }
-
-  if (!currentUser.email) {
-    const email = getStringClaim(profile, "email");
-    if (email) {
-      updateData.email = email.toLowerCase();
-    }
-  }
-
-  if (!currentUser.image) {
-    const image = getStringClaim(profile, "picture");
-    if (image) {
-      updateData.image = image;
-    }
-  }
-
-  if (!currentUser.username) {
-    const usernameCandidates = getZitadelUsernameCandidates(profile);
-
-    for (const username of usernameCandidates) {
-      const [existingUser] = await db
-        .select({ id: users.id })
-        .from(users)
-        .where(eq(users.username, username))
-        .limit(1);
-
-      if (existingUser && existingUser.id !== userId) {
-        continue;
-      }
-
-      updateData.username = username;
-      break;
-    }
-  }
-
-  if (!Object.keys(updateData).length) {
-    return;
-  }
-
-  await db.update(users).set(updateData).where(eq(users.id, userId));
+  return username.includes("@")
+    ? (username.split("@")[0]?.trim() ?? username)
+    : username;
 }
 
-const providers = [];
+const plugins: BetterAuthPlugin[] = [nextCookies()];
 
 if (zitadelConfigured && zitadelIssuer && zitadelClientId) {
-  const zitadelConfig: Parameters<typeof Zitadel>[0] & {
-    clientSecret?: string;
-    idToken?: boolean;
-  } = {
-    clientId: zitadelClientId,
-    issuer: zitadelIssuer,
-    idToken: false,
-    authorization: {
-      params: {
-        scope: "openid profile email",
-      },
-    },
-  };
-
-  if (zitadelClientSecret) {
-    zitadelConfig.clientSecret = zitadelClientSecret;
-  }
-
-  providers.push(Zitadel(zitadelConfig));
-}
-
-if (credentialsFallbackEnabled) {
-  providers.push(
-    Credentials({
-      credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials) {
-        const email = credentials.email as string;
-        const password = credentials.password as string;
-
-        if (!email || !password) {
-          throw new InvalidCredentialsError();
-        }
-
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.email, email))
-          .limit(1);
-
-        if (!user?.password) {
-          throw new InvalidCredentialsError();
-        }
-
-        const valid = await verify(user.password, password);
-        if (!valid) {
-          throw new InvalidCredentialsError();
-        }
-
-        return {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-        };
-      },
+  plugins.push(
+    genericOAuth({
+      config: [
+        {
+          providerId: "zitadel",
+          clientId: zitadelClientId,
+          clientSecret: zitadelClientSecret ?? undefined,
+          discoveryUrl: `${zitadelIssuer}/.well-known/openid-configuration`,
+          issuer: zitadelIssuer,
+          scopes: ["openid", "profile", "email"],
+          pkce: true,
+          mapProfileToUser(profile) {
+            return {
+              name: getStringClaim(profile, "name") ?? "",
+              email: getStringClaim(profile, "email") ?? "",
+              image: getStringClaim(profile, "picture"),
+              emailVerified: profile.email_verified !== false,
+              username: getUsernameFromProfile(profile),
+            };
+          },
+        },
+      ],
     }),
   );
 }
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: DrizzleAdapter(db),
-  session: { strategy: "jwt" },
-  providers,
-  logger: {
-    error(error) {
-      if (error instanceof CredentialsSignin) return;
-      console.error(error);
+export const authServer = betterAuth({
+  baseURL: authUrl ?? undefined,
+  secret: process.env.AUTH_SECRET,
+  database: drizzleAdapter(db, {
+    provider: "pg",
+    camelCase: true,
+    schema: {
+      user: users,
+      session: sessions,
+      account: accounts,
+      verification: verifications,
+    },
+  }),
+  user: {
+    additionalFields: {
+      username: {
+        type: "string",
+        required: false,
+        input: false,
+      },
+      bio: {
+        type: "string",
+        required: false,
+        input: false,
+      },
+      timezone: {
+        type: "string",
+        required: false,
+        input: false,
+      },
+      skills: {
+        type: "string[]",
+        required: false,
+        input: false,
+      },
+      socialLinks: {
+        type: "string[]",
+        required: false,
+        input: false,
+      },
+      emailNotifications: {
+        type: "boolean",
+        required: false,
+        input: false,
+        defaultValue: true,
+      },
     },
   },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
-  callbacks: {
-    signIn: async ({ account, profile }) => {
-      if (account?.provider === "zitadel") {
-        const emailVerified = profile?.email_verified;
-        return emailVerified !== false;
-      }
-
-      return true;
-    },
-    jwt: async ({ token, account, profile }) => {
-      if (account?.provider === "zitadel") {
-        const name = getStringClaim(profile, "name");
-        const email = getStringClaim(profile, "email");
-        const image = getStringClaim(profile, "picture");
-
-        if (name) {
-          token.name = name;
-        }
-
-        if (email) {
-          token.email = email.toLowerCase();
-        }
-
-        if (image) {
-          token.picture = image;
-        }
-      }
-
-      return token;
-    },
-    session: async ({ session, token }) => {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
-
-      return session;
-    },
-    authorized: async ({ auth }) => {
-      return !!auth;
+  emailAndPassword: {
+    enabled: credentialsFallbackEnabled,
+    disableSignUp: true,
+    minPasswordLength: 1,
+    password: {
+      hash,
+      verify: ({ hash: passwordHash, password }) =>
+        verify(passwordHash, password),
     },
   },
-  events: {
-    signIn: async ({ user, account, profile }) => {
-      if (account?.provider !== "zitadel" || !user.id) {
-        return;
+  socialProviders: githubConfigured
+    ? {
+        github: {
+          clientId: githubClientId,
+          clientSecret: githubClientSecret,
+          mapProfileToUser(profile) {
+            return {
+              username: profile.login,
+            };
+          },
+        },
       }
-
-      await syncZitadelProfile(user.id, profile);
-    },
+    : undefined,
+  plugins,
+  onAPIError: {
+    errorURL: "/login",
   },
 });
+
+export async function auth() {
+  return authServer.api.getSession({
+    headers: await headers(),
+  });
+}

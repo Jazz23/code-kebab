@@ -120,7 +120,7 @@ export function NotificationBell({
       <button
         type="button"
         onClick={handleOpen}
-        className="relative flex h-8 w-8 items-center justify-center rounded-lg text-[#7a7490] transition-colors hover:bg-[#00f0ff]/10 hover:text-[#00f0ff]"
+        className="relative flex h-8 w-8 items-center justify-center rounded-lg text-[#a59cb8] transition-colors hover:bg-[#00a876]/10 hover:text-[#7ef2cb]"
         aria-label="Messages"
       >
         <svg
@@ -139,7 +139,7 @@ export function NotificationBell({
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff2d8f] px-1 text-[10px] font-bold leading-none text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff9e2c] px-1 text-[10px] font-bold leading-none text-[#140f18]">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -150,7 +150,7 @@ export function NotificationBell({
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <span className="text-sm font-semibold text-white">Messages</span>
             {unreadCount > 0 && (
-              <span className="rounded-full border border-[#ff2d8f]/25 bg-[#ff2d8f]/10 px-2 py-0.5 text-xs font-medium text-[#ff2d8f]">
+              <span className="rounded-full border border-[#ff9e2c]/25 bg-[#ff9e2c]/10 px-2 py-0.5 text-xs font-medium text-[#ffb04a]">
                 {unreadCount} unread
               </span>
             )}
@@ -159,11 +159,11 @@ export function NotificationBell({
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <span className="text-sm text-[#7a7490]">Loading…</span>
+                <span className="text-sm text-[#a59cb8]">Loading…</span>
               </div>
             ) : !items || items.length === 0 ? (
               <div className="flex items-center justify-center py-8">
-                <span className="text-sm text-[#7a7490]">No messages yet</span>
+                <span className="text-sm text-[#a59cb8]">No messages yet</span>
               </div>
             ) : (
               items.map((item) => {
@@ -175,22 +175,22 @@ export function NotificationBell({
                       key={notif.id}
                       className={`group flex items-start gap-3 border-b px-4 py-3 last:border-0 ${
                         isUnread
-                          ? "border-white/10 bg-[#00f0ff]/10"
+                          ? "border-white/10 bg-[#00a876]/10"
                           : "border-white/10"
                       }`}
                     >
                       {isUnread && (
-                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00f0ff]" />
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00a876]" />
                       )}
                       <Link
                         href={`/messages/system/${notif.id}`}
                         onClick={() => setIsOpen(false)}
                         className={`min-w-0 flex-1 hover:opacity-80 ${!isUnread ? "pl-5" : ""}`}
                       >
-                        <p className="text-sm leading-snug text-[#c6c0da]">
+                        <p className="text-sm leading-snug text-[#ddd7ef]">
                           {notificationLabel(notif)}
                         </p>
-                        <p className="mt-0.5 text-xs text-[#7a7490]">
+                        <p className="mt-0.5 text-xs text-[#a59cb8]">
                           {timeAgo(item.date)}
                         </p>
                       </Link>
@@ -212,12 +212,12 @@ export function NotificationBell({
                     key={msg.id}
                     className={`group flex items-start gap-3 border-b px-4 py-3 last:border-0 ${
                       isUnread
-                        ? "border-white/10 bg-[#00f0ff]/10"
+                        ? "border-white/10 bg-[#00a876]/10"
                         : "border-white/10"
                     }`}
                   >
                     {isUnread && (
-                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00f0ff]" />
+                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00a876]" />
                     )}
                     <Link
                       href={`/messages/${msg.id}`}
@@ -225,17 +225,17 @@ export function NotificationBell({
                       className={`min-w-0 flex-1 hover:opacity-80 ${!isUnread ? "pl-5" : ""}`}
                     >
                       <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#00f0ff] text-[9px] font-bold text-[#050408]">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#00a876] text-[9px] font-bold text-[#140f18]">
                           {initials}
                         </div>
-                        <p className="truncate text-sm font-medium leading-snug text-[#c6c0da]">
+                        <p className="truncate text-sm font-medium leading-snug text-[#ddd7ef]">
                           {msg.senderName}
                         </p>
                       </div>
-                      <p className="mt-0.5 truncate text-xs text-[#7a7490]">
+                      <p className="mt-0.5 truncate text-xs text-[#a59cb8]">
                         {msg.subject}
                       </p>
-                      <p className="mt-0.5 text-xs text-[#7a7490]">
+                      <p className="mt-0.5 text-xs text-[#a59cb8]">
                         {timeAgo(item.date)}
                       </p>
                     </Link>
@@ -249,7 +249,7 @@ export function NotificationBell({
             <Link
               href="/messages"
               onClick={() => setIsOpen(false)}
-              className="block text-center text-xs font-medium text-[#00f0ff] transition-colors hover:text-[#8fffff]"
+              className="block text-center text-xs font-medium text-[#7ef2cb] transition-colors hover:text-[#c9fff0]"
             >
               View all messages →
             </Link>

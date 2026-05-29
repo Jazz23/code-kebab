@@ -31,11 +31,11 @@ export function PostCard({ post }: { post: PostCardData }) {
         <span className="sr-only">{post.title}</span>
       </Link>
 
-      <h3 className="text-lg font-bold text-white transition-colors group-hover:text-[#bffbff]">
+      <h3 className="text-lg font-bold text-white transition-colors group-hover:text-[#fff1da]">
         {post.title}
       </h3>
 
-      <p className="line-clamp-3 text-sm leading-relaxed text-[#aaa3bf]">
+      <p className="line-clamp-3 text-sm leading-relaxed text-[#d6d0e5]">
         {snippet}
       </p>
 
@@ -49,7 +49,7 @@ export function PostCard({ post }: { post: PostCardData }) {
         </div>
       )}
 
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 font-mono text-[11px] text-[#7a7490]">
+      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 font-mono text-[11px] text-[#a59cb8]">
         <span>by {post.authorName ?? post.authorUsername ?? "Unknown"}</span>
         <span>&middot;</span>
         <span>{dateLabel}</span>

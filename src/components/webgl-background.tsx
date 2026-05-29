@@ -57,9 +57,9 @@ void main() {
   vec2 mouse = (u_mouse - 0.5) * vec2(0.18, -0.12);
   float t = u_time;
 
-  vec3 ink = vec3(0.018, 0.012, 0.032);
-  vec3 plum = vec3(0.09, 0.026, 0.09);
-  vec3 deep = vec3(0.012, 0.025, 0.055);
+  vec3 ink = vec3(0.08, 0.06, 0.11);
+  vec3 plum = vec3(0.18, 0.13, 0.23);
+  vec3 deep = vec3(0.07, 0.09, 0.1);
   vec3 col = mix(ink, deep, smoothstep(-0.35, 0.9, p.y));
   col = mix(col, plum, 0.28 + 0.18 * sin(p.x * 2.4 - p.y * 1.5));
 
@@ -67,10 +67,10 @@ void main() {
   float n2 = fbm(p * 2.45 + vec2(-t * 0.028, t * 0.025) - mouse * 0.6);
   float ribbonA = smoothstep(0.56, 0.92, n1 + p.y * 0.28);
   float ribbonB = smoothstep(0.6, 0.96, n2 - p.y * 0.16);
-  vec3 cyan = vec3(0.0, 0.94, 1.0);
-  vec3 magenta = vec3(1.0, 0.18, 0.56);
+  vec3 cyan = vec3(0.0, 0.66, 0.46);
+  vec3 magenta = vec3(0.78, 0.75, 0.86);
   vec3 amber = vec3(1.0, 0.62, 0.17);
-  vec3 green = vec3(0.0, 1.0, 0.58);
+  vec3 green = vec3(0.0, 0.66, 0.46);
 
   col += cyan * ribbonA * 0.18;
   col += magenta * ribbonB * 0.16;
@@ -172,7 +172,7 @@ export function WebGLBackground() {
     });
     if (!gl) {
       canvas.style.background =
-        "radial-gradient(circle at 50% 30%, #16243f, #050408 70%)";
+        "radial-gradient(circle at 50% 30%, #2a2232, #140f18 70%)";
       return;
     }
 

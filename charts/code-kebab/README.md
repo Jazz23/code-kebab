@@ -108,10 +108,12 @@ helm upgrade --install code-kebab ./charts/code-kebab \
 
 ## Auth Secrets
 
-Provide the Auth.js secret plus the ZITADEL OIDC settings in your app env
-secret:
+Provide the Better Auth secret plus any enabled OAuth provider settings in your
+app env secret:
 
 - `AUTH_SECRET`
+- `AUTH_GITHUB_ID`
+- `AUTH_GITHUB_SECRET`
 - `AUTH_ZITADEL_ISSUER`
 - `AUTH_ZITADEL_ID`
 - `AUTH_ZITADEL_SECRET` if your ZITADEL client requires one
@@ -119,6 +121,7 @@ secret:
 Also set the public app origin as a normal env var:
 
 - `AUTH_URL`
+- `BETTER_AUTH_URL`; if omitted, the app falls back to `AUTH_URL`
 - `APP_URL` for links in outbound email; if omitted, the chart defaults it to
   `AUTH_URL`
 
@@ -129,7 +132,20 @@ domain and used as `AUTH_ZITADEL_ISSUER`.
 `AUTH_URL` should be the browser-facing base URL of this app, for example
 `https://code-kebab.dev`.
 
+GitHub OAuth apps should allow this callback URL:
+
+```text
+https://code-kebab.dev/api/auth/callback/github
+```
+
+ZITADEL generic OIDC should allow this callback URL:
+
+```text
+https://code-kebab.dev/api/auth/oauth2/callback/zitadel
+```
+
 When using the chart-managed auth `ExternalSecret`, keep `AUTH_SECRET` on
 `auth.externalSecret.secretKey`/`remoteRef` and add other Vault-backed env vars
-such as `AUTH_ZITADEL_ISSUER` and `AUTH_ZITADEL_ID` under
+such as `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_ZITADEL_ISSUER`, and
+`AUTH_ZITADEL_ID` under
 `auth.externalSecret.extraData`.

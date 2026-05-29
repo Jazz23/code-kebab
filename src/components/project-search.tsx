@@ -43,15 +43,15 @@ const DIFFICULTY_LABELS: Record<Difficulty, string> = {
 };
 
 const DIFFICULTY_COLORS: Record<Difficulty, string> = {
-  beginner: "border-[#00ff94]/25 bg-[#00ff94]/10 text-[#00ff94]",
+  beginner: "border-[#00a876]/25 bg-[#00a876]/10 text-[#7ef2cb]",
   intermediate: "border-[#ff9e2c]/25 bg-[#ff9e2c]/10 text-[#ff9e2c]",
-  advanced: "border-[#ff2d8f]/25 bg-[#ff2d8f]/10 text-[#ff2d8f]",
+  advanced: "border-[#c6c0da]/25 bg-[#c6c0da]/10 text-[#ddd7ef]",
 };
 
 const DIFFICULTY_ACTIVE: Record<Difficulty, string> = {
-  beginner: "border-[#00ff94]/80 bg-[#00ff94] text-[#050408]",
-  intermediate: "border-[#ff9e2c]/80 bg-[#ff9e2c] text-[#050408]",
-  advanced: "border-[#ff2d8f]/80 bg-[#ff2d8f] text-white",
+  beginner: "border-[#00a876]/80 bg-[#00a876] text-[#140f18]",
+  intermediate: "border-[#ff9e2c]/80 bg-[#ff9e2c] text-[#140f18]",
+  advanced: "border-[#c6c0da]/80 bg-[#c6c0da] text-[#140f18]",
 };
 
 function applySortAndFilter(
@@ -215,7 +215,7 @@ function SearchInput({
       <div className="relative flex items-center">
         <svg
           aria-hidden="true"
-          className="pointer-events-none absolute left-3.5 h-4 w-4 text-[#00f0ff]"
+          className="pointer-events-none absolute left-3.5 h-4 w-4 text-[#00a876]"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -248,7 +248,7 @@ function SearchInput({
           <button
             type="button"
             onClick={onClear}
-            className="absolute right-3 text-[#7a7490] hover:text-[#00f0ff]"
+            className="absolute right-3 text-[#a59cb8] hover:text-[#7ef2cb]"
             aria-label="Clear search"
           >
             <svg
@@ -271,7 +271,7 @@ function SearchInput({
 
       {showSuggestions && suggestions.length > 0 && (
         <div className="ck-panel absolute left-0 right-0 top-full z-50 mt-2 max-h-[70vh] overflow-y-auto rounded-2xl p-4">
-          <p className="mb-3 font-mono text-xs font-medium uppercase tracking-[0.08em] text-[#7a7490]">
+          <p className="mb-3 font-mono text-xs font-medium uppercase tracking-[0.08em] text-[#a59cb8]">
             {suggestions.length}{" "}
             {suggestions.length === 1
               ? "matching project"
@@ -401,7 +401,7 @@ export function ProjectSearch({
         <div className="flex items-center gap-2">
           <label
             htmlFor="project-sort"
-            className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]"
+            className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#a59cb8]"
           >
             Sort:
           </label>
@@ -429,8 +429,8 @@ export function ProjectSearch({
           onClick={() => setShowFilters((v) => !v)}
           className={`flex items-center gap-1.5 rounded-lg border px-3 py-2 font-mono text-xs font-bold uppercase tracking-[0.08em] transition-colors ${
             showFilters || hasActiveFilters
-              ? "border-[#00f0ff]/80 bg-[#00f0ff] text-[#050408]"
-              : "border-[#00f0ff]/35 bg-[#00f0ff]/10 text-[#00f0ff] hover:border-[#00f0ff]/70"
+              ? "border-[#00a876]/80 bg-[#00a876] text-[#140f18]"
+              : "border-[#00a876]/35 bg-[#00a876]/10 text-[#7ef2cb] hover:border-[#00a876]/70"
           }`}
         >
           <svg
@@ -449,7 +449,7 @@ export function ProjectSearch({
           </svg>
           Filters
           {activeFilterCount > 0 && (
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#050408] text-xs font-bold text-[#00f0ff]">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#140f18] text-xs font-bold text-[#7ef2cb]">
               {activeFilterCount}
             </span>
           )}
@@ -459,7 +459,7 @@ export function ProjectSearch({
           <button
             type="button"
             onClick={clearFilters}
-            className="text-sm text-[#7a7490] underline-offset-2 hover:text-[#ff9e2c] hover:underline"
+            className="text-sm text-[#a59cb8] underline-offset-2 hover:text-[#ffb04a] hover:underline"
           >
             Clear filters
           </button>
@@ -472,7 +472,7 @@ export function ProjectSearch({
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {/* Tags */}
             <div className="lg:col-span-2">
-              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
+              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#a59cb8]">
                 Tags
               </div>
               <TagInput
@@ -485,7 +485,7 @@ export function ProjectSearch({
 
             {/* Difficulty */}
             <div>
-              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
+              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#a59cb8]">
                 Role difficulty
               </div>
               <div className="flex flex-wrap gap-2">
@@ -512,7 +512,7 @@ export function ProjectSearch({
             <div>
               <label
                 htmlFor="min-open-roles"
-                className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]"
+                className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#a59cb8]"
               >
                 Min open roles
               </label>
@@ -530,17 +530,17 @@ export function ProjectSearch({
             {/* Pay range */}
             <div>
               <div className="mb-2 flex items-center justify-between">
-                <div className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
+                <div className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#a59cb8]">
                   Pay range
                 </div>
-                <div className="flex rounded-lg border border-[#00f0ff]/25 text-xs">
+                <div className="flex rounded-lg border border-[#00a876]/25 text-xs">
                   <button
                     type="button"
                     onClick={() => setPayMode("hourly")}
                     className={`rounded-l-lg px-2.5 py-1 font-medium transition-colors ${
                       payMode === "hourly"
-                        ? "bg-[#00f0ff] text-[#050408]"
-                        : "text-[#7a7490] hover:text-[#00f0ff]"
+                        ? "bg-[#00a876] text-[#140f18]"
+                        : "text-[#a59cb8] hover:text-[#7ef2cb]"
                     }`}
                   >
                     $/hr
@@ -550,8 +550,8 @@ export function ProjectSearch({
                     onClick={() => setPayMode("salary")}
                     className={`rounded-r-lg px-2.5 py-1 font-medium transition-colors ${
                       payMode === "salary"
-                        ? "bg-[#00f0ff] text-[#050408]"
-                        : "text-[#7a7490] hover:text-[#00f0ff]"
+                        ? "bg-[#00a876] text-[#140f18]"
+                        : "text-[#a59cb8] hover:text-[#7ef2cb]"
                     }`}
                   >
                     $/yr
@@ -567,7 +567,7 @@ export function ProjectSearch({
                   placeholder={payMode === "salary" ? "Min (k)" : "Min"}
                   className={`w-full ${inputClass}`}
                 />
-                <span className="text-[#7a7490]">-</span>
+                <span className="text-[#a59cb8]">-</span>
                 <input
                   type="number"
                   min="0"
@@ -578,7 +578,7 @@ export function ProjectSearch({
                 />
               </div>
               {payMode === "salary" && (
-                <p className="mt-1 text-xs text-[#7a7490]">
+                <p className="mt-1 text-xs text-[#a59cb8]">
                   Values in thousands (e.g. 90 = $90k/yr)
                 </p>
               )}
@@ -586,7 +586,7 @@ export function ProjectSearch({
 
             {/* Timeline */}
             <div>
-              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
+              <div className="mb-2 block font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#a59cb8]">
                 Timeline
               </div>
               <div className="flex items-center gap-2">
@@ -597,7 +597,7 @@ export function ProjectSearch({
                   className={`w-full ${inputClass}`}
                   title="From"
                 />
-                <span className="text-[#7a7490]">-</span>
+                <span className="text-[#a59cb8]">-</span>
                 <input
                   type="date"
                   value={timelineTo}
@@ -606,7 +606,7 @@ export function ProjectSearch({
                   title="To"
                 />
               </div>
-              <p className="mt-1 text-xs text-[#7a7490]">
+              <p className="mt-1 text-xs text-[#a59cb8]">
                 Only shows projects with a set deadline
               </p>
             </div>
@@ -615,7 +615,7 @@ export function ProjectSearch({
       )}
 
       {/* Results count */}
-      <p className="mt-6 font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#7a7490]">
+      <p className="mt-6 font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#a59cb8]">
         {results.length === projects.length
           ? `${results.length} ${results.length === 1 ? "project" : "projects"}`
           : `${results.length} of ${projects.length} ${projects.length === 1 ? "project" : "projects"}`}
@@ -630,12 +630,12 @@ export function ProjectSearch({
         </div>
       ) : (
         <div className="mt-12 text-center">
-          <p className="text-[#7a7490]">No projects match your filters.</p>
+          <p className="text-[#a59cb8]">No projects match your filters.</p>
           {hasActiveFilters && (
             <button
               type="button"
               onClick={clearFilters}
-              className="mt-3 text-sm font-medium text-[#00f0ff] underline underline-offset-2 hover:text-[#8fffff]"
+              className="mt-3 text-sm font-medium text-[#7ef2cb] underline underline-offset-2 hover:text-[#c9fff0]"
             >
               Clear all filters
             </button>

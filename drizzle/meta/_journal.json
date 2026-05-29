@@ -85,6 +85,13 @@
       "when": 1775658878463,
       "tag": "0011_cuddly_centennial",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1780022733856,
+      "tag": "0012_faulty_blue_blade",
+      "breakpoints": true
     }
   ]
 }

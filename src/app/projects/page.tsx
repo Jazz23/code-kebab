@@ -28,7 +28,7 @@ export default async function ProjectsPage({
             <h1 className="text-4xl font-black tracking-tight text-white">
               Projects
             </h1>
-            <p className="mt-2 text-[#aaa3bf]">
+            <p className="mt-2 text-[#d6d0e5]">
               Browse projects looking for collaborators.
             </p>
           </div>

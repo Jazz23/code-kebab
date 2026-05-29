@@ -16,7 +16,7 @@ export default async function PostsPage() {
             <h1 className="text-4xl font-black tracking-tight text-white">
               Posts
             </h1>
-            <p className="mt-2 text-sm text-[#aaa3bf]">
+            <p className="mt-2 text-sm text-[#d6d0e5]">
               Connect with other coders and find your next collaborator.
             </p>
           </div>
@@ -29,11 +29,11 @@ export default async function PostsPage() {
 
         {allPosts.length === 0 ? (
           <div className="mt-16 text-center">
-            <p className="text-[#7a7490]">No posts yet.</p>
+            <p className="text-[#a59cb8]">No posts yet.</p>
             {session?.user && (
               <Link
                 href="/posts/create"
-                className="mt-4 inline-block text-sm font-medium text-[#00f0ff] underline underline-offset-4"
+                className="mt-4 inline-block text-sm font-medium text-[#7ef2cb] underline underline-offset-4"
               >
                 Be the first to post
               </Link>
