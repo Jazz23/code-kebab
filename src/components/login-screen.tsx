@@ -109,7 +109,7 @@ export function LoginScreen({
       <div className="w-full max-w-sm">
         <Link
           href="/"
-          className="text-sm text-[#a59cb8] transition-colors hover:text-[#fff1da]"
+          className="text-sm text-[#a89778] transition-colors hover:text-[#f1e6d2]"
         >
           &larr; Back
         </Link>
@@ -118,7 +118,7 @@ export function LoginScreen({
 
         {githubEnabled || zitadelEnabled ? (
           <>
-            <p className="mt-2 text-sm text-[#d6d0e5]">
+            <p className="mt-2 text-sm text-[#cbb992]">
               Continue with GitHub
               {zitadelEnabled ? " or your HazyForge account" : ""}.
               {zitadelEnabled && zitadelHost
@@ -155,7 +155,7 @@ export function LoginScreen({
             </div>
           </>
         ) : (
-          <p className="mt-2 text-sm text-[#ffb04a]">
+          <p className="mt-2 text-sm text-[#ffbf75]">
             OAuth is not configured. Using the local development fallback
             instead.
           </p>
@@ -166,7 +166,7 @@ export function LoginScreen({
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-[#ddd7ef]"
+                className="block text-sm font-medium text-[#f1e6d2]"
               >
                 Email
               </label>
@@ -185,7 +185,7 @@ export function LoginScreen({
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-[#ddd7ef]"
+                className="block text-sm font-medium text-[#f1e6d2]"
               >
                 Password
               </label>

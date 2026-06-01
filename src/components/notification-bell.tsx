@@ -120,7 +120,7 @@ export function NotificationBell({
       <button
         type="button"
         onClick={handleOpen}
-        className="relative flex h-8 w-8 items-center justify-center rounded-lg text-[#a59cb8] transition-colors hover:bg-[#00a876]/10 hover:text-[#7ef2cb]"
+        className="relative flex h-8 w-8 items-center justify-center rounded-lg text-[#a89778] transition-colors hover:bg-[#ff8a1e]/10 hover:text-[#ffbf75]"
         aria-label="Messages"
       >
         <svg
@@ -139,7 +139,7 @@ export function NotificationBell({
           />
         </svg>
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff9e2c] px-1 text-[10px] font-bold leading-none text-[#140f18]">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ff8a1e] px-1 text-[10px] font-bold leading-none text-[#11100d]">
             {unreadCount > 99 ? "99+" : unreadCount}
           </span>
         )}
@@ -148,9 +148,11 @@ export function NotificationBell({
       {isOpen && (
         <div className="ck-panel absolute right-0 top-10 z-50 w-80 rounded-xl">
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
-            <span className="text-sm font-semibold text-white">Messages</span>
+            <span className="ck-display text-lg font-black text-white">
+              Messages
+            </span>
             {unreadCount > 0 && (
-              <span className="rounded-full border border-[#ff9e2c]/25 bg-[#ff9e2c]/10 px-2 py-0.5 text-xs font-medium text-[#ffb04a]">
+              <span className="rounded-full border border-[#ff8a1e]/25 bg-[#ff8a1e]/10 px-2 py-0.5 text-xs font-medium text-[#ffbf75]">
                 {unreadCount} unread
               </span>
             )}
@@ -159,11 +161,11 @@ export function NotificationBell({
           <div className="max-h-80 overflow-y-auto">
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <span className="text-sm text-[#a59cb8]">Loading…</span>
+                <span className="text-sm text-[#a89778]">Loading…</span>
               </div>
             ) : !items || items.length === 0 ? (
               <div className="flex items-center justify-center py-8">
-                <span className="text-sm text-[#a59cb8]">No messages yet</span>
+                <span className="text-sm text-[#a89778]">No messages yet</span>
               </div>
             ) : (
               items.map((item) => {
@@ -175,22 +177,22 @@ export function NotificationBell({
                       key={notif.id}
                       className={`group flex items-start gap-3 border-b px-4 py-3 last:border-0 ${
                         isUnread
-                          ? "border-white/10 bg-[#00a876]/10"
+                          ? "border-white/10 bg-[#21c168]/10"
                           : "border-white/10"
                       }`}
                     >
                       {isUnread && (
-                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00a876]" />
+                        <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#21c168]" />
                       )}
                       <Link
                         href={`/messages/system/${notif.id}`}
                         onClick={() => setIsOpen(false)}
                         className={`min-w-0 flex-1 hover:opacity-80 ${!isUnread ? "pl-5" : ""}`}
                       >
-                        <p className="text-sm leading-snug text-[#ddd7ef]">
+                        <p className="text-sm leading-snug text-[#f1e6d2]">
                           {notificationLabel(notif)}
                         </p>
-                        <p className="mt-0.5 text-xs text-[#a59cb8]">
+                        <p className="mt-0.5 text-xs text-[#a89778]">
                           {timeAgo(item.date)}
                         </p>
                       </Link>
@@ -212,12 +214,12 @@ export function NotificationBell({
                     key={msg.id}
                     className={`group flex items-start gap-3 border-b px-4 py-3 last:border-0 ${
                       isUnread
-                        ? "border-white/10 bg-[#00a876]/10"
+                        ? "border-white/10 bg-[#21c168]/10"
                         : "border-white/10"
                     }`}
                   >
                     {isUnread && (
-                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#00a876]" />
+                      <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-[#21c168]" />
                     )}
                     <Link
                       href={`/messages/${msg.id}`}
@@ -225,17 +227,17 @@ export function NotificationBell({
                       className={`min-w-0 flex-1 hover:opacity-80 ${!isUnread ? "pl-5" : ""}`}
                     >
                       <div className="flex items-center gap-2">
-                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#00a876] text-[9px] font-bold text-[#140f18]">
+                        <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#21c168] text-[9px] font-bold text-[#11100d]">
                           {initials}
                         </div>
-                        <p className="truncate text-sm font-medium leading-snug text-[#ddd7ef]">
+                        <p className="truncate text-sm font-medium leading-snug text-[#f1e6d2]">
                           {msg.senderName}
                         </p>
                       </div>
-                      <p className="mt-0.5 truncate text-xs text-[#a59cb8]">
+                      <p className="mt-0.5 truncate text-xs text-[#a89778]">
                         {msg.subject}
                       </p>
-                      <p className="mt-0.5 text-xs text-[#a59cb8]">
+                      <p className="mt-0.5 text-xs text-[#a89778]">
                         {timeAgo(item.date)}
                       </p>
                     </Link>
@@ -249,7 +251,7 @@ export function NotificationBell({
             <Link
               href="/messages"
               onClick={() => setIsOpen(false)}
-              className="block text-center text-xs font-medium text-[#7ef2cb] transition-colors hover:text-[#c9fff0]"
+              className="block text-center text-xs font-medium text-[#9af0bd] transition-colors hover:text-[#d7ffdf]"
             >
               View all messages →
             </Link>

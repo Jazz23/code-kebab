@@ -42,8 +42,8 @@ export async function Nav() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#140f18]/78 backdrop-blur-xl">
-      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6">
+    <header className="sticky top-0 z-50 border-b border-[#f1e6d2]/12 bg-[#0b0d0f]/82 backdrop-blur-xl">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-2">
           <Link
             href="/"
@@ -53,10 +53,10 @@ export async function Nav() {
             <Image
               src="/code-kebab-logo.svg"
               alt="code-kebab"
-              width={200}
-              height={63}
+              width={280}
+              height={88}
               priority
-              className="h-11 w-auto sm:h-12"
+              className="h-12 w-auto sm:h-14"
             />
           </Link>
           <a
@@ -64,7 +64,7 @@ export async function Nav() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Source on GitHub"
-            className="hidden text-[#a59cb8] transition-colors hover:text-[#7ef2cb] sm:block"
+            className="hidden text-[#a89778] transition-colors hover:text-[#ffbf75] sm:block"
           >
             <span className="sr-only">Source on GitHub</span>
             <svg
@@ -77,16 +77,16 @@ export async function Nav() {
             </svg>
           </a>
         </div>
-        <nav className="flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-[0.08em] sm:gap-6 sm:text-xs">
+        <nav className="flex items-center gap-3 font-mono text-[10px] font-bold uppercase tracking-[0.06em] sm:gap-6 sm:text-xs">
           <Link
             href="/projects"
-            className="text-[#a59cb8] transition-colors hover:text-[#7ef2cb]"
+            className="text-[#a89778] transition-colors hover:text-[#ffbf75]"
           >
             Projects
           </Link>
           <Link
             href="/posts"
-            className="text-[#a59cb8] transition-colors hover:text-[#7ef2cb]"
+            className="text-[#a89778] transition-colors hover:text-[#ffbf75]"
           >
             Posts
           </Link>

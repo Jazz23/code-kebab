@@ -23,19 +23,24 @@ export function PostCard({ post }: { post: PostCardData }) {
       : post.description;
 
   return (
-    <div className="ck-panel group relative flex flex-col gap-3 rounded-2xl p-6 transition-all duration-200 hover:-translate-y-1">
+    <div className="ck-panel group relative flex min-h-[230px] flex-col gap-4 overflow-hidden rounded-xl p-5 transition-all duration-200 hover:-translate-y-1 hover:border-[#ff8a1e]/40">
       <Link
         href={`/posts/${post.id}`}
-        className="absolute inset-0 z-10 rounded-2xl"
+        className="absolute inset-0 z-10 rounded-xl"
       >
         <span className="sr-only">{post.title}</span>
       </Link>
 
-      <h3 className="text-lg font-bold text-white transition-colors group-hover:text-[#fff1da]">
+      <div className="flex items-center justify-between border-b border-[#f1e6d2]/10 pb-3">
+        <span className="ck-kicker text-[#ff8a1e]">Collab post</span>
+        <span className="ck-kicker text-[#8d8b82]">{dateLabel}</span>
+      </div>
+
+      <h3 className="ck-display text-2xl font-black leading-6 text-white transition-colors group-hover:text-[#ffbf75]">
         {post.title}
       </h3>
 
-      <p className="line-clamp-3 text-sm leading-relaxed text-[#d6d0e5]">
+      <p className="line-clamp-3 text-sm leading-relaxed text-[#cbb992]">
         {snippet}
       </p>
 
@@ -49,10 +54,8 @@ export function PostCard({ post }: { post: PostCardData }) {
         </div>
       )}
 
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-2 font-mono text-[11px] text-[#a59cb8]">
+      <div className="mt-auto flex flex-wrap items-center gap-2 border-t border-[#f1e6d2]/10 pt-3 font-mono text-[11px] text-[#a89778]">
         <span>by {post.authorName ?? post.authorUsername ?? "Unknown"}</span>
-        <span>&middot;</span>
-        <span>{dateLabel}</span>
       </div>
     </div>
   );

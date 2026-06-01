@@ -8,92 +8,219 @@ export const dynamic = "force-dynamic";
 export default async function Home() {
   const allProjects = await getProjects();
   const featured = allProjects.slice(0, 3);
+  const openRoleCount = allProjects.reduce(
+    (total, project) =>
+      total + (project.openRoles.length || project.openSlots || 0),
+    0,
+  );
+  const memberCount = allProjects.reduce(
+    (total, project) => total + project.memberCount,
+    0,
+  );
 
   return (
     <main className="flex-1">
-      <section className="relative flex min-h-[calc(100vh-4rem)] items-center overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#140f18]/5 via-[#140f18]/20 to-[#140f18]" />
-        <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-6 py-20 lg:grid-cols-[1fr_400px]">
-          <div>
-            <div className="ck-status-badge mb-8 inline-flex items-center gap-2 rounded-full border border-[#00a876]/30 bg-[#00a876]/10 px-4 py-1.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-[#7ef2cb]">
-              <span className="ck-status-dot h-1.5 w-1.5 rounded-full bg-[#00a876] shadow-[0_0_12px_rgba(0,168,118,0.8)]" />
-              Network Online
-              <span className="ck-status-divider text-[#00a876]/40">/</span>
-              {allProjects.length.toLocaleString()} Projects
+      <section className="relative overflow-hidden">
+        <div className="mx-auto grid min-h-[calc(100vh-5rem)] w-full max-w-7xl items-center gap-10 px-4 py-10 sm:px-6 lg:grid-cols-[minmax(0,0.88fr)_minmax(520px,1.12fr)] lg:py-14">
+          <div className="max-w-2xl">
+            <div className="ck-kicker mb-5 inline-flex items-center gap-3 rounded-full border border-[#ff8a1e]/30 bg-[#ff8a1e]/10 px-4 py-2 text-[#ffbf75]">
+              <span className="h-2 w-2 rounded-full bg-[#21c168] shadow-[0_0_18px_rgba(33,193,104,0.75)]" />
+              Build Board Live
+              <span className="text-[#a89778]">/</span>
+              {allProjects.length.toLocaleString()} projects
             </div>
-            <h1 className="max-w-4xl text-5xl font-black leading-[1.02] tracking-tight text-white sm:text-7xl lg:text-8xl">
-              Find Projects.
-              <span className="block text-[#ff9e2c]">Find People.</span>
-              <span className="mt-2 block text-[#c6c0da] drop-shadow-[0_10px_28px_rgba(198,192,218,0.16)]">
-                Build Together.
-              </span>
+            <h1 className="ck-display max-w-3xl text-6xl font-black leading-[0.86] text-white sm:text-7xl lg:text-8xl">
+              Find projects.
+              <span className="block text-[#f1e6d2]">Post collabs.</span>
+              <span className="block text-[#e0312d]">Build together.</span>
             </h1>
-            <p className="mt-6 max-w-xl text-base leading-7 text-[#d6d0e5]">
-              Browse open projects looking for contributors, or connect with
-              developers ready to build something new.
+            <p className="mt-6 max-w-xl text-lg leading-7 text-[#cbb992]">
+              Code Kebab is a build board for developers who want the next thing
+              to ship with other people. Browse active projects, post a
+              collaborator request, and turn loose ideas into real teams.
             </p>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link href="/projects" className="ck-button-primary px-6 py-3">
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/projects" className="ck-button-primary px-5 py-3">
                 Browse Projects
+                <span aria-hidden="true">-&gt;</span>
               </Link>
-              <Link href="/posts" className="ck-button-secondary px-6 py-3">
-                Browse Posts
+              <Link href="/posts" className="ck-button-secondary px-5 py-3">
+                Post Collab Request
               </Link>
+            </div>
+            <div className="mt-9 grid max-w-xl grid-cols-3 border-y border-[#f1e6d2]/12 py-4">
+              <div>
+                <div className="ck-display text-3xl font-black text-[#ff8a1e]">
+                  {openRoleCount.toLocaleString()}
+                </div>
+                <div className="ck-kicker mt-1 text-[#8d8b82]">Open roles</div>
+              </div>
+              <div className="border-x border-[#f1e6d2]/12 px-5">
+                <div className="ck-display text-3xl font-black text-[#21c168]">
+                  {memberCount.toLocaleString()}
+                </div>
+                <div className="ck-kicker mt-1 text-[#8d8b82]">Builders</div>
+              </div>
+              <div className="pl-5">
+                <div className="ck-display text-3xl font-black text-[#f1e6d2]">
+                  24/7
+                </div>
+                <div className="ck-kicker mt-1 text-[#8d8b82]">Open shop</div>
+              </div>
             </div>
           </div>
 
-          <div className="ck-panel hidden min-h-[460px] rounded-[2rem] p-6 lg:block">
-            <div className="absolute left-5 top-5 h-10 w-10 border-l-2 border-t-2 border-[#00a876]/55" />
-            <div className="absolute right-5 top-5 h-10 w-10 border-r-2 border-t-2 border-[#ff9e2c]/55" />
-            <div className="absolute bottom-5 left-5 h-10 w-10 border-b-2 border-l-2 border-[#c6c0da]/45" />
-            <div className="absolute bottom-5 right-5 h-10 w-10 border-b-2 border-r-2 border-[#00a876]/45" />
-            <div className="flex h-full flex-col items-center justify-center gap-8">
-              <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.03] px-8 py-6 shadow-[0_24px_50px_rgba(0,0,0,0.18)]">
+          <div className="ck-board relative min-h-[560px] overflow-hidden rounded-[1.25rem] p-4 sm:p-5">
+            <div className="flex items-center justify-between border-b border-[#f1e6d2]/12 pb-4">
+              <div className="flex items-center gap-3">
                 <Image
-                  src="/code-kebab-logo.svg"
-                  alt="code-kebab"
-                  width={200}
-                  height={63}
-                  className="h-16 w-auto"
+                  src="/code-kebab-mark.svg"
+                  alt=""
+                  width={44}
+                  height={44}
+                  className="h-11 w-11"
                 />
-              </div>
-              <div className="text-center">
-                <div className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-[#a59cb8]">
-                  Collaboration Status
+                <div>
+                  <div className="ck-display text-2xl font-black text-[#f1e6d2]">
+                    Code Kebab
+                  </div>
+                  <div className="ck-kicker text-[#8d8b82]">
+                    Project grill / live queue
+                  </div>
                 </div>
-                <div className="mt-2 font-mono text-sm font-bold uppercase tracking-[0.08em] text-[#7ef2cb]">
-                  Operational
-                </div>
               </div>
-              <div className="grid w-full grid-cols-3 gap-3">
-                {["Build", "Ship", "Learn"].map((label) => (
-                  <div
+              <div className="hidden items-center gap-2 sm:flex">
+                {["Projects", "People", "Activity"].map((label, index) => (
+                  <span
                     key={label}
-                    className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-4 text-center font-mono text-[11px] font-bold uppercase tracking-[0.08em] text-[#ddd7ef]"
+                    className={`ck-kicker rounded-md px-3 py-2 ${
+                      index === 0
+                        ? "bg-[#ff8a1e] text-[#11100d]"
+                        : "text-[#a89778]"
+                    }`}
                   >
                     {label}
-                  </div>
+                  </span>
                 ))}
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-4 lg:grid-cols-[76px_1fr_170px]">
+              <div className="hidden flex-col gap-3 rounded-xl border border-[#f1e6d2]/10 bg-[#f1e6d2]/[0.03] p-3 lg:flex">
+                {["&gt;_", "{}", "&lt;/&gt;", "++", "-&gt;"].map(
+                  (icon, index) => (
+                    <div
+                      key={icon}
+                      className={`grid h-10 place-items-center rounded-lg font-mono text-sm font-black ${
+                        index === 0
+                          ? "bg-[#21c168]/16 text-[#9af0bd]"
+                          : "text-[#a89778]"
+                      }`}
+                    >
+                      {icon}
+                    </div>
+                  ),
+                )}
+              </div>
+              <div className="rounded-xl border border-[#f1e6d2]/10 bg-[#0b0d0f]/70 p-4">
+                <div className="ck-kicker text-[#21c168]">
+                  {"// featured builds"}
+                </div>
+                <div className="mt-4 space-y-3">
+                  {featured.length > 0
+                    ? featured.map((project, index) => (
+                        <Link
+                          key={project.slug}
+                          href={`/projects/${project.slug}`}
+                          className="group block rounded-lg border border-[#f1e6d2]/10 bg-[#f1e6d2]/[0.035] p-4 transition-colors hover:border-[#ff8a1e]/45"
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div>
+                              <div className="ck-display text-xl font-black text-[#f1e6d2] group-hover:text-[#ffbf75]">
+                                {project.title}
+                              </div>
+                              <p className="mt-1 line-clamp-2 text-sm leading-6 text-[#cbb992]">
+                                {project.description}
+                              </p>
+                            </div>
+                            <span className="ck-kicker shrink-0 rounded-md border border-[#21c168]/25 bg-[#21c168]/10 px-2 py-1 text-[#9af0bd]">
+                              {project.openRoles.length ||
+                                project.openSlots ||
+                                index + 1}{" "}
+                              open
+                            </span>
+                          </div>
+                          <div className="mt-3 flex flex-wrap gap-1.5">
+                            {project.tags.slice(0, 3).map((tag) => (
+                              <span
+                                key={tag}
+                                className="ck-chip rounded-md px-2 py-0.5"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        </Link>
+                      ))
+                    : [
+                        "Next auth starter",
+                        "Realtime collab editor",
+                        "Open API hub",
+                      ].map((label) => (
+                        <div
+                          key={label}
+                          className="rounded-lg border border-[#f1e6d2]/10 bg-[#f1e6d2]/[0.035] p-4"
+                        >
+                          <div className="ck-display text-xl font-black text-[#f1e6d2]">
+                            {label}
+                          </div>
+                          <div className="mt-3 h-2 w-4/5 rounded bg-[#8d8b82]/25" />
+                          <div className="mt-2 h-2 w-2/3 rounded bg-[#8d8b82]/18" />
+                        </div>
+                      ))}
+                </div>
+              </div>
+              <div className="rounded-xl border border-[#f1e6d2]/10 bg-[#f1e6d2]/[0.03] p-4">
+                <div className="ck-kicker text-[#21c168]">Active now</div>
+                <div className="mt-3 space-y-3">
+                  {["Frontend", "Infra", "Design", "API", "Data"].map(
+                    (label, index) => (
+                      <div key={label} className="flex items-center gap-2">
+                        <div className="grid h-7 w-7 place-items-center rounded-full border border-[#ff8a1e]/30 bg-[#ff8a1e]/10 font-mono text-[10px] font-black text-[#ffbf75]">
+                          {index + 1}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="h-1.5 w-full rounded bg-[#8d8b82]/25" />
+                          <div className="mt-1.5 h-1.5 w-2/3 rounded bg-[#8d8b82]/16" />
+                        </div>
+                        <span className="h-2 w-2 rounded-full bg-[#21c168]" />
+                      </div>
+                    ),
+                  )}
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="ck-section border-y border-white/10">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-black text-white">
-              Featured Projects
-            </h2>
+      <section className="ck-section border-y border-[#f1e6d2]/12">
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+          <div className="flex items-end justify-between gap-6">
+            <div>
+              <div className="ck-kicker text-[#ff8a1e]">Featured projects</div>
+              <h2 className="ck-display mt-2 text-4xl font-black text-white">
+                Fresh from the board
+              </h2>
+            </div>
             <Link
               href="/projects"
-              className="font-mono text-xs font-bold uppercase tracking-[0.08em] text-[#ffb04a] transition-colors hover:text-[#ffd08c]"
+              className="ck-kicker hidden text-[#ffbf75] transition-colors hover:text-[#f1e6d2] sm:block"
             >
-              View all &rarr;
+              View all -&gt;
             </Link>
           </div>
-          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {featured.map((project) => (
               <ProjectCard key={project.slug} project={project} />
             ))}
@@ -101,53 +228,40 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-[#1a1420]/90">
-        <div className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-3xl font-black text-white">How it works</h2>
-          <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <div className="text-5xl font-black text-transparent [-webkit-text-stroke:2px_#00a876]">
-                01
+      <section>
+        <div className="mx-auto grid max-w-7xl gap-6 px-4 py-16 sm:px-6 lg:grid-cols-4">
+          {[
+            [
+              "01",
+              "Browse the board",
+              "Filter open projects by stack, role, pay, and timeline.",
+            ],
+            [
+              "02",
+              "Post a collab",
+              "Share the thing you want to build before you have the team.",
+            ],
+            [
+              "03",
+              "Request a seat",
+              "Send a focused join request that tells a maintainer what you bring.",
+            ],
+            [
+              "04",
+              "Ship together",
+              "Move from discovery into a working project space with your team.",
+            ],
+          ].map(([step, title, body]) => (
+            <div key={step} className="border-t border-[#f1e6d2]/12 pt-5">
+              <div className="ck-display text-5xl font-black text-transparent [-webkit-text-stroke:1.5px_var(--ember)]">
+                {step}
               </div>
-              <h3 className="mt-4 font-semibold text-white">Browse projects</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#a59cb8]">
-                Explore projects that match your skills and interests. Filter by
-                technology, role, or topic.
-              </p>
-            </div>
-            <div>
-              <div className="text-5xl font-black text-transparent [-webkit-text-stroke:2px_#ff9e2c]">
-                02
-              </div>
-              <h3 className="mt-4 font-semibold text-white">
-                Discover developers
+              <h3 className="ck-display mt-3 text-2xl font-black text-white">
+                {title}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#a59cb8]">
-                Browse posts from developers who don&apos;t have a project yet
-                but are looking for collaborators to build something new.
-              </p>
+              <p className="mt-2 text-sm leading-6 text-[#cbb992]">{body}</p>
             </div>
-            <div>
-              <div className="text-5xl font-black text-transparent [-webkit-text-stroke:2px_#c6c0da]">
-                03
-              </div>
-              <h3 className="mt-4 font-semibold text-white">Request to join</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#a59cb8]">
-                Found something you like? Send a join request with a short
-                message about what you&apos;d bring to the team.
-              </p>
-            </div>
-            <div>
-              <div className="text-5xl font-black text-transparent [-webkit-text-stroke:2px_#00a876]">
-                04
-              </div>
-              <h3 className="mt-4 font-semibold text-white">Build together</h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#a59cb8]">
-                Once accepted, collaborate with your team. Ship features, squash
-                bugs, and learn from each other.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
     </main>

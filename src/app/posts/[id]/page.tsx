@@ -1,8 +1,8 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { auth } from "@/auth";
-import { getPostById } from "@/db/queries";
 import { PostReplyForm } from "@/components/post-reply-form";
+import { getPostById } from "@/db/queries";
 
 export const dynamic = "force-dynamic";
 
@@ -34,6 +34,7 @@ export default async function PostPage({
           className="mb-8 inline-flex items-center gap-1.5 text-sm text-zinc-500 transition-colors hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50"
         >
           <svg
+            aria-hidden="true"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -50,7 +51,7 @@ export default async function PostPage({
 
         {/* Post header */}
         <article>
-          <h1 className="text-3xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+          <h1 className="ck-display text-4xl font-black leading-none text-zinc-900 dark:text-zinc-50">
             {post.title}
           </h1>
 

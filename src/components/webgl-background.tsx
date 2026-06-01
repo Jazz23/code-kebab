@@ -57,24 +57,24 @@ void main() {
   vec2 mouse = (u_mouse - 0.5) * vec2(0.18, -0.12);
   float t = u_time;
 
-  vec3 ink = vec3(0.08, 0.06, 0.11);
-  vec3 plum = vec3(0.18, 0.13, 0.23);
-  vec3 deep = vec3(0.07, 0.09, 0.1);
+  vec3 ink = vec3(0.04, 0.05, 0.055);
+  vec3 smoke = vec3(0.11, 0.12, 0.13);
+  vec3 deep = vec3(0.025, 0.03, 0.035);
   vec3 col = mix(ink, deep, smoothstep(-0.35, 0.9, p.y));
-  col = mix(col, plum, 0.28 + 0.18 * sin(p.x * 2.4 - p.y * 1.5));
+  col = mix(col, smoke, 0.18 + 0.12 * sin(p.x * 2.4 - p.y * 1.5));
 
   float n1 = fbm(p * 1.55 + vec2(t * 0.035, -t * 0.018) + mouse);
   float n2 = fbm(p * 2.45 + vec2(-t * 0.028, t * 0.025) - mouse * 0.6);
   float ribbonA = smoothstep(0.56, 0.92, n1 + p.y * 0.28);
   float ribbonB = smoothstep(0.6, 0.96, n2 - p.y * 0.16);
-  vec3 cyan = vec3(0.0, 0.66, 0.46);
-  vec3 magenta = vec3(0.78, 0.75, 0.86);
-  vec3 amber = vec3(1.0, 0.62, 0.17);
-  vec3 green = vec3(0.0, 0.66, 0.46);
+  vec3 green = vec3(0.13, 0.76, 0.41);
+  vec3 tomato = vec3(0.88, 0.19, 0.18);
+  vec3 amber = vec3(1.0, 0.54, 0.12);
+  vec3 parchment = vec3(0.95, 0.9, 0.82);
 
-  col += cyan * ribbonA * 0.18;
-  col += magenta * ribbonB * 0.16;
-  col += amber * pow(max(ribbonA - ribbonB, 0.0), 1.6) * 0.16;
+  col += amber * ribbonA * 0.14;
+  col += tomato * ribbonB * 0.11;
+  col += green * pow(max(ribbonA - ribbonB, 0.0), 1.6) * 0.1;
 
   float nodeGlow = 0.0;
   float edgeGlow = 0.0;
@@ -99,14 +99,14 @@ void main() {
     edgeGlow += exp(-e * 95.0) * 0.025;
   }
 
-  vec3 networkColor = mix(cyan, green, 0.42 + 0.22 * sin(t * 0.5));
+  vec3 networkColor = mix(amber, green, 0.42 + 0.22 * sin(t * 0.5));
   col += networkColor * edgeGlow;
-  col += mix(cyan, magenta, 0.45 + 0.35 * sin(t * 0.35)) * nodeGlow * 0.08;
+  col += mix(amber, tomato, 0.45 + 0.35 * sin(t * 0.35)) * nodeGlow * 0.06;
 
   float ring = abs(length(p - mouse * 0.45) - (0.34 + sin(t * 0.45) * 0.025));
-  col += cyan * exp(-ring * 70.0) * 0.045;
+  col += amber * exp(-ring * 70.0) * 0.03;
   float ring2 = abs(length(p + mouse * 0.25) - (0.58 + cos(t * 0.32) * 0.035));
-  col += magenta * exp(-ring2 * 60.0) * 0.035;
+  col += green * exp(-ring2 * 60.0) * 0.024;
 
   float stars = 0.0;
   for (int s = 0; s < 3; s++) {
@@ -118,7 +118,7 @@ void main() {
     float sparkle = smoothstep(0.025, 0.0, length(gv)) * step(0.985, h);
     stars += sparkle * (0.45 + 0.55 * sin(t * (1.0 + h * 2.0) + h * TAU));
   }
-  col += vec3(0.82, 0.9, 1.0) * stars * smoothstep(-0.2, 0.6, p.y);
+  col += parchment * stars * smoothstep(-0.2, 0.6, p.y);
 
   float grain = hash(gl_FragCoord.xy + fract(t * 19.0) * 170.0) - 0.5;
   float vignette = smoothstep(1.25, 0.18, length((uv - 0.5) * vec2(1.18, 1.0)));
@@ -171,8 +171,7 @@ export function WebGLBackground() {
       powerPreference: "high-performance",
     });
     if (!gl) {
-      canvas.style.background =
-        "radial-gradient(circle at 50% 30%, #2a2232, #140f18 70%)";
+      canvas.style.background = "linear-gradient(135deg, #17130f, #0b0d0f 70%)";
       return;
     }
 

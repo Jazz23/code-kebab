@@ -1,0 +1,24 @@
+<svg width="88" height="88" viewBox="0 0 88 88" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">Code Kebab mark</title>
+  <desc id="desc">A diagonal skewer of code symbols.</desc>
+  <rect width="88" height="88" rx="18" fill="#0B0D0F"/>
+  <path d="M20 77L72 15" stroke="#F1E6D2" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="19.5" cy="76.5" r="6.5" fill="#0B0D0F" stroke="#F1E6D2" stroke-width="4"/>
+  <path d="M74 13L80 5L77 24L67 21L74 13Z" fill="#F1E6D2"/>
+  <g transform="rotate(-11 34 58)">
+    <rect x="23" y="49" width="26" height="20" rx="4" fill="#6FA95C" stroke="#0A0C0F" stroke-width="2"/>
+    <path d="M32 54L28 59L32 64M41 54L45 59L41 64" stroke="#0B0D0F" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="rotate(-12 45 45)">
+    <rect x="31" y="35" width="31" height="24" rx="4" fill="#FF9A1F" stroke="#0A0C0F" stroke-width="2"/>
+    <path d="M42 41L37 47L42 53M52 41L57 47L52 53" stroke="#101214" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M49 41L45 53" stroke="#101214" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <path d="M47 24C42 29 42 35 47 40M62 20C68 25 68 32 62 37" stroke="#E0372E" stroke-width="7" stroke-linecap="round"/>
+  <g transform="rotate(-12 60 23)">
+    <rect x="48" y="12" width="28" height="22" rx="4" fill="#1B2025" stroke="#0A0C0F" stroke-width="2"/>
+    <path d="M56 20L63 26L56 30" stroke="#7DDD69" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M64 30H72" stroke="#7DDD69" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <path d="M63 7L54 15L63 23M76 5L85 13L76 21" stroke="#F1E6D2" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
