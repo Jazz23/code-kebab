@@ -17,7 +17,11 @@ RUN --mount=type=cache,target=/root/.bun/install/cache bun install --frozen-lock
 
 FROM base AS builder
 ARG DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:5432/postgres
+ARG BETTER_AUTH_URL=http://localhost:3000
+ARG BETTER_AUTH_SECRET=build-stage-placeholder-secret-32-chars-minimum
 ENV DATABASE_URL=$DATABASE_URL
+ENV BETTER_AUTH_URL=$BETTER_AUTH_URL
+ENV BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN bun run build

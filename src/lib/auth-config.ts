@@ -31,6 +31,9 @@ const normalizedGithubClientSecret = normalizeEnv(
 const normalizedAuthUrl = normalizeUrl(
   process.env.BETTER_AUTH_URL ?? process.env.AUTH_URL,
 );
+const normalizedAuthSecret = normalizeEnv(
+  process.env.BETTER_AUTH_SECRET ?? process.env.AUTH_SECRET,
+);
 
 export const zitadelConfigured = Boolean(
   normalizedZitadelClientId && normalizedZitadelIssuer,
@@ -55,3 +58,4 @@ export const githubConfigured = Boolean(
   normalizedGithubClientId && normalizedGithubClientSecret,
 );
 export const authUrl = normalizedAuthUrl;
+export const authSecret = normalizedAuthSecret;

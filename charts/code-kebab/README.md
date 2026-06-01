@@ -111,7 +111,8 @@ helm upgrade --install code-kebab ./charts/code-kebab \
 Provide the Better Auth secret plus any enabled OAuth provider settings in your
 app env secret:
 
-- `AUTH_SECRET`
+- `BETTER_AUTH_SECRET`
+- `AUTH_SECRET` is still accepted as a legacy fallback
 - `AUTH_GITHUB_ID`
 - `AUTH_GITHUB_SECRET`
 - `AUTH_ZITADEL_ISSUER`
@@ -144,7 +145,7 @@ ZITADEL generic OIDC should allow this callback URL:
 https://code-kebab.dev/api/auth/oauth2/callback/zitadel
 ```
 
-When using the chart-managed auth `ExternalSecret`, keep `AUTH_SECRET` on
+When using the chart-managed auth `ExternalSecret`, keep `BETTER_AUTH_SECRET` on
 `auth.externalSecret.secretKey`/`remoteRef` and add other Vault-backed env vars
 such as `AUTH_GITHUB_ID`, `AUTH_GITHUB_SECRET`, `AUTH_ZITADEL_ISSUER`, and
 `AUTH_ZITADEL_ID` under

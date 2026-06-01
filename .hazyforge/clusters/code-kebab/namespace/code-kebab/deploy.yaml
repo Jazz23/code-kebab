@@ -5,7 +5,7 @@ replicaCount: 1
 image:
   repository: ghcr.io/jazz23/code-kebab
   pullPolicy: Always
-  tag: "redesign-20260601-0150"
+  tag: "hardware-accel-20260601-0858"
 
 resources:
   requests:
@@ -81,7 +81,7 @@ auth:
     target:
       name: code-kebab-authjs
       creationPolicy: Owner
-    secretKey: AUTH_SECRET
+    secretKey: BETTER_AUTH_SECRET
     remoteRef:
       key: secret/authjs-secret
     extraData:

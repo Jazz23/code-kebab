@@ -1,6 +1,20 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const FALLBACK_STORAGE_KEY = "code-kebab:webgl-fallback-until";
+const FALLBACK_TTL_MS = 1000 * 60 * 60 * 24;
+const FRAME_PROBE_COUNT = 24;
+const SLOW_AVERAGE_FRAME_MS = 30;
+const SLOW_FRAME_MS = 90;
+const TARGET_FRAME_MS = 1000 / 30;
+const SOFTWARE_RENDERER_PATTERNS = [
+  "swiftshader",
+  "llvmpipe",
+  "software",
+  "microsoft basic",
+  "mesa offscreen",
+];
 
 const VERT = `
 attribute vec2 a_pos;
@@ -158,24 +172,97 @@ function createProgram(gl: WebGLRenderingContext) {
   return program;
 }
 
+function hasTemporaryFallback() {
+  try {
+    const fallbackUntil = Number(localStorage.getItem(FALLBACK_STORAGE_KEY));
+    if (!Number.isFinite(fallbackUntil)) return false;
+    if (fallbackUntil <= Date.now()) {
+      localStorage.removeItem(FALLBACK_STORAGE_KEY);
+      return false;
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function rememberTemporaryFallback() {
+  try {
+    localStorage.setItem(
+      FALLBACK_STORAGE_KEY,
+      String(Date.now() + FALLBACK_TTL_MS),
+    );
+  } catch {
+    // Storage can be unavailable in private contexts; the in-session fallback still applies.
+  }
+}
+
+function shouldPreferStaticBackground() {
+  if (hasTemporaryFallback()) return true;
+
+  const reducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  ).matches;
+  if (reducedMotion) return true;
+
+  const nav = navigator as Navigator & {
+    connection?: { saveData?: boolean };
+    deviceMemory?: number;
+  };
+
+  if (nav.connection?.saveData) return true;
+  if (nav.hardwareConcurrency && nav.hardwareConcurrency <= 2) return true;
+  if (nav.deviceMemory && nav.deviceMemory <= 2) return true;
+
+  return false;
+}
+
+function isSoftwareRenderer(gl: WebGLRenderingContext) {
+  const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+  if (!debugInfo) return false;
+
+  const renderer = String(
+    gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) ?? "",
+  ).toLowerCase();
+
+  return SOFTWARE_RENDERER_PATTERNS.some((pattern) =>
+    renderer.includes(pattern),
+  );
+}
+
 export function WebGLBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isStatic, setIsStatic] = useState(false);
 
   useEffect(() => {
+    if (shouldPreferStaticBackground()) {
+      setIsStatic(true);
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
 
     const gl = canvas.getContext("webgl", {
       alpha: false,
       antialias: false,
-      powerPreference: "high-performance",
+      depth: false,
+      failIfMajorPerformanceCaveat: true,
+      powerPreference: "default",
+      stencil: false,
     });
     if (!gl) {
-      canvas.style.background = "linear-gradient(135deg, #17130f, #0b0d0f 70%)";
+      setIsStatic(true);
       return;
     }
 
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    if (isSoftwareRenderer(gl)) {
+      rememberTemporaryFallback();
+      setIsStatic(true);
+      return;
+    }
+
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let width = window.innerWidth;
     let height = window.innerHeight;
 
@@ -193,9 +280,18 @@ export function WebGLBackground() {
     window.addEventListener("resize", resize);
 
     const program = createProgram(gl);
-    if (!program) return;
+    if (!program) {
+      window.removeEventListener("resize", resize);
+      setIsStatic(true);
+      return;
+    }
 
     const buffer = gl.createBuffer();
+    if (!buffer) {
+      window.removeEventListener("resize", resize);
+      setIsStatic(true);
+      return;
+    }
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(
       gl.ARRAY_BUFFER,
@@ -207,7 +303,7 @@ export function WebGLBackground() {
     const uTime = gl.getUniformLocation(program, "u_time");
     const uRes = gl.getUniformLocation(program, "u_res");
     const uMouse = gl.getUniformLocation(program, "u_mouse");
-    const applyProgram = WebGLRenderingContext.prototype.useProgram.bind(gl);
+    const activateProgram = WebGLRenderingContext.prototype.useProgram.bind(gl);
     const mouse = { x: 0.5, y: 0.5 };
     const smoothMouse = { x: 0.5, y: 0.5 };
 
@@ -218,16 +314,58 @@ export function WebGLBackground() {
     window.addEventListener("mousemove", handleMouse);
 
     let frame = 0;
+    let shouldRender = true;
+    let lastDraw = 0;
+    let lastFrameTime = performance.now();
+    let slowFrameCount = 0;
+    let sampledFrames = 0;
+    let totalFrameTime = 0;
     const start = performance.now();
-    const render = () => {
+    const detach = () => {
+      shouldRender = false;
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", handleMouse);
+    };
+    const switchToStatic = () => {
+      rememberTemporaryFallback();
+      detach();
+      setIsStatic(true);
+    };
+    const render = (now: number) => {
+      if (!shouldRender) return;
+
+      const frameTime = now - lastFrameTime;
+      lastFrameTime = now;
+      if (sampledFrames < FRAME_PROBE_COUNT) {
+        sampledFrames += 1;
+        totalFrameTime += frameTime;
+        if (frameTime > SLOW_FRAME_MS) slowFrameCount += 1;
+
+        const averageFrameTime = totalFrameTime / sampledFrames;
+        if (
+          sampledFrames >= 8 &&
+          (averageFrameTime > SLOW_AVERAGE_FRAME_MS || slowFrameCount >= 2)
+        ) {
+          switchToStatic();
+          return;
+        }
+      }
+
+      if (now - lastDraw < TARGET_FRAME_MS) {
+        frame = requestAnimationFrame(render);
+        return;
+      }
+      lastDraw = now;
+
       smoothMouse.x += (mouse.x - smoothMouse.x) * 0.035;
       smoothMouse.y += (mouse.y - smoothMouse.y) * 0.035;
 
-      applyProgram(program);
+      activateProgram(program);
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
       gl.enableVertexAttribArray(aPos);
       gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
-      gl.uniform1f(uTime, (performance.now() - start) / 1000);
+      gl.uniform1f(uTime, (now - start) / 1000);
       gl.uniform2f(uRes, canvas.width, canvas.height);
       gl.uniform2f(uMouse, smoothMouse.x, smoothMouse.y);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -235,14 +373,14 @@ export function WebGLBackground() {
       frame = requestAnimationFrame(render);
     };
 
-    render();
+    frame = requestAnimationFrame(render);
 
     return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", handleMouse);
+      detach();
     };
   }, []);
+
+  if (isStatic) return null;
 
   return (
     <canvas

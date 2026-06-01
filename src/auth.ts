@@ -8,6 +8,7 @@ import { headers } from "next/headers";
 import { db } from "@/db";
 import { accounts, sessions, users, verifications } from "@/db/schema";
 import {
+  authSecret,
   authUrl,
   credentialsFallbackEnabled,
   githubClientId,
@@ -84,7 +85,7 @@ if (zitadelConfigured && zitadelIssuer && zitadelClientId) {
 
 export const authServer = betterAuth({
   baseURL: authUrl ?? undefined,
-  secret: process.env.AUTH_SECRET,
+  secret: authSecret ?? undefined,
   database: drizzleAdapter(db, {
     provider: "pg",
     camelCase: true,
