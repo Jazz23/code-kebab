@@ -1,4 +1,4 @@
-# Preserve the recorded Hazy Sites runtime; target DNS remains held.
+# Preserve the recorded Hazy Sites runtime; verified target route owns DNS.
 helmChartPath: charts/code-kebab
 replicaCount: 1
 image:
