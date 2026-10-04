@@ -33,3 +33,11 @@
 - Tagged pushes matching `v*` build and publish both app and `-migrate` images to GHCR.
 - `bun run release:tag <version>` updates package/chart/deploy tags, commits, tags, and pushes; only run it when explicitly asked to perform a release.
 - The Helm chart can run a pre-install/pre-upgrade migration hook, but first-time installs require the database to exist before enabling that hook.
+
+## Primaris migration contract
+
+- The reviewed destination is `.hazyforge/clusters/anvil-primaris/namespace/code-kebab/deploy.yaml`, with companion runtime manifests in `manifests/`. Existing source-cluster values remain separate during cutover.
+- See `docs/primaris-migration.md` for the recorded runtime and activation prerequisites. This contract pins the current running digest; a migration does not build an image, create a database, or run schema migrations.
+- For a later release, update the destination's immutable image digest as well as its tag after verifying the new artifact; a populated digest takes precedence over the tag.
+- Primaris uses the shared `gateway/gateway` listener and existing external database/auth secrets. Keep CNPG provisioning, the chart-created Gateway, and migration hooks disabled for this adoption.
+- Keep `external-dns.alpha.kubernetes.io/controller: migration-preflight` until the operator verifies target behavior and approves DNS promotion.

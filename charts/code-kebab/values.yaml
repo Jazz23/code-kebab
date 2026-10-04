@@ -7,6 +7,8 @@ image:
   repository: ghcr.io/jazz23/code-kebab
   pullPolicy: IfNotPresent
   tag: "hardware-accel-20260601-0858"
+  # When set, deploy these immutable bytes instead of resolving the tag.
+  digest: ""
 
 imagePullSecrets: []
 

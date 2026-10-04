@@ -1,0 +1,69 @@
+# Preserve the recorded Hazy Sites runtime; target DNS remains held.
+helmChartPath: charts/code-kebab
+replicaCount: 1
+image:
+  repository: ghcr.io/jazz23/code-kebab
+  tag: hardware-accel-20260601-0858
+  digest: sha256:255b597198de55bfa00d6802f2a9dc6e9dbb8c759102c22b00a0c1d80e971f31
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+cnpg:
+  enabled: false
+migration:
+  enabled: false
+database:
+  url: ''
+  existingSecret:
+    name: code-kebab-postgres
+    key: uri
+  secretEnvMappings: []
+env:
+  APP_URL: https://code-kebab.dev
+  AUTH_TRUST_HOST: 'true'
+  AUTH_URL: https://code-kebab.dev
+  BETTER_AUTH_URL: https://code-kebab.dev
+  HOSTNAME: 0.0.0.0
+  NODE_ENV: production
+  PORT: '3000'
+envFromSecrets:
+- code-kebab-authjs
+secretEnv: {}
+resources:
+  limits:
+    cpu: '1'
+    memory: 1Gi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+auth:
+  externalSecret:
+    create: true
+    name: code-kebab-authjs
+    secretKey: BETTER_AUTH_SECRET
+    remoteRef:
+      key: secret/authjs-secret
+    extraData:
+    - secretKey: AUTH_ZITADEL_ISSUER
+      remoteRef:
+        key: secret/auth-zitadel-issuer
+    - secretKey: AUTH_ZITADEL_ID
+      remoteRef:
+        key: secret/auth-zitadel-id
+    - secretKey: AUTH_GITHUB_ID
+      remoteRef:
+        key: secret/auth-github-id
+    - secretKey: AUTH_GITHUB_SECRET
+      remoteRef:
+        key: secret/auth-github-secret
+    secretStoreRef:
+      kind: ClusterSecretStore
+      name: code-kebab-cluster-secret-store
+    target:
+      name: code-kebab-authjs
+      creationPolicy: Owner
+    refreshInterval: 48h
+gateway:
+  enabled: false
+fullnameOverride: code-kebab
+nodeSelector:
+  hazyforge.io/site: hetzner-nbg1
