@@ -57,7 +57,7 @@ auth:
         key: secret/auth-github-secret
     secretStoreRef:
       kind: ClusterSecretStore
-      name: azurekv-cluster-secret-store
+      name: code-kebab-cluster-secret-store
     target:
       name: code-kebab-authjs
       creationPolicy: Owner

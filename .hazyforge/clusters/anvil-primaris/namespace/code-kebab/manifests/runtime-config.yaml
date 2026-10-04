@@ -15,7 +15,7 @@ spec:
   refreshInterval: 48h
   secretStoreRef:
     kind: ClusterSecretStore
-    name: azurekv-cluster-secret-store
+    name: code-kebab-cluster-secret-store
   target:
     creationPolicy: Owner
     deletionPolicy: Retain
