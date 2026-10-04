@@ -26,8 +26,6 @@ kind: HTTPRoute
 metadata:
   name: code-kebab-route
   namespace: code-kebab
-  annotations:
-    external-dns.alpha.kubernetes.io/controller: migration-preflight
 spec:
   parentRefs:
   - name: gateway

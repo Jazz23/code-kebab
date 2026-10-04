@@ -1,6 +1,6 @@
-# Code Kebab: staged Primaris migration
+# Code Kebab: Primaris migration
 
-The destination contract is `.hazyforge/clusters/anvil-primaris/namespace/code-kebab/deploy.yaml`; `manifests/` owns its HTTPRoute and database ExternalSecret. It uses the existing `charts/code-kebab` chart. The source contract remains unchanged. This change prepares desired state and does not establish a deployed or publicly cut-over site.
+The destination contract is `.hazyforge/clusters/anvil-primaris/namespace/code-kebab/deploy.yaml`; `manifests/` owns its HTTPRoute and database ExternalSecret. It uses the existing `charts/code-kebab` chart. The source contract remains unchanged. The target was verified before DNS promotion; public DNS reconciliation and source retirement remain separate operator steps.
 
 ## Recorded source, 2026-10-04
 
@@ -23,14 +23,28 @@ Render with:
 ```bash
 helm lint charts/code-kebab -f .hazyforge/clusters/anvil-primaris/namespace/code-kebab/deploy.yaml
 helm template code-kebab-chart charts/code-kebab --namespace code-kebab -f .hazyforge/clusters/anvil-primaris/namespace/code-kebab/deploy.yaml --skip-tests
-kubectl kustomize .hazyforge/clusters/anvil-primaris/namespace/code-kebab
+kubectl apply --dry-run=server --validate=strict -f .hazyforge/clusters/anvil-primaris/namespace/code-kebab/manifests/
 ```
 
 Before activation, the operator must provide the target namespace, the dedicated ClusterSecretStore and its existing identity Secret, ESO namespace authorization, and the shared TLS listener `gateway/gateway: https-code-kebab` for `code-kebab.dev`. This repository is under `Jazz23`, so verify the GitHub App/repository discovery grant or create the explicit Argo chart/manifests Applications in infrastructure. The two source Secrets were present with the expected key names; target synchronization must prove the existing alias values are accessible.
 
 Run strict server dry-run against the actual namespace once those prerequisites exist. After merge and reconciliation, verify the exact pod imageID, Secret readiness, database access from the new node egress, and existing login/API behavior. Exercise authentication through the public identity provider without creating or resetting database state. The source/target rendered container configuration and service ports/selectors were compared; this is configuration evidence, not database or login proof.
 
-The HTTPRoute is bound to `gateway/gateway` with `external-dns.alpha.kubernetes.io/controller: migration-preflight`; the installed DNS controller ignores that mismatched controller value. Retain it while testing TLS and routing directly against the destination. DNS promotion and source retirement follow the operator's live verification.
+The HTTPRoute is bound to `gateway/gateway`. During preflight it used `external-dns.alpha.kubernetes.io/controller: migration-preflight` to hold DNS. After the following target proof, the promotion change removes that annotation so the installed DNS controller can publish `code-kebab.dev` from the Primaris Gateway. Verify authoritative DNS and normal public HTTPS after reconciliation, then retire the source in its own reviewed change. The source remains at one replica during promotion.
+
+## Verified target before DNS promotion, 2026-10-04
+
+Source and target database/auth Secret values and loaded environment values were compared without exposing credentials and matched. The target initially returned SQLSTATE `28000`: the existing external PostgreSQL host rejected the encrypted connection from its new worker address. The reviewed [Primaris access procedure](https://github.com/HazyForge/anvil-primaris/blob/master/docs/code-kebab-postgres-migration.md) added one marked TLS/SCRAM `/32` rule for the same existing database and role, retaining all old source rules, file ownership and mode. PostgreSQL parser validation passed before reload.
+
+At 07:19:59 UTC, the same original target Pod `code-kebab-56fb5f7dbc-nmqgq` on `anvil-primaris-worker-nbg1-2` passed its native read-only `SELECT 1`. At 07:20:44 UTC, trusted-TLS `curl --disable --noproxy '*' --resolve` probes for `code-kebab.dev` confirmed the actual source Gateway IP `49.13.40.142` and target Gateway IP `5.161.160.74`; all six responses were HTTP 200 with TLS verification result zero. Source and target bodies matched exactly:
+
+| Path | Bytes | SHA256 |
+| --- | ---: | --- |
+| `/` | 37,326 | `c9053640bc918fce9728ab5ea388ce39a70574e37f726dc58c1711a40a254366` |
+| `/_next/static/chunks/06bk-uq27qp8g.css` | 66,045 | `2e96a04e5758d2ab4930ec829f55d8b6f2d7605db1c3f3e4e237e5a0d0e82acb` |
+| `/_next/static/chunks/0wd199q_ifsey.js` | 33,059 | `854045fc642c452aec029a5f8479689b100d9616ea4dd0c9455c88d457fdb1f8` |
+
+This proves target database connectivity and the recorded public page/assets. It does not establish a completed identity-provider login or public DNS cutover. A later move to a different worker egress requires its own verified database source-address policy before scheduling there. The migration retains the pinned artifact and does not run database schema hooks.
 
 ## Later releases
 
