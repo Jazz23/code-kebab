@@ -44,7 +44,9 @@ At 07:19:59 UTC, the same original target Pod `code-kebab-56fb5f7dbc-nmqgq` on `
 | `/_next/static/chunks/06bk-uq27qp8g.css` | 66,045 | `2e96a04e5758d2ab4930ec829f55d8b6f2d7605db1c3f3e4e237e5a0d0e82acb` |
 | `/_next/static/chunks/0wd199q_ifsey.js` | 33,059 | `854045fc642c452aec029a5f8479689b100d9616ea4dd0c9455c88d457fdb1f8` |
 
-This proves target database connectivity and the recorded public page/assets. It does not establish a completed identity-provider login or public DNS cutover. A later move to a different worker egress requires its own verified database source-address policy before scheduling there. The migration retains the pinned artifact and does not run database schema hooks.
+This proves target database connectivity and the recorded public page/assets. It does not establish a completed identity-provider login or public DNS cutover. The target's node selector includes the verified `anvil-primaris-worker-nbg1-2` hostname, as well as its NBG site label, so a future reschedule cannot silently select a worker whose database egress has not been authorized. A later move requires its own verified database source-address policy before relaxing this restriction. The migration retains the pinned artifact and does not run database schema hooks.
+
+The PostgreSQL access helper checks the current ready Pod and its recorded node address at plan/apply time. That check describes current execution; the hostname selector preserves the constraint across later reschedules. Keep both checks. A hostname selector change triggers a Deployment rollout, whose surge Pod still needs sufficient request capacity on this one worker before it can start; verify that slot before reconciling the placement change.
 
 ## Later releases
 

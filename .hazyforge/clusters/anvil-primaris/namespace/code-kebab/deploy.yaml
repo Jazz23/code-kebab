@@ -67,3 +67,4 @@ gateway:
 fullnameOverride: code-kebab
 nodeSelector:
   hazyforge.io/site: hetzner-nbg1
+  kubernetes.io/hostname: anvil-primaris-worker-nbg1-2
